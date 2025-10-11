@@ -22,10 +22,16 @@
             <version>9.1.0</version>
         </dependency>
 
+            <dependency>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-controls</artifactId>
+                <version>17.0.11</version>
+            </dependency>
+
         <dependency>
             <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>23.0.1</version>
+            <artifactId>javafx-fxml</artifactId>
+            <version>17.0.11</version>
         </dependency>
 
         <dependency>
@@ -35,5 +41,20 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <configuration>
+                    <mainClass>br.edu.fatecgru.ui.LibraryInterface</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
 
 </project>
