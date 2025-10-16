@@ -1,0 +1,7 @@
+.hyperlink-normal {
+    -fx-text-fill: black;
+    -fx-underline: false;
+    -fx-font-size: 14px;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}

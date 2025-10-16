@@ -1,11 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="br.edu.fatecgru.controller.LibraryController"
-      spacing="10" alignment="CENTER">
-    <Button text="Cadastrar Livro" onAction="#cadastrarLivro"/>
-    <Button text="Listar Livros" onAction="#listarLivros"/>
-</VBox>
+<BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+
+   <left>
+      <VBox alignment="TOP_CENTER" spacing="10" style="-fx-background-color: #E5E5E5; -fx-padding: 15;" BorderPane.alignment="CENTER">
+
+         <children>
+            <!-- HBox com logo e título no topo -->
+            <HBox alignment="CENTER_LEFT" spacing="10">
+               <children>
+                  <ImageView fitHeight="40.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/bibliotec_logo.png" />
+                     </image>
+                  </ImageView>
+                  <Label text="Bibliotec" textAlignment="CENTER" textFill="#670b0b">
+                     <font>
+                        <Font name="Segoe UI Bold" size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+
+            <!-- Espaço entre topo e links -->
+            <Region prefHeight="20.0" />
+
+            <!-- Hyperlinks -->
+            <VBox alignment="CENTER_LEFT" spacing="5">
+               <Hyperlink text="Home" styleClass="hyperlink-normal" />
+               <Hyperlink text="Pesquisar" styleClass="hyperlink-normal" />
+               <Hyperlink text="Cadastrar" styleClass="hyperlink-normal" />
+            </VBox>
+
+            <!-- Espaço flexível para empurrar rodapé para baixo -->
+            <Region VBox.vgrow="ALWAYS" />
+
+            <!-- Logo e rodapé no final -->
+            <VBox alignment="CENTER_LEFT" spacing="5">
+               <ImageView fitHeight="100.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@../images/fatec_logo.png" />
+                  </image>
+               </ImageView>
+               <Label text="Desenvolvido por&#10;Gabriella Bueno e Sara Robles">
+                  <font>
+                     <Font name="Segoe UI" size="10.0" />
+                  </font>
+               </Label>
+            </VBox>
+
+         </children>
+      </VBox>
+   </left>
+
+</BorderPane>
