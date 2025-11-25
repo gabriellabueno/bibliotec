@@ -1,6 +1,6 @@
 package br.edu.fatecgru.ui.controller;
 
-import br.edu.fatecgru.model.MaterialResult; // Classe de modelo com todos os campos (código, titulo, isbn, volume, etc.)
+import br.edu.fatecgru.model.TableView.MaterialResult; // Classe de modelo com todos os campos (código, titulo, isbn, volume, etc.)
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;

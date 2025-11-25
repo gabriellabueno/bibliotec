@@ -1,6 +1,6 @@
 package br.edu.fatecgru.ui.controller;
 
-import br.edu.fatecgru.model.UserResult; // Crie esta classe de modelo!
+import br.edu.fatecgru.model.TableView.UserResult; // Crie esta classe de modelo!
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;

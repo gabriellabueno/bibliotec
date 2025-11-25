@@ -1,4 +1,4 @@
-package br.edu.fatecgru.model;
+package br.edu.fatecgru.model.TableView;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
