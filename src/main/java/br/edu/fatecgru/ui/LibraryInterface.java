@@ -1,7 +1,6 @@
 package br.edu.fatecgru.ui;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -9,7 +8,7 @@ public class LibraryInterface extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ui/home.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ui/main.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1200, 700);
 
         scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());

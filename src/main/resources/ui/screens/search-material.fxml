@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+
+<VBox alignment="TOP_CENTER" spacing="20.0" prefHeight="700.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="br.edu.fatecgru.ui.controller.SearchMaterialController">
+
+    <padding>
+        <Insets top="30.0" left="40.0" right="40.0" bottom="30.0" />
+    </padding>
+
+    <Label text="Pesquisa" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;">
+        <VBox.margin>
+            <Insets bottom="10.0" />
+        </VBox.margin>
+    </Label>
+
+    <HBox spacing="30.0" alignment="CENTER">
+        <children>
+            <RadioButton fx:id="rbLivro" text="Livro" selected="true" onAction="#handleRadioChange">
+                <toggleGroup>
+                    <ToggleGroup fx:id="materialTypeGroup" />
+                </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="rbRevista" text="Revista" toggleGroup="$materialTypeGroup" onAction="#handleRadioChange" />
+            <RadioButton fx:id="rbTG" text="Trabalho de Graduação" toggleGroup="$materialTypeGroup" onAction="#handleRadioChange" />
+            <RadioButton fx:id="rbEquipamento" text="Equipamento" toggleGroup="$materialTypeGroup" onAction="#handleRadioChange" />
+        </children>
+    </HBox>
+
+    <Separator />
+
+    <HBox spacing="10.0" alignment="CENTER_LEFT" prefWidth="720.0">
+        <TextField fx:id="searchField" HBox.hgrow="ALWAYS" promptText="Digite aqui sua busca" prefHeight="35.0" />
+        <Button text="Buscar" onAction="#onSearchClick" style="-fx-background-color: #5a1a1a; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 20 8 20; -fx-cursor: hand;" />
+    </HBox>
+
+    <TableView fx:id="resultsTable" VBox.vgrow="ALWAYS" prefHeight="400.0">
+        <columns>
+            <TableColumn fx:id="colCodigo" text="Código" prefWidth="60.0">
+                <cellValueFactory><PropertyValueFactory property="codigo" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="colTitulo" text="Título" prefWidth="300.0">
+                <cellValueFactory><PropertyValueFactory property="titulo" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="colAnoPublicacao" text="Ano Publicação" prefWidth="120.0">
+                <cellValueFactory><PropertyValueFactory property="anoPublicacao" /></cellValueFactory>
+            </TableColumn>
+
+            <TableColumn fx:id="colISBN" text="ISBN" prefWidth="120.0">
+                <cellValueFactory><PropertyValueFactory property="isbn" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="colAutor" text="Autor Principal" prefWidth="150.0">
+                <cellValueFactory><PropertyValueFactory property="autor" /></cellValueFactory>
+            </TableColumn>
+
+            <TableColumn fx:id="colVolume" text="Volume" prefWidth="80.0">
+                <cellValueFactory><PropertyValueFactory property="volume" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="colNumero" text="Número" prefWidth="80.0">
+                <cellValueFactory><PropertyValueFactory property="numero" /></cellValueFactory>
+            </TableColumn>
+
+            <TableColumn fx:id="colSubtitulo" text="Subtítulo" prefWidth="150.0">
+                <cellValueFactory><PropertyValueFactory property="subtitulo" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="colAutor2" text="Autor 2" prefWidth="100.0">
+                <cellValueFactory><PropertyValueFactory property="autor2" /></cellValueFactory>
+            </TableColumn>
+
+            <TableColumn fx:id="colNomeEquipamento" text="Nome" prefWidth="250.0">
+                <cellValueFactory><PropertyValueFactory property="nome" /></cellValueFactory>
+            </TableColumn>
+
+            <TableColumn fx:id="colTarjaVermelha" text="Tarja Vermelha" prefWidth="120.0" style="-fx-alignment: CENTER;">
+                <cellValueFactory><PropertyValueFactory property="tarjaVermelha" /></cellValueFactory>
+            </TableColumn>
+            <TableColumn fx:id="colDisponibilidade" text="Disponibilidade" prefWidth="150.0" style="-fx-alignment: CENTER;">
+                <cellValueFactory><PropertyValueFactory property="disponibilidade" /></cellValueFactory>
+            </TableColumn>
+
+        </columns>
+        <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+        </columnResizePolicy>
+    </TableView>
+
+</VBox>

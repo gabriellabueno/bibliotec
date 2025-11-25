@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import java.lang.String?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+
+<VBox alignment="TOP_CENTER" spacing="20.0" prefHeight="700.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="br.edu.fatecgru.ui.controller.SearchUserController">
+
+    <padding>
+        <Insets top="30.0" left="40.0" right="40.0" bottom="30.0" />
+    </padding>
+
+    <Label text="Pesquisa" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;">
+        <VBox.margin>
+            <Insets bottom="10.0" />
+        </VBox.margin>
+    </Label>
+
+    <HBox spacing="30.0" alignment="CENTER">
+        <children>
+            <RadioButton text="Aluno" selected="true">
+                <toggleGroup>
+                    <ToggleGroup fx:id="userTypeGroup" />
+                </toggleGroup>
+            </RadioButton>
+            <RadioButton text="Docente" toggleGroup="$userTypeGroup" />
+        </children>
+    </HBox>
+
+    <Separator />
+
+    <HBox spacing="10.0" alignment="CENTER_LEFT" prefWidth="720.0">
+        <TextField fx:id="searchField" HBox.hgrow="ALWAYS" promptText="Digite aqui sua busca" prefHeight="35.0" />
+        <Button text="Buscar" onAction="#onSearchClick" style="-fx-background-color: #5a1a1a; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 20 8 20; -fx-cursor: hand;" />
+    </HBox>
+
+    <TableView fx:id="resultsTable" VBox.vgrow="ALWAYS" prefHeight="400.0">
+        <columns>
+            <TableColumn text="ID" prefWidth="60.0">
+                <cellValueFactory>
+                    <PropertyValueFactory property="id" />
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Nome" prefWidth="300.0">
+                <cellValueFactory>
+                    <PropertyValueFactory property="nome" />
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Empréstimos" prefWidth="180.0" style="-fx-alignment: CENTER;">
+                <cellValueFactory>
+                    <PropertyValueFactory property="emprestimosStatus" />
+                </cellValueFactory>
+            </TableColumn>
+        </columns>
+        <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+        </columnResizePolicy>
+    </TableView>
+
+</VBox>
