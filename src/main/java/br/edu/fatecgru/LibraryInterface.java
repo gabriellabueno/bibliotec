@@ -1,4 +1,4 @@
-package br.edu.fatecgru.controller;
+package br.edu.fatecgru;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

@@ -8,13 +8,13 @@ import jakarta.persistence.*;
 public class Livro extends Material {
 
     @Column(name = "fk_autor", nullable = false)
-    String autor;
+    private String autor;
 
     @Column(name = "fk_genero", nullable = false)
-    String genero;
+    private String genero;
 
     @Column(name = "fk_editora", nullable = false)
-    String editora;
+    private String editora;
 
     @Column(name = "isbn", nullable = false)
     private String isbn;

@@ -1,51 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
-<?import java.lang.String?>
-<?import javafx.collections.FXCollections?>
-<VBox alignment="TOP_CENTER" spacing="20.0" prefHeight="700.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+
+<VBox alignment="TOP_CENTER" prefHeight="700.0" prefWidth="650.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="br.edu.fatecgru.controller.RegisterMaterialController">
 
     <padding>
-        <Insets top="30.0" left="40.0" right="40.0" bottom="30.0" />
+        <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
     </padding>
 
-    <Label text="Cadastro de Material" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;">
+    <Label style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;" text="Cadastro de Material">
         <VBox.margin>
             <Insets bottom="20.0" />
         </VBox.margin>
     </Label>
 
-    <HBox spacing="30.0" alignment="CENTER">
+    <HBox alignment="CENTER" spacing="30.0">
         <children>
-            <RadioButton fx:id="rbLivro" text="Livro" selected="true" onAction="#handleRadioChange">
+            <RadioButton fx:id="rbLivro" onAction="#handleRadioChange" selected="true" text="Livro">
                 <toggleGroup>
                     <ToggleGroup fx:id="materialTypeGroup" />
                 </toggleGroup>
             </RadioButton>
-            <RadioButton fx:id="rbRevista" text="Revista" toggleGroup="$materialTypeGroup" onAction="#handleRadioChange" />
-            <RadioButton fx:id="rbTG" text="Trabalho de Graduação" toggleGroup="$materialTypeGroup" onAction="#handleRadioChange" />
-            <RadioButton fx:id="rbEquipamento" text="Equipamento" toggleGroup="$materialTypeGroup" onAction="#handleRadioChange" />
+            <RadioButton fx:id="rbRevista" onAction="#handleRadioChange" text="Revista" toggleGroup="$materialTypeGroup" />
+            <RadioButton fx:id="rbTG" onAction="#handleRadioChange" text="Trabalho de Graduação" toggleGroup="$materialTypeGroup" />
+            <RadioButton fx:id="rbEquipamento" onAction="#handleRadioChange" text="Equipamento" toggleGroup="$materialTypeGroup" />
         </children>
     </HBox>
 
     <Separator />
 
-    <GridPane hgap="20.0" vgap="15.0" prefWidth="580.0">
+    <GridPane hgap="20.0" prefWidth="580.0" vgap="15.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="280.0" prefWidth="280.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="280.0" prefWidth="280.0" />
         </columnConstraints>
 
         <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
-            <Label text="Código" style="-fx-font-weight: bold;" />
-            <TextField fx:id="numeroNotaFiscalField" />
+            <Label style="-fx-font-weight: bold;" text="Código" />
+            <TextField fx:id="codigoField" />
         </VBox>
 
         <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
-            <Label text="Tipo de Aquisição" style="-fx-font-weight: bold;" />
+            <Label style="-fx-font-weight: bold;" text="Total Exemplares" />
+            <TextField fx:id="totalExemplaresField" />
+        </VBox>
+
+        <VBox fx:id="vboxTipoAquisicao" spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
+            <Label style="-fx-font-weight: bold;" text="Tipo de Aquisição" />
             <ComboBox fx:id="tipoAquisicaoCombo" prefWidth="280.0" promptText="Selecione o tipo...">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
@@ -56,198 +62,217 @@
             </ComboBox>
         </VBox>
 
-        <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
-            <Label text="Nota Fiscal" style="-fx-font-weight: bold;" />
-            <TextField fx:id="notaFiscalCombo" prefWidth="280.0">
-
-            </TextField>
+        <VBox fx:id="vboxNotaFiscal" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <Label style="-fx-font-weight: bold;" text="Nota Fiscal" />
+            <TextField fx:id="numeroNotaFiscalField" prefWidth="280.0" />
         </VBox>
+
+        <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+        </rowConstraints>
     </GridPane>
 
     <StackPane fx:id="materialFormsContainer" alignment="TOP_LEFT" prefWidth="580.0" VBox.vgrow="ALWAYS">
 
-        <GridPane fx:id="formLivro" hgap="20.0" vgap="15.0" prefWidth="580.0">
+        <GridPane fx:id="formLivro" hgap="20.0" prefWidth="580.0" vgap="15.0">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="280.0" prefWidth="280.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="280.0" prefWidth="280.0" />
             </columnConstraints>
 
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                <Label text="ISBN" style="-fx-font-weight: bold;" />
+                <Label style="-fx-font-weight: bold;" text="ISBN" />
                 <TextField fx:id="isbnField" promptText="- - - - - - - - -" />
             </VBox>
 
-            <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                <Label text="Título" style="-fx-font-weight: bold;" />
-                <TextField fx:id="tituloLivroField" />
-            </VBox>
-
-            <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
-                <Label text="Palavras-Chave" style="-fx-font-weight: bold;" />
-                <TextArea fx:id="palavrasChaveLivroArea" promptText="Separe as palavras por vírgula." prefHeight="60.0" wrapText="true" />
-            </VBox>
-
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                <Label text="Edição" style="-fx-font-weight: bold;" />
+                <Label style="-fx-font-weight: bold;" text="Edição" />
                 <TextField fx:id="edicaoField" />
             </VBox>
 
+            <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                <Label style="-fx-font-weight: bold;" text="Título" />
+                <TextField fx:id="tituloLivroField" />
+            </VBox>
+
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                <Label text="Assunto" style="-fx-font-weight: bold;" />
+                <Label style="-fx-font-weight: bold;" text="Assunto" />
                 <TextField fx:id="assuntoLivroField" />
             </VBox>
 
-            <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                <Label text="Ano de Publicação" style="-fx-font-weight: bold;" />
-                <TextField fx:id="anoPublicacaoLivroField" />
-            </VBox>
-
-            <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                <Label text="Local de Publicação" style="-fx-font-weight: bold;" />
-                <TextField fx:id="localPublicacaoLivroField" />
-            </VBox>
-
-            <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="3">
-                <Label text="Autor" style="-fx-font-weight: bold;" />
+            <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                <Label style="-fx-font-weight: bold;" text="Autor" />
                 <TextField fx:id="autorLivroField" promptText="Nome do Autor" />
             </VBox>
 
-            <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="4">
-                <Label text="Editora" style="-fx-font-weight: bold;" />
+            <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                <Label style="-fx-font-weight: bold;" text="Ano de Publicação" />
+                <TextField fx:id="anoPublicacaoLivroField" />
+            </VBox>
+
+            <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="3">
+                <Label style="-fx-font-weight: bold;" text="Editora" />
                 <TextField fx:id="editoraLivroField" promptText="Nome da Editora." />
             </VBox>
 
-            <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                <Label text="Gênero" style="-fx-font-weight: bold;" />
+            <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                <Label style="-fx-font-weight: bold;" text="Local de Publicação" />
+                <TextField fx:id="localPublicacaoLivroField" />
+            </VBox>
+
+            <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="4">
+                <Label style="-fx-font-weight: bold;" text="Gênero" />
                 <TextField fx:id="generoLivroField" promptText="Gênero ou área." />
             </VBox>
+
+            <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="5">
+                <Label style="-fx-font-weight: bold;" text="Palavras-Chave" />
+                <TextArea fx:id="palavrasChaveLivroArea" prefHeight="60.0" promptText="Separe as palavras por vírgula." wrapText="true" />
+            </VBox>
+
+            <rowConstraints>
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+            </rowConstraints>
         </GridPane>
 
-        <GridPane fx:id="formRevista" hgap="20.0" vgap="15.0" prefWidth="580.0" visible="false" managed="false">
+        <GridPane fx:id="formRevista" hgap="20.0" managed="false" prefWidth="580.0" vgap="15.0" visible="false">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="280.0" prefWidth="280.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="280.0" prefWidth="280.0" />
             </columnConstraints>
-
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                <Label text="Título" style="-fx-font-weight: bold;" />
+                <Label style="-fx-font-weight: bold;" text="Título" />
                 <TextField fx:id="tituloRevistaField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                <Label text="Volume" style="-fx-font-weight: bold;" />
+                <Label style="-fx-font-weight: bold;" text="Volume" />
                 <TextField fx:id="volumeRevistaField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
-                <Label text="Número" style="-fx-font-weight: bold;" />
+                <Label style="-fx-font-weight: bold;" text="Número" />
                 <TextField fx:id="numeroRevistaField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                <Label text="Assunto" style="-fx-font-weight: bold;" />
+                <Label style="-fx-font-weight: bold;" text="Assunto" />
                 <TextField fx:id="assuntoRevistaField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                <Label text="Ano de Publicação" style="-fx-font-weight: bold;" />
+                <Label style="-fx-font-weight: bold;" text="Ano de Publicação" />
                 <TextField fx:id="anoPublicacaoRevistaField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                <Label text="Local de Publicação" style="-fx-font-weight: bold;" />
+                <Label style="-fx-font-weight: bold;" text="Local de Publicação" />
                 <TextField fx:id="localPublicacaoRevistaField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="3">
-                <Label text="Editora" style="-fx-font-weight: bold;" />
-                <TextField fx:id="editoraRevistaCombo" promptText="Nome da Editora." />
+                <Label style="-fx-font-weight: bold;" text="Editora" />
+                <TextField fx:id="editoraRevistaField" promptText="Nome da Editora." />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                <Label text="Gênero" style="-fx-font-weight: bold;" />
-                <TextField fx:id="generoRevistaCombo" promptText="Gênero ou área." />
+                <Label style="-fx-font-weight: bold;" text="Gênero" />
+                <TextField fx:id="generoRevistaField" promptText="Gênero ou área." />
             </VBox>
+
         </GridPane>
 
-        <GridPane fx:id="formTG" hgap="20.0" vgap="15.0" prefWidth="580.0" visible="false" managed="false">
+        <GridPane fx:id="formTG" hgap="20.0" managed="false" prefWidth="580.0" vgap="15.0" visible="false">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="280.0" prefWidth="280.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="280.0" prefWidth="280.0" />
             </columnConstraints>
-
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                <Label text="Título" style="-fx-font-weight: bold;" />
+                <Label style="-fx-font-weight: bold;" text="Título" />
                 <TextField fx:id="tituloTGField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                <Label text="Subtítulo" style="-fx-font-weight: bold;" />
+                <Label style="-fx-font-weight: bold;" text="Subtítulo" />
                 <TextField fx:id="subtituloTGField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                <Label text="Assunto" style="-fx-font-weight: bold;" />
+                <Label style="-fx-font-weight: bold;" text="Assunto" />
                 <TextField fx:id="assuntoTGField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
-                <Label text="Autor 1" style="-fx-font-weight: bold;" />
+                <Label style="-fx-font-weight: bold;" text="Autor 1" />
                 <TextField fx:id="autor1TGField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="3">
-                <Label text="RA 1" style="-fx-font-weight: bold;" />
+                <Label style="-fx-font-weight: bold;" text="RA 1" />
                 <TextField fx:id="ra1TGField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                <Label text="Autor 2" style="-fx-font-weight: bold;" />
+                <Label style="-fx-font-weight: bold;" text="Autor 2" />
                 <TextField fx:id="autor2TGField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                <Label text="RA 2" style="-fx-font-weight: bold;" />
+                <Label style="-fx-font-weight: bold;" text="RA 2" />
                 <TextField fx:id="ra2TGField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="4">
-                <Label text="Ano de Publicação" style="-fx-font-weight: bold;" />
+                <Label style="-fx-font-weight: bold;" text="Ano de Publicação" />
                 <TextField fx:id="anoPublicacaoTGField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                <Label text="Local de Publicação" style="-fx-font-weight: bold;" />
+                <Label style="-fx-font-weight: bold;" text="Local de Publicação" />
                 <TextField fx:id="localPublicacaoTGField" />
             </VBox>
 
-            <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.columnSpan="2">
-                <Label text="Palavras-Chave" style="-fx-font-weight: bold;" />
-                <TextArea fx:id="palavrasChaveTGArea" promptText="Separe as palavras por vírgula." prefHeight="60.0" wrapText="true" />
+            <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="5">
+                <Label style="-fx-font-weight: bold;" text="Palavras-Chave" />
+                <TextArea fx:id="palavrasChaveTGArea" prefHeight="60.0" promptText="Separe as palavras por vírgula." wrapText="true" />
             </VBox>
+
         </GridPane>
 
-        <GridPane fx:id="formEquipamento" hgap="20.0" vgap="15.0" prefWidth="580.0" visible="false" managed="false">
+        <GridPane fx:id="formEquipamento" hgap="20.0" managed="false" prefWidth="580.0" vgap="15.0" visible="false">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="280.0" prefWidth="280.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="280.0" prefWidth="280.0" />
             </columnConstraints>
 
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                <Label text="Nome" style="-fx-font-weight: bold;" />
+                <Label style="-fx-font-weight: bold;" text="Nome" />
                 <TextField fx:id="nomeEquipamentoField" />
             </VBox>
 
-            <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
-                <Label text="Descrição" style="-fx-font-weight: bold;" />
+            <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                <Label style="-fx-font-weight: bold;" text="Descrição" />
                 <TextArea fx:id="descricaoEquipamentoArea" prefHeight="100.0" wrapText="true" />
             </VBox>
+
         </GridPane>
 
     </StackPane>
 
+    <HBox alignment="BASELINE_LEFT" spacing="30.0">
+        <children>
+            <RadioButton fx:id="rbTarjaVermelha" selected="false" text="Tarja Vermelha">
+            </RadioButton>
+        </children>
+    </HBox>
     <HBox alignment="CENTER_RIGHT" prefWidth="580.0">
-        <Button text="+ Cadastrar" onAction="#onCadastrarClick" style="-fx-background-color: #2c1810; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;">
+        <Button onAction="#onCadastrarClick" style="-fx-background-color: #2c1810; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="+ Cadastrar">
             <HBox.margin>
                 <Insets top="10.0" />
             </HBox.margin>

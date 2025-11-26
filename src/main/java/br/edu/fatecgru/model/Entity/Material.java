@@ -15,7 +15,7 @@ public abstract class Material {
     private Long idMaterial;
 
     @ManyToOne
-    @JoinColumn(name = "fk_nota_fiscal", nullable = false)
+    @JoinColumn(name = "fk_nota_fiscal")
     private NotaFiscal notaFiscal;
 
     @Enumerated(EnumType.STRING)
@@ -49,7 +49,7 @@ public abstract class Material {
         this.idMaterial = idMaterial;
     }
 
-    public NotaFiscal getNotaFiscal() {
+        public NotaFiscal getNotaFiscal() {
         return notaFiscal;
     }
 

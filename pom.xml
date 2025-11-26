@@ -68,7 +68,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>br.edu.fatecgru.controller.LibraryInterface</mainClass>
+                    <mainClass>br.edu.fatecgru.LibraryInterface</mainClass>
                 </configuration>
             </plugin>
         </plugins>
