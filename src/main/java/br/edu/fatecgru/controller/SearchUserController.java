@@ -1,4 +1,4 @@
-package br.edu.fatecgru.ui.controller;
+package br.edu.fatecgru.controller;
 
 import br.edu.fatecgru.model.TableView.UserResult; // Crie esta classe de modelo!
 

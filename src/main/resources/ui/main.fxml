@@ -7,7 +7,7 @@
 <?import java.lang.String?>
 
 <BorderPane fx:id="mainBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="br.edu.fatecgru.ui.controller.MainController">
+            fx:controller="br.edu.fatecgru.controller.MainController">
     <left>
         <VBox prefHeight="600.0" prefWidth="220.0" styleClass="sidebar" BorderPane.alignment="CENTER">
             <children>

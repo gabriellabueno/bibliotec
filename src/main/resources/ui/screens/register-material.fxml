@@ -6,7 +6,7 @@
 <?import java.lang.String?>
 <?import javafx.collections.FXCollections?>
 <VBox alignment="TOP_CENTER" spacing="20.0" prefHeight="700.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="br.edu.fatecgru.ui.controller.RegisterMaterialController">
+      fx:controller="br.edu.fatecgru.controller.RegisterMaterialController">
 
     <padding>
         <Insets top="30.0" left="40.0" right="40.0" bottom="30.0" />
@@ -41,17 +41,16 @@
 
         <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
             <Label text="Código" style="-fx-font-weight: bold;" />
-            <TextField fx:id="codigoField" />
+            <TextField fx:id="numeroNotaFiscalField" />
         </VBox>
 
         <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
             <Label text="Tipo de Aquisição" style="-fx-font-weight: bold;" />
-            <ComboBox fx:id="tipoAquisicaoCombo" prefWidth="280.0" promptText="Doação">
+            <ComboBox fx:id="tipoAquisicaoCombo" prefWidth="280.0" promptText="Selecione o tipo...">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="Doação" />
                         <String fx:value="Compra" />
-                        <String fx:value="Permuta" />
                     </FXCollections>
                 </items>
             </ComboBox>
@@ -59,13 +58,9 @@
 
         <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
             <Label text="Nota Fiscal" style="-fx-font-weight: bold;" />
-            <ComboBox fx:id="notaFiscalCombo" prefWidth="280.0" promptText="Não possui nota fiscal.">
-                <items>
-                    <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="Não possui nota fiscal." />
-                    </FXCollections>
-                </items>
-            </ComboBox>
+            <TextField fx:id="notaFiscalCombo" prefWidth="280.0">
+
+            </TextField>
         </VBox>
     </GridPane>
 
@@ -114,17 +109,17 @@
 
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="3">
                 <Label text="Autor" style="-fx-font-weight: bold;" />
-                <ComboBox fx:id="autorCombo" prefWidth="280.0" promptText="Selecione um Autor" editable="true" />
+                <TextField fx:id="autorLivroField" promptText="Nome do Autor" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="4">
                 <Label text="Editora" style="-fx-font-weight: bold;" />
-                <ComboBox fx:id="editoraLivroCombo" prefWidth="280.0" promptText="Digite uma Editora." editable="true" />
+                <TextField fx:id="editoraLivroField" promptText="Nome da Editora." />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                 <Label text="Gênero" style="-fx-font-weight: bold;" />
-                <ComboBox fx:id="generoLivroCombo" prefWidth="280.0" promptText="Acadêmico" />
+                <TextField fx:id="generoLivroField" promptText="Gênero ou área." />
             </VBox>
         </GridPane>
 
@@ -166,12 +161,12 @@
 
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="3">
                 <Label text="Editora" style="-fx-font-weight: bold;" />
-                <ComboBox fx:id="editoraRevistaCombo" prefWidth="280.0" promptText="Digite uma Editora." editable="true" />
+                <TextField fx:id="editoraRevistaCombo" promptText="Nome da Editora." />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                 <Label text="Gênero" style="-fx-font-weight: bold;" />
-                <ComboBox fx:id="generoRevistaCombo" prefWidth="280.0" promptText="Acadêmico" />
+                <TextField fx:id="generoRevistaCombo" promptText="Gênero ou área." />
             </VBox>
         </GridPane>
 

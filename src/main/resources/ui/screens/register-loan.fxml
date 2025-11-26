@@ -7,7 +7,7 @@
 <?import javafx.collections.FXCollections?>
 
 <VBox alignment="TOP_CENTER" spacing="20.0" prefHeight="600.0" prefWidth="580.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="br.edu.fatecgru.ui.controller.RegisterEmprestimoController">
+      fx:controller="br.edu.fatecgru.controller.RegisterEmprestimoController">
 
     <padding>
         <Insets top="30.0" left="40.0" right="40.0" bottom="30.0" />

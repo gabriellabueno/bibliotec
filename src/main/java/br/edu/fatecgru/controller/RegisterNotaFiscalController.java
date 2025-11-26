@@ -1,7 +1,6 @@
-package br.edu.fatecgru.ui.controller;
+package br.edu.fatecgru.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextArea;
 import javafx.event.ActionEvent;

@@ -14,7 +14,7 @@ public abstract class Material {
     @Column(name = "pk_material")
     private Long idMaterial;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "fk_nota_fiscal", nullable = false)
     private NotaFiscal notaFiscal;
 
