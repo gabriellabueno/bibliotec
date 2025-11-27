@@ -241,7 +241,7 @@ public class RegisterMaterialController implements Initializable {
                 cadastrarRevista(tipoAquisicao);
             } else if ("rbTG".equals(selectedId)) {
                 // cadastrarTG(tipoAquisicao); // Método a ser implementado
-                System.out.println("⚠️ Cadastro de TG ainda não implementado.");
+                cadastrarTG(tipoAquisicao);
             } else if ("rbEquipamento".equals(selectedId)) {
                 // cadastrarEquipamento(tipoAquisicao); // Método a ser implementado
                 System.out.println("⚠️ Cadastro de Equipamento ainda não implementado.");
@@ -360,6 +360,56 @@ public class RegisterMaterialController implements Initializable {
             throw new Exception("Falha no serviço de cadastro.");
         }
     }
+
+    // ---------------------------------------------------------------------
+
+    /**
+     * Lógica específica para cadastrar um TG (Trabalho de Graduação).
+     */
+    private void cadastrarTG(TipoAquisicao tipoAquisicao) throws Exception {
+        System.out.println("--- Iniciando Cadastro de TG ---");
+
+        // O FXML não exibe o campo 'totalExemplares' para TG,
+        // mas o banco de dados pode requerer um valor padrão (como 1).
+        // Como a entidade TG não possui 'totalExemplares', vamos omitir essa parte.
+
+        br.edu.fatecgru.model.Entity.TG novoTG = new br.edu.fatecgru.model.Entity.TG();
+
+        // Dados Base Material (Padrão para TG)
+        novoTG.setTipoMaterial(TipoMaterial.TG);
+
+        // Define TipoAquisicao como DOACAO para satisfazer a restrição NOT NULL
+        // no banco de dados, já que TG não é comprado.
+        novoTG.setTipoAquisicao(TipoAquisicao.DOACAO);
+
+        novoTG.setStatusMaterial(StatusMaterial.DISPONIVEL);
+        novoTG.setNotaFiscal(null);
+
+        // Dados Específicos TG
+        novoTG.setTitulo(tituloTGField.getText());
+        novoTG.setSubtitulo(subtituloTGField.getText());
+        novoTG.setAssunto(assuntoTGField.getText());
+        novoTG.setRa1(ra1TGField.getText());
+        novoTG.setAutor1(autor1TGField.getText());
+
+        // Campos opcionais (RA2 e Autor2)
+        novoTG.setRa2(ra2TGField.getText());
+        novoTG.setAutor2(autor2TGField.getText());
+
+        novoTG.setAnoPublicacao(anoPublicacaoTGField.getText());
+        novoTG.setLocalPublicacao(localPublicacaoTGField.getText());
+        novoTG.setPalavrasChave(palavrasChaveTGArea.getText());
+
+        // Persistência
+        if (materialService.cadastrarTG(novoTG)) { // Assume que você implementou cadastrarTG no MaterialService
+            System.out.println("✅ SUCESSO: TG cadastrado.");
+        } else {
+            System.err.println("❌ FALHA: Não foi possível cadastrar o TG.");
+            throw new Exception("Falha no serviço de cadastro.");
+        }
+    }
+
+// ---------------------------------------------------------------------
 
     /**
      * Limpa todos os campos específicos dos formulários de material.

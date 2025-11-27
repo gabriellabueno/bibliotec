@@ -38,12 +38,13 @@
     -fx-background-color: #C4C7C6;
 }
 
-/* Botão Ativo (Home) */
-.nav-active {
-    -fx-background-color: #C4C7C6; /* Cinza do Item Selecionado */
-    -fx-font-weight: bold;
-    -fx-text-fill: #000000;
-}
+/*VERIFICAR DEPOIS SE SERÁ MANTIDO*/
+/*!* Botão Ativo (Home) *!*/
+/*.nav-active {*/
+/*    -fx-background-color: #C4C7C6; !* Cinza do Item Selecionado *!*/
+/*    -fx-font-weight: bold;*/
+/*    -fx-text-fill: #000000;*/
+/*}*/
 
 /* SEÇÕES (PESQUISA/CADASTRAR) NA SIDEBAR */
 .nav-section {

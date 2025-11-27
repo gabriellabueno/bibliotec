@@ -68,6 +68,10 @@ public class TG extends Material {
         this.palavrasChave = palavrasChave;
     }
 
+    public TG() {
+
+    }
+
     public String getTitulo() {
         return titulo;
     }

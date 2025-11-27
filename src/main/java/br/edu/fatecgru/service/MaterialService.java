@@ -3,6 +3,7 @@ package br.edu.fatecgru.service;
 import br.edu.fatecgru.model.Entity.Livro;
 import br.edu.fatecgru.model.Entity.Revista;
 // Importe outras entidades de material conforme necessário (TG, Equipamento)
+import br.edu.fatecgru.model.Entity.TG;
 import br.edu.fatecgru.util.JPAUtil; // Assumindo esta classe utilitária existe
 
 import jakarta.persistence.EntityManager;
@@ -68,6 +69,37 @@ public class MaterialService {
                 em.getTransaction().rollback();
             }
             System.err.println("Erro inesperado ao cadastrar Revista: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+    /*
+    Cadastra um novo TG (Trabalho de Graduação) no banco de dados.
+    @param tg A entidade TG a ser persistida.
+     * @return true se o cadastro for bem-sucedido, false caso contrário.
+            */
+    public boolean cadastrarTG(TG tg) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            // O persist no TG automaticamente trata a inserção na tabela tb_material (herança JOINED)
+            em.persist(tg);
+            em.getTransaction().commit();
+            return true;
+        } catch (ConstraintViolationException e) {
+            // Exceção específica para violação de NOT NULL ou UNIQUE
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            System.err.println("Erro de restrição ao cadastrar TG: " + e.getMessage());
+            return false;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            System.err.println("Erro inesperado ao cadastrar TG: " + e.getMessage());
             e.printStackTrace();
             return false;
         } finally {
