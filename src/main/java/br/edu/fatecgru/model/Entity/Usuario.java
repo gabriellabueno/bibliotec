@@ -5,10 +5,11 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "tb_usuario")
 public class Usuario {
+
+    //@GeneratedValue(strategy = GenerationType.IDENTITY) -> O ID do usuário será RA, por isso não será auto incremento
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pk_usuario")
-    private Long idUsuario;
+    private String idUsuario;
 
     @Column(name = "nome", nullable = false)
     private String nome;
@@ -25,7 +26,7 @@ public class Usuario {
     // Não temos as colunas maxEmprestimos e prazoDevolucao no SQL,
     // então elas são omitidas aqui, seguindo estritamente o modelo.
 
-    public Usuario(Long idUsuario, String nome, String email, boolean docente, boolean penalidade) {
+    public Usuario(String idUsuario, String nome, String email, boolean docente, boolean penalidade) {
         this.idUsuario = idUsuario;
         this.nome = nome;
         this.email = email;
@@ -33,11 +34,13 @@ public class Usuario {
         this.penalidade = penalidade;
     }
 
-    public Long getIdUsuario() {
+    public Usuario() {}
+
+    public String getIdUsuario() {
         return idUsuario;
     }
 
-    public void setIdUsuario(Long idUsuario) {
+    public void setIdUsuario(String idUsuario) {
         this.idUsuario = idUsuario;
     }
 
