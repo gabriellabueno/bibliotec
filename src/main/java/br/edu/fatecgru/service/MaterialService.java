@@ -2,9 +2,9 @@ package br.edu.fatecgru.service;
 
 import br.edu.fatecgru.model.Entity.Livro;
 import br.edu.fatecgru.model.Entity.Revista;
-// Importe outras entidades de material conforme necessário (TG, Equipamento)
 import br.edu.fatecgru.model.Entity.TG;
-import br.edu.fatecgru.util.JPAUtil; // Assumindo esta classe utilitária existe
+import br.edu.fatecgru.model.Entity.Equipamento;
+import br.edu.fatecgru.util.JPAUtil;
 
 import jakarta.persistence.EntityManager;
 import org.hibernate.exception.ConstraintViolationException;
@@ -42,8 +42,6 @@ public class MaterialService {
             em.close();
         }
     }
-
-    // ---
 
     /**
      * Cadastra uma nova Revista no banco de dados.
@@ -107,17 +105,34 @@ public class MaterialService {
         }
     }
 
-    // ---
-
-    // Você pode adicionar aqui métodos para cadastrar TG e Equipamento:
-
-    /*
-    public boolean cadastrarTG(TG tg) {
-        // Implementar lógica de persistência do TG
-    }
-
+    /**
+     * Cadastra um novo Equipamento no banco de dados.
+     * @param equipamento A entidade Equipamento a ser persistida.
+     * @return true se o cadastro for bem-sucedido, false caso contrário.
+     */
     public boolean cadastrarEquipamento(Equipamento equipamento) {
-        // Implementar lógica de persistência do Equipamento
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            // O persist no Equipamento também trata a inserção na tabela tb_material (herança JOINED)
+            em.persist(equipamento);
+            em.getTransaction().commit();
+            return true;
+        } catch (ConstraintViolationException e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            System.err.println("Erro de restrição ao cadastrar Equipamento: " + e.getMessage());
+            return false;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            System.err.println("Erro inesperado ao cadastrar Equipamento: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
     }
-    */
 }

@@ -240,11 +240,10 @@ public class RegisterMaterialController implements Initializable {
             } else if ("rbRevista".equals(selectedId)) {
                 cadastrarRevista(tipoAquisicao);
             } else if ("rbTG".equals(selectedId)) {
-                // cadastrarTG(tipoAquisicao); // Método a ser implementado
+                // cadastrarTG(tipoAquisicao);
                 cadastrarTG(tipoAquisicao);
             } else if ("rbEquipamento".equals(selectedId)) {
-                // cadastrarEquipamento(tipoAquisicao); // Método a ser implementado
-                System.out.println("⚠️ Cadastro de Equipamento ainda não implementado.");
+                cadastrarEquipamento(tipoAquisicao);
             }
 
         } catch (IllegalArgumentException e) {
@@ -405,6 +404,40 @@ public class RegisterMaterialController implements Initializable {
             System.out.println("✅ SUCESSO: TG cadastrado.");
         } else {
             System.err.println("❌ FALHA: Não foi possível cadastrar o TG.");
+            throw new Exception("Falha no serviço de cadastro.");
+        }
+    }
+
+    // ---------------------------------------------------------------------
+
+    /**
+     * Lógica específica para cadastrar um Equipamento.
+     */
+    private void cadastrarEquipamento(TipoAquisicao tipoAquisicao) throws Exception {
+        System.out.println("--- Iniciando Cadastro de EQUIPAMENTO ---");
+
+        if (tipoAquisicao == null) {
+            // Equipamento exige Tipo de Aquisição, ao contrário de TG.
+            throw new IllegalArgumentException("O Tipo de Aquisição é obrigatório para Equipamento.");
+        }
+
+        br.edu.fatecgru.model.Entity.Equipamento novoEquipamento = new br.edu.fatecgru.model.Entity.Equipamento();
+
+        // Dados Base Material
+        novoEquipamento.setTipoMaterial(TipoMaterial.EQUIPAMENTO);
+        novoEquipamento.setTipoAquisicao(tipoAquisicao);
+        novoEquipamento.setStatusMaterial(StatusMaterial.DISPONIVEL);
+        novoEquipamento.setNotaFiscal(null); // (A lógica para criar NotaFiscal deve ser implementada separadamente)
+
+        // Dados Específicos Equipamento
+        novoEquipamento.setNome(nomeEquipamentoField.getText());
+        novoEquipamento.setDescricao(descricaoEquipamentoArea.getText());
+
+        // Persistência
+        if (materialService.cadastrarEquipamento(novoEquipamento)) {
+            System.out.println("✅ SUCESSO: Equipamento cadastrado.");
+        } else {
+            System.err.println("❌ FALHA: Não foi possível cadastrar o equipamento.");
             throw new Exception("Falha no serviço de cadastro.");
         }
     }
