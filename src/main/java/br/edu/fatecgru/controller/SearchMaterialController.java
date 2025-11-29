@@ -1,17 +1,30 @@
 package br.edu.fatecgru.controller;
 
-import br.edu.fatecgru.model.TableView.MaterialResult; // Classe de modelo com todos os campos (código, titulo, isbn, volume, etc.)
+import br.edu.fatecgru.model.Entity.Equipamento;
+import br.edu.fatecgru.model.Entity.Livro;
+import br.edu.fatecgru.model.Entity.Revista;
+import br.edu.fatecgru.model.Entity.TG;
+import br.edu.fatecgru.model.TableView.MaterialResult;
+import br.edu.fatecgru.service.MaterialService;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.event.ActionEvent;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
+import javafx.scene.control.cell.PropertyValueFactory;
+
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SearchMaterialController implements Initializable {
+
+    // === Service ===
+    private final MaterialService materialService = new MaterialService();
 
     // === Radio Buttons ===
     @FXML private ToggleGroup materialTypeGroup;
@@ -24,7 +37,7 @@ public class SearchMaterialController implements Initializable {
     @FXML private TextField searchField;
     @FXML private TableView<MaterialResult> resultsTable;
 
-    // === Colunas da Tabela (todas as colunas possíveis) ===
+    // === Colunas da Tabela ===
     @FXML private TableColumn<MaterialResult, String> colCodigo;
     @FXML private TableColumn<MaterialResult, String> colTitulo;
     @FXML private TableColumn<MaterialResult, String> colAnoPublicacao;
@@ -38,88 +51,142 @@ public class SearchMaterialController implements Initializable {
     @FXML private TableColumn<MaterialResult, String> colTarjaVermelha;
     @FXML private TableColumn<MaterialResult, String> colDisponibilidade;
 
-    // Lista de todas as colunas para facilitar a manipulação
-    private List<TableColumn<MaterialResult, String>> allColumns;
-
+    // Lista Observável para atualizar a UI automaticamente
+    private ObservableList<MaterialResult> listaResultados = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Inicializa a lista de todas as colunas
-        allColumns = Arrays.asList(
-                colCodigo, colTitulo, colAnoPublicacao, colISBN, colAutor,
-                colVolume, colNumero, colSubtitulo, colAutor2, colNomeEquipamento,
-                colTarjaVermelha, colDisponibilidade
-        );
+        // 1. Configurar de onde cada coluna pega os dados (Bind com MaterialResult)
+        configurarFactoriesColunas();
 
-        // Define as colunas iniciais (Livro)
+        // 2. Vincular a lista observável à tabela
+        resultsTable.setItems(listaResultados);
+
+        // 3. Selecionar Livro por padrão e configurar colunas iniciais
+        rbLivro.setSelected(true);
         updateTableColumns();
+    }
 
-        // Carrega dados de exemplo
-        // loadSampleData(); // Removido para simplificar, mas seria chamado aqui.
+    /**
+     * Ensina as colunas a lerem os campos da classe MaterialResult.
+     * Importante: O nome na PropertyValueFactory deve ser igual ao nome do atributo na classe MaterialResult.
+     */
+    private void configurarFactoriesColunas() {
+        colCodigo.setCellValueFactory(new PropertyValueFactory<>("codigo"));
+        colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
+        colAnoPublicacao.setCellValueFactory(new PropertyValueFactory<>("anoPublicacao"));
+        colISBN.setCellValueFactory(new PropertyValueFactory<>("isbn"));
+        colAutor.setCellValueFactory(new PropertyValueFactory<>("autor"));
+        colVolume.setCellValueFactory(new PropertyValueFactory<>("volume"));
+        colNumero.setCellValueFactory(new PropertyValueFactory<>("numero"));
+        colSubtitulo.setCellValueFactory(new PropertyValueFactory<>("subtitulo"));
+        colAutor2.setCellValueFactory(new PropertyValueFactory<>("autor2"));
+        colNomeEquipamento.setCellValueFactory(new PropertyValueFactory<>("nomeEquipamento"));
+        colTarjaVermelha.setCellValueFactory(new PropertyValueFactory<>("tarjaVermelha"));
+        colDisponibilidade.setCellValueFactory(new PropertyValueFactory<>("disponibilidade"));
     }
 
     /**
      * Define as colunas visíveis da tabela com base no Radio Button selecionado.
      */
     private void updateTableColumns() {
-        // 1. Limpa todas as colunas
+        // 1. Limpa visualmente as colunas (não apaga os dados, só a estrutura visual)
         resultsTable.getColumns().clear();
 
         // 2. Identifica o tipo selecionado
         RadioButton selected = (RadioButton) materialTypeGroup.getSelectedToggle();
         if (selected == null) return;
 
-        // 3. Define as colunas comuns e específicas para o tipo
-        List<TableColumn<MaterialResult, String>> commonColumns = Arrays.asList(
-                colCodigo, colTitulo, colDisponibilidade
-        );
+        // 3. Define as colunas comuns
+        // Nota: colTitulo é comum a Livro, Revista e TG. Equipamento usa Nome.
+        boolean usarTitulo = !selected.equals(rbEquipamento);
 
-        List<TableColumn<MaterialResult, String>> specificColumns;
+        // Adiciona Código (Sempre)
+        resultsTable.getColumns().add(colCodigo);
 
-        if (selected.equals(rbLivro)) {
-            specificColumns = Arrays.asList(colTarjaVermelha, colISBN, colAutor, colAnoPublicacao);
-        } else if (selected.equals(rbRevista)) {
-            specificColumns = Arrays.asList(colTarjaVermelha, colVolume, colNumero, colAnoPublicacao);
-        } else if (selected.equals(rbTG)) {
-            specificColumns = Arrays.asList(colSubtitulo, colAutor, colAutor2, colAnoPublicacao);
-        } else if (selected.equals(rbEquipamento)) {
-            specificColumns = Arrays.asList(colNomeEquipamento);
-        } else {
-            return;
+        // Adiciona Título se não for Equipamento
+        if (usarTitulo) {
+            resultsTable.getColumns().add(colTitulo);
         }
 
-        // 4. Adiciona as colunas na ordem desejada
-        resultsTable.getColumns().addAll(commonColumns);
-        resultsTable.getColumns().addAll(specificColumns);
+        // 4. Adiciona colunas específicas
+        if (selected.equals(rbLivro)) {
+            resultsTable.getColumns().addAll(colDisponibilidade, colTarjaVermelha, colISBN, colAutor, colAnoPublicacao);
+        } else if (selected.equals(rbRevista)) {
+            resultsTable.getColumns().addAll(colDisponibilidade, colTarjaVermelha, colVolume, colNumero, colAnoPublicacao);
+        } else if (selected.equals(rbTG)) {
+            resultsTable.getColumns().addAll(colDisponibilidade, colSubtitulo, colAutor, colAutor2, colAnoPublicacao);
+        } else if (selected.equals(rbEquipamento)) {
+            // Equipamento tem colNomeEquipamento em vez de Título
+            resultsTable.getColumns().addAll(colNomeEquipamento, colDisponibilidade);
+        }
 
-        // Garante que o resize policy seja reaplicado para o novo conjunto de colunas
+        // Garante redimensionamento
         resultsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
-    /**
-     * Chamado ao clicar em um Radio Button, altera a visualização da tabela.
-     */
     @FXML
     private void handleRadioChange(ActionEvent event) {
+        // Limpa os resultados antigos para não misturar tipos
+        listaResultados.clear();
+        searchField.clear();
+
+        // Atualiza as colunas
         updateTableColumns();
-        // Dispara a lógica de busca com o novo tipo de material
-        onSearchClick(null);
     }
 
-    /**
-     * Executa a busca de dados.
-     */
     @FXML
     private void onSearchClick(ActionEvent event) {
         RadioButton selected = (RadioButton) materialTypeGroup.getSelectedToggle();
-        String tipoMaterial = (selected != null) ? selected.getText() : "Nenhum";
+        if (selected == null) return;
+
         String termoBusca = searchField.getText().trim();
+        listaResultados.clear(); // Limpa tabela anterior
 
-        System.out.println("Buscando por: " + tipoMaterial + ", Termo: " + termoBusca);
+        try {
+            // Lógica de busca e conversão baseada no tipo selecionado
+            if (selected.equals(rbLivro)) {
+                List<Livro> livros = materialService.buscarLivros(termoBusca);
+                // Converte List<Livro> para List<MaterialResult>
+                List<MaterialResult> resultados = livros.stream()
+                        .map(MaterialResult::fromLivro)
+                        .collect(Collectors.toList());
+                listaResultados.addAll(resultados);
 
-        // Implemente sua lógica real de busca no banco de dados aqui.
-        // O resultado da busca deve ser uma lista de objetos MaterialResult.
+            } else if (selected.equals(rbRevista)) {
+                List<Revista> revistas = materialService.buscarRevistas(termoBusca);
+                List<MaterialResult> resultados = revistas.stream()
+                        .map(MaterialResult::fromRevista)
+                        .collect(Collectors.toList());
+                listaResultados.addAll(resultados);
 
-        // resultsTable.setItems(suaListaDeResultados);
+            } else if (selected.equals(rbTG)) {
+                List<TG> tgs = materialService.buscarTGs(termoBusca);
+                List<MaterialResult> resultados = tgs.stream()
+                        .map(MaterialResult::fromTG)
+                        .collect(Collectors.toList());
+                listaResultados.addAll(resultados);
+
+            } else if (selected.equals(rbEquipamento)) {
+                List<Equipamento> equipamentos = materialService.buscarEquipamentos(termoBusca);
+                List<MaterialResult> resultados = equipamentos.stream()
+                        .map(MaterialResult::fromEquipamento)
+                        .collect(Collectors.toList());
+                listaResultados.addAll(resultados);
+            }
+
+            // Feedback visual se não achar nada
+            if (listaResultados.isEmpty()) {
+                resultsTable.setPlaceholder(new Label("Nenhum registro encontrado para: " + termoBusca));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert erro = new Alert(Alert.AlertType.ERROR);
+            erro.setTitle("Erro na Busca");
+            erro.setHeaderText("Falha ao buscar dados");
+            erro.setContentText(e.getMessage());
+            erro.showAndWait();
+        }
     }
 }
