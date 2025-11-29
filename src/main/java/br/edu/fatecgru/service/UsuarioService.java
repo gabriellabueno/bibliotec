@@ -4,7 +4,11 @@ import br.edu.fatecgru.model.Entity.Usuario;
 import br.edu.fatecgru.util.JPAUtil;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import org.hibernate.exception.ConstraintViolationException;
+
+import java.util.Collections;
+import java.util.List;
 
 public class UsuarioService {
 
@@ -35,6 +39,40 @@ public class UsuarioService {
             System.err.println("Erro inesperado ao cadastrar Usuário: " + e.getMessage());
             e.printStackTrace();
             return false;
+        } finally {
+            em.close();
+        }
+    }
+
+    /**
+     * Busca usuários por termo (ID, Nome, Email) e, opcionalmente, por tipo (Docente).
+     * @param termo Termo de busca digitado pelo usuário.
+     * @param isDocente Se for true, filtra apenas docentes; se for false, filtra apenas alunos.
+     * @return Lista de usuários que correspondem aos critérios.
+     */
+    public List<Usuario> buscarUsuarios(String termo, boolean isDocente) {
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            // JPQL base: Busca por ID (RA), Nome ou Email.
+            // O operador str() é usado para permitir o LIKE em campos numéricos/string (ID).
+            String jpql = "SELECT u FROM Usuario u WHERE u.docente = :docenteFilter AND " +
+                    "(str(u.idUsuario) LIKE :termo OR lower(u.nome) LIKE :termo OR lower(u.email) LIKE :termo)";
+
+            TypedQuery<Usuario> query = em.createQuery(jpql, Usuario.class);
+
+            // 1. Aplica o filtro obrigatório (Docente ou Aluno)
+            query.setParameter("docenteFilter", isDocente);
+
+            // 2. Aplica o termo de busca (case insensitive)
+            query.setParameter("termo", "%" + termo.toLowerCase() + "%");
+
+            return query.getResultList();
+
+        } catch (Exception e) {
+            System.err.println("Erro ao buscar Usuários: " + e.getMessage());
+            e.printStackTrace();
+            return Collections.emptyList();
         } finally {
             em.close();
         }

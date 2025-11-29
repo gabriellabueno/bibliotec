@@ -21,12 +21,12 @@
 
     <HBox spacing="30.0" alignment="CENTER">
         <children>
-            <RadioButton text="Aluno" selected="true">
+            <RadioButton text="Aluno" selected="true" onAction="#handleRadioChange">
                 <toggleGroup>
                     <ToggleGroup fx:id="userTypeGroup" />
                 </toggleGroup>
             </RadioButton>
-            <RadioButton text="Docente" toggleGroup="$userTypeGroup" />
+            <RadioButton text="Docente" toggleGroup="$userTypeGroup" onAction="#handleRadioChange" />
         </children>
     </HBox>
 
