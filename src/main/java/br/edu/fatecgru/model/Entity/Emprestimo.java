@@ -45,6 +45,10 @@ public class Emprestimo {
         this.statusEmprestimo = statusEmprestimo;
     }
 
+    public Emprestimo() {
+
+    }
+
     public Long getIdEmprestimo() {
         return idEmprestimo;
     }

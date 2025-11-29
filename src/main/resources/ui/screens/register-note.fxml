@@ -44,7 +44,7 @@
 
     </VBox>
     <HBox alignment="BOTTOM_RIGHT" VBox.vgrow="ALWAYS">
-        <Button text="+ Cadastrar" onAction="#onCadastrarClick" style="-fx-background-color: #2c1810; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;">
+        <Button text="+ Cadastrar" onAction="#onCadastrarClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;">
         </Button>
     </HBox>
 </VBox>

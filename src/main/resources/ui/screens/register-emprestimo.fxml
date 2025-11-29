@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="580.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.edu.fatecgru.controller.RegisterEmprestimoController">
+
+    <padding>
+        <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
+    </padding>
+
+    <Label style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;" text="Cadastro de Empréstimo">
+        <VBox.margin>
+            <Insets bottom="20.0" />
+        </VBox.margin>
+    </Label>
+
+    <VBox alignment="TOP_LEFT" maxWidth="400.0" spacing="25.0" VBox.vgrow="ALWAYS">
+
+        <VBox spacing="5.0">
+            <Label style="-fx-font-weight: bold;" text="Usuário" />
+            <TextField fx:id="usuario" prefWidth="400.0" promptText="Insira o ID do usuário" style="-fx-background-color: white; -fx-text-fill: black;">
+            </TextField>
+        </VBox>
+
+        <VBox spacing="5.0">
+            <Label style="-fx-font-weight: bold;" text="Material" />
+            <TextField fx:id="material" prefWidth="400.0" promptText="Insira o ID do material" style="-fx-background-color: white; -fx-text-fill: black;">
+            </TextField>
+        </VBox>
+
+        <VBox spacing="5.0">
+            <Label style="-fx-font-weight: bold;" text="Data do Empréstimo" />
+            <TextField fx:id="dataEmprestimoField" promptText="__/__/____" />
+        </VBox>
+
+    </VBox>
+    <HBox alignment="BOTTOM_RIGHT" VBox.vgrow="ALWAYS">
+        <Button onAction="#onCadastrarClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="+ Cadastrar">
+        </Button>
+    </HBox>
+</VBox>

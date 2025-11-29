@@ -53,7 +53,7 @@ public class MainController {
 
     @FXML
     private void onRegisterLoanClick() {
-        loadScreen("/ui/screens/register-loan.fxml");
+        loadScreen("/ui/screens/register-emprestimo.fxml");
     }
 
     @FXML

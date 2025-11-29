@@ -272,7 +272,7 @@
         </children>
     </HBox>
     <HBox alignment="CENTER_RIGHT" prefWidth="580.0">
-        <Button onAction="#onCadastrarClick" style="-fx-background-color: #2c1810; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="+ Cadastrar">
+        <Button onAction="#onCadastrarClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="+ Cadastrar">
             <HBox.margin>
                 <Insets top="10.0" />
             </HBox.margin>
