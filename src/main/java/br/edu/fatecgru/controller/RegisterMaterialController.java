@@ -312,7 +312,7 @@ public class RegisterMaterialController implements Initializable {
         novoLivro.setTarjaVermelha(rbTarjaVermelha.isSelected());
 
         // Persistência
-        if (materialService.cadastrarLivro(novoLivro)) {
+        if (materialService.cadastrarMaterial(novoLivro)) {
             System.out.println("✅ SUCESSO: Livro cadastrado.");
         } else {
             System.err.println("❌ FALHA: Não foi possível cadastrar o livro.");
@@ -352,7 +352,7 @@ public class RegisterMaterialController implements Initializable {
         novaRevista.setTarjaVermelha(rbTarjaVermelha.isSelected());
 
         // Persistência
-        if (materialService.cadastrarRevista(novaRevista)) {
+        if (materialService.cadastrarMaterial(novaRevista)) {
             System.out.println("✅ SUCESSO: Revista cadastrada.");
         } else {
             System.err.println("❌ FALHA: Não foi possível cadastrar a revista.");
@@ -400,7 +400,7 @@ public class RegisterMaterialController implements Initializable {
         novoTG.setPalavrasChave(palavrasChaveTGArea.getText());
 
         // Persistência
-        if (materialService.cadastrarTG(novoTG)) { // Assume que você implementou cadastrarTG no MaterialService
+        if (materialService.cadastrarMaterial(novoTG)) { // Assume que você implementou cadastrarTG no MaterialService
             System.out.println("✅ SUCESSO: TG cadastrado.");
         } else {
             System.err.println("❌ FALHA: Não foi possível cadastrar o TG.");
@@ -434,7 +434,7 @@ public class RegisterMaterialController implements Initializable {
         novoEquipamento.setDescricao(descricaoEquipamentoArea.getText());
 
         // Persistência
-        if (materialService.cadastrarEquipamento(novoEquipamento)) {
+        if (materialService.cadastrarMaterial(novoEquipamento)) {
             System.out.println("✅ SUCESSO: Equipamento cadastrado.");
         } else {
             System.err.println("❌ FALHA: Não foi possível cadastrar o equipamento.");

@@ -5,6 +5,9 @@ import br.edu.fatecgru.model.Entity.Material;
 import br.edu.fatecgru.model.Entity.Usuario;
 import br.edu.fatecgru.model.Enum.StatusEmprestimo;
 import br.edu.fatecgru.model.Enum.StatusMaterial;
+import br.edu.fatecgru.repository.EmprestimoRepository;
+import br.edu.fatecgru.repository.MaterialRepository;
+import br.edu.fatecgru.repository.UsuarioRepository;
 import br.edu.fatecgru.util.JPAUtil;
 
 import jakarta.persistence.EntityManager;
@@ -14,120 +17,74 @@ import java.time.LocalDate;
 
 public class EmprestimoService {
 
-    // Prazo padrão de 7 dias para este exemplo
-    private static final int PRAZO_PADRAO_DIAS = 7;
+
+    private final UsuarioRepository usuarioRepository = new UsuarioRepository();
+    private final MaterialRepository materialRepository = new MaterialRepository();
+    private final EmprestimoRepository emprestimoRepository = new EmprestimoRepository();
+
+
+    // --- MÉTODOS AUXILIARES PARA NOVA REGRA ---
 
     /**
-     * Busca um Usuário por ID.
-     * @param idUsuario O ID do usuário.
-     * @return O objeto Usuario ou null se não for encontrado.
+     * Define o prazo de empréstimo em dias com base no tipo de usuário.
+     * @param usuario O usuário que está solicitando o empréstimo.
+     * @return 14 dias para Docente, 7 dias para Aluno.
      */
-    public Usuario buscarUsuarioPorId(Long idUsuario) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            return em.find(Usuario.class, idUsuario);
-        } catch (Exception e) {
-            System.err.println("Erro ao buscar Usuário: " + e.getMessage());
-            return null;
-        } finally {
-            em.close();
-        }
+    private int definirPrazoEmprestimo(Usuario usuario) {
+
+        // Acesso direto ao estado do objeto, delegando a regra de negócio
+        return usuario.isDocente() ? 14 : 7;
+    }
+
+
+    // Calcula a data prevista de devolução com base em um prazo em dias.
+    private LocalDate calcularDataPrevistaDevolucao(LocalDate dataEmprestimo, int prazoDias) {
+        return dataEmprestimo.plusDays(prazoDias);
     }
 
     /**
-     * Busca um Material por ID.
-     * @param idMaterial O ID do material.
-     * @return O objeto Material ou null se não for encontrado.
-     */
-    public Material buscarMaterialPorId(Long idMaterial) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            return em.find(Material.class, idMaterial);
-        } catch (Exception e) {
-            System.err.println("Erro ao buscar Material: " + e.getMessage());
-            return null;
-        } finally {
-            em.close();
-        }
-    }
-
-    /**
-     * Calcula a data prevista de devolução.
-     */
-    private LocalDate calcularDataPrevistaDevolucao(LocalDate dataEmprestimo) {
-        return dataEmprestimo.plusDays(PRAZO_PADRAO_DIAS);
-    }
-
-    /**
-     * Registra um novo empréstimo no banco de dados.
+     * Registra um novo empréstimo no banco de dados (Lógica de Negócios Central)
      */
     public Emprestimo registrarEmprestimo(Long idUsuario, Long idMaterial) throws IllegalArgumentException, IllegalStateException, Exception {
-        EntityManager em = JPAUtil.getEntityManager();
-        Emprestimo novoEmprestimo = null;
 
-        try {
-            em.getTransaction().begin();
+        // 1. Buscar entidades e validar existência (CHAMA REPOSITORY)
+        Usuario usuario = usuarioRepository.buscarUsuarioPorId(idUsuario);
+        Material material = materialRepository.buscarMaterialPorId(idMaterial);
 
-            // 1. Buscar entidades e validar existência
-            Usuario usuario = em.find(Usuario.class, idUsuario);
-            Material material = em.find(Material.class, idMaterial);
-
-            if (usuario == null) {
-                throw new IllegalArgumentException("Usuário não encontrado com ID: " + idUsuario);
-            }
-            if (material == null) {
-                throw new IllegalArgumentException("Material não encontrado com ID: " + idMaterial);
-            }
-
-            // 2. Validação de Disponibilidade
-            if (material.getStatusMaterial() != StatusMaterial.DISPONIVEL) {
-                throw new IllegalStateException("O material com ID " + idMaterial + " não está disponível para empréstimo. Status atual: " + material.getStatusMaterial());
-            }
-
-            // 3. Preparar Empréstimo
-            LocalDate hoje = LocalDate.now();
-            LocalDate dataPrevistaDevolucao = calcularDataPrevistaDevolucao(hoje);
-
-            novoEmprestimo = new Emprestimo();
-            novoEmprestimo.setUsuario(usuario);
-            novoEmprestimo.setMaterial(material);
-            novoEmprestimo.setDataEmprestimo(hoje);
-            novoEmprestimo.setDataPrevistaDevolucao(dataPrevistaDevolucao);
-            novoEmprestimo.setStatusEmprestimo(StatusEmprestimo.ATIVO);
-            novoEmprestimo.setDataDevolucao(null);
-
-            // 4. Persistir Empréstimo
-            em.persist(novoEmprestimo);
-
-            // 5. Atualizar Status do Material
-            material.setStatusMaterial(StatusMaterial.EMPRESTADO);
-            em.merge(material);
-
-            em.getTransaction().commit();
-
-            // Retorna o objeto persistido que contém o ID gerado e as datas calculadas
-            return novoEmprestimo;
-
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw e;
-        } catch (ConstraintViolationException e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            System.err.println("Erro de restrição ao registrar Empréstimo: " + e.getMessage());
-            throw new Exception("Falha de persistência devido a restrição de dados.");
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            System.err.println("Erro inesperado ao registrar Empréstimo: " + e.getMessage());
-            e.printStackTrace();
-            throw new Exception("Erro inesperado no sistema de empréstimo.");
-        } finally {
-            em.close();
+        if (usuario == null) {
+            throw new IllegalArgumentException("Usuário não encontrado.");
         }
+        if (material == null) {
+            throw new IllegalArgumentException("Material não encontrado.");
+        }
+
+        // 2. Validação de Disponibilidade
+        if (material.getStatusMaterial() != StatusMaterial.DISPONIVEL) {
+            throw new IllegalStateException("Material indisponível. Status: " + material.getStatusMaterial());
+        }
+
+        // 3. Preparar Empréstimo (LÓGICA DE NEGÓCIOS)
+
+
+        // Determina o prazo com base no usuário
+        LocalDate hoje = LocalDate.now();
+        int prazoDias = definirPrazoEmprestimo(usuario);
+        LocalDate dataPrevistaDevolucao = calcularDataPrevistaDevolucao(hoje, prazoDias);
+
+        Emprestimo novoEmprestimo = new Emprestimo();
+        novoEmprestimo.setUsuario(usuario);
+        novoEmprestimo.setMaterial(material);
+        novoEmprestimo.setDataEmprestimo(hoje);
+        novoEmprestimo.setDataPrevistaDevolucao(dataPrevistaDevolucao);
+        novoEmprestimo.setStatusEmprestimo(StatusEmprestimo.ATIVO);
+
+        // 4. Persistir Empréstimo (Delegado ao Repository)
+        Emprestimo emprestimoPersistido = emprestimoRepository.cadastrarEmprestimo(novoEmprestimo);
+
+        // 5. Atualizar Status do Material (Delegado ao Repository)
+        material.setStatusMaterial(StatusMaterial.EMPRESTADO);
+        materialRepository.cadastrarMaterial(material); // Reutiliza o método de salvar do MaterialRepository para o merge
+
+        return emprestimoPersistido;
     }
 }

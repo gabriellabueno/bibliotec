@@ -103,7 +103,7 @@ public class SearchUserController implements Initializable {
         // ... (o restante da sua lógica de busca no UsuarioService) ...
         try {
             // 3. Chamar o Serviço para buscar no banco
-            List<Usuario> usuariosEncontrados = usuarioService.buscarUsuarios(termoBusca, isDocente);
+            List<Usuario> usuariosEncontrados = usuarioService.buscarUsuario(termoBusca, isDocente);
 
             // 4. Mapear Entidade (Usuario) para DTO (UserResult)
             List<UserResult> resultados = usuariosEncontrados.stream()
