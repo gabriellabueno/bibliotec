@@ -1,9 +1,13 @@
 package br.edu.fatecgru.model.Entity;
 
-import br.edu.fatecgru.model.Enum.StatusMaterial;
-import br.edu.fatecgru.model.Enum.TipoAquisicao;
-import br.edu.fatecgru.model.Enum.TipoMaterial;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 
 @Entity
 @Table(name = "tb_equipamento")
@@ -15,36 +19,4 @@ public class Equipamento extends Material {
     private String nome;
 
     private String descricao;
-
-
-    public Equipamento(Long idMaterial, NotaFiscal notaFiscal, TipoAquisicao tipoAquisicao, TipoMaterial tipoMaterial, StatusMaterial statusMaterial, String nome, String descricao) {
-        super(idMaterial, notaFiscal, tipoAquisicao, tipoMaterial, statusMaterial);
-        this.nome = nome;
-        this.descricao = descricao;
-    }
-
-    public Equipamento(String nome, String descricao) {
-        this.nome = nome;
-        this.descricao = descricao;
-    }
-
-
-    public Equipamento() {
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
 }

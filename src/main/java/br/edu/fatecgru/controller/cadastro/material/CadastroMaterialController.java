@@ -103,6 +103,7 @@ public class CadastroMaterialController implements Initializable {
 
 
         // LISTENERS
+
         // Tipo de Material
         materialTypeGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             apresentarForms(null);
@@ -110,10 +111,11 @@ public class CadastroMaterialController implements Initializable {
 
         // Tipo de Aquisição
         tipoAquisicaoCombo.valueProperty().addListener((obs, oldV, newV) -> {
-            // Desativa NF se Aquisição = Doação
-            numeroNotaFiscalField.setDisable(
-                    newV.equals("Doação")
-            );
+
+            if (newV != null) {
+                numeroNotaFiscalField.setDisable(newV.equals("Doação")); // Desativa NF se Aquisição = Doação
+            }
+
         });
 
 
@@ -179,6 +181,10 @@ public class CadastroMaterialController implements Initializable {
         formRevista.setManaged(true);
 
         habilitarCamposNF(true);
+
+        rbTarjaVermelha.setVisible(true);
+        rbTarjaVermelha.setManaged(true);
+        rbTarjaVermelha.setSelected(false);
     }
 
     public void camposTG() {
@@ -223,7 +229,7 @@ public class CadastroMaterialController implements Initializable {
 
             switch (selectedRb.getId()) {
                 case  "rbLivro":
-                    cadastrarLivro(tipoAquisicao);
+                   cadastrarLivro(tipoAquisicao);
                     break;
                 case "rbRevista":
                     cadastrarRevista(tipoAquisicao);
@@ -246,10 +252,10 @@ public class CadastroMaterialController implements Initializable {
 
 
     // CADASTRO
-
     private void cadastrarLivro(TipoAquisicao tipoAquisicao) throws Exception {
+        MaterialService materialService = new MaterialService();
+
         System.out.println("--- Iniciando Cadastro de LIVRO ---");
-        // ... (Implementação de cadastro omitida para brevidade) ...
 
         Livro novoLivro = new Livro();
 
@@ -260,10 +266,12 @@ public class CadastroMaterialController implements Initializable {
         novoLivro.setNotaFiscal(null); // Sem NF por enquanto
 
         // Dados Específicos Livro
+        novoLivro.setCodigo(codigoField.getText());
         novoLivro.setIsbn(isbnField.getText());
         novoLivro.setTitulo(tituloLivroField.getText());
         novoLivro.setAutor(autorLivroField.getText());
         novoLivro.setEditora(editoraLivroField.getText());
+        novoLivro.setEdicao(edicaoField.getText());
         novoLivro.setGenero(generoLivroField.getText());
         novoLivro.setAssunto(assuntoLivroField.getText());
         novoLivro.setAnoPublicacao(anoPublicacaoLivroField.getText());
@@ -282,6 +290,7 @@ public class CadastroMaterialController implements Initializable {
         }
     }
 
+
     private void cadastrarRevista(TipoAquisicao tipoAquisicao) throws Exception {
         System.out.println("--- Iniciando Cadastro de REVISTA ---");
 
@@ -291,9 +300,10 @@ public class CadastroMaterialController implements Initializable {
         novaRevista.setTipoMaterial(TipoMaterial.REVISTA);
         novaRevista.setTipoAquisicao(tipoAquisicao);
         novaRevista.setStatusMaterial(StatusMaterial.DISPONIVEL);
-        novaRevista.setNotaFiscal(null); // Sem NF por enquanto
+        novaRevista.setNotaFiscal(null);
 
         // Dados Específicos Revista
+        novaRevista.setCodigo(codigoRevistaField.getText());
         novaRevista.setTitulo(tituloRevistaField.getText());
         novaRevista.setVolume(volumeRevistaField.getText());
         novaRevista.setNumero(numeroRevistaField.getText());
