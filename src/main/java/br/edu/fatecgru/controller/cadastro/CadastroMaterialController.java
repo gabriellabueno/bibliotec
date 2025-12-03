@@ -1,6 +1,7 @@
 package br.edu.fatecgru.controller.cadastro; // Pacote atualizado conforme o FXML
 
 import br.edu.fatecgru.model.Entity.Revista;
+import br.edu.fatecgru.model.Entity.TG;
 import br.edu.fatecgru.model.Enum.TipoMaterial;
 import br.edu.fatecgru.service.MaterialService;
 import br.edu.fatecgru.model.Entity.Livro;
@@ -34,7 +35,6 @@ public class CadastroMaterialController implements Initializable {
 
     // --- Campos Comuns (GRID GERAL) ---
     @FXML private TextField codigoField;
-    @FXML private TextField totalExemplaresField; // Adicionado aqui, pois é comum a todos
 
 
     // --- CAMPOS/CONTÊINERES CONDICIONAIS (Controlados no GRID GERAL) ---
@@ -67,6 +67,7 @@ public class CadastroMaterialController implements Initializable {
 
     // --- CAMPOS ESPECÍFICOS DA REVISTA ---
     @FXML private TextField tituloRevistaField;
+    @FXML private TextField codigoRevistaField;
     @FXML private TextField volumeRevistaField;
     @FXML private TextField numeroRevistaField;
     @FXML private TextField assuntoRevistaField;
@@ -90,19 +91,6 @@ public class CadastroMaterialController implements Initializable {
     // --- CAMPOS ESPECÍFICOS DO EQUIPAMENTO ---
     @FXML private TextField nomeEquipamentoField;
     @FXML private TextArea descricaoEquipamentoArea;
-    // Os campos a seguir são usados no FXML Equipamento para Aquisição/NF,
-    // mas o código Java deve usar os campos comuns quando o Equipamento estiver ativo.
-    // **NOTA:** Como eles têm o mesmo fx:id no FXML superior e no Equipamento,
-    // o JavaFX *pode* injetar a mesma instância do campo superior.
-    // Se estivessem dentro do formEquipamento, eles deveriam ter nomes diferentes (como antes).
-    // Como voltamos eles para o GRID GERAL, vamos remover as duplicatas de injeção
-    // e assumir que os campos principais (`tipoAquisicaoCombo`, `numeroNotaFiscalField`)
-    // são usados por todos (Livro, Revista, Equipamento) quando visíveis.
-    // Se o FXML ainda tiver esses campos duplicados:
-    // @FXML private ComboBox<String> tipoAquisicaoComboEquipamento; // REMOVIDO para usar o comum
-    // @FXML private TextField codigoFieldEquipamento; // REMOVIDO para usar o comum
-    // @FXML private TextField numeroNotaFiscalFieldEquipamento; // REMOVIDO para usar o comum
-
 
     // --- Dependências ---
     private final MaterialService materialService = new MaterialService();
@@ -111,16 +99,16 @@ public class CadastroMaterialController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        // TIPO DE MATERIAL
-        rbLivro.setSelected(true);
+        // Valores padrão
+        rbLivro.setSelected(true); // tipo de material - Livro
+        tipoAquisicaoCombo.getSelectionModel().select("Compra"); // tipo de aquisição - Compra
 
-        // Listener para mudança de tipo de material (visibilidade de formulários)
+        // Listener mudança de tipo de material (Visibilidade de Formulários)
         materialTypeGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             handleRadioChange(null);
         });
 
-        // NOTA FISCAL
-        // Listener para ativar/desativar campos da Nota Fiscal
+        // Listener ativar/desativar campos da Nota Fiscal
         tipoAquisicaoCombo.valueProperty().addListener((obs, oldV, newV) -> {
             toggleNotaFiscalFields(newV);
         });
@@ -130,13 +118,9 @@ public class CadastroMaterialController implements Initializable {
         handleRadioChange(null); // Chama para configurar visibilidade inicial
     }
 
-    /**
-     * Alterna a ativação/desativação dos campos da Nota Fiscal baseada no tipo de aquisição.
-     */
-    private void toggleNotaFiscalFields(String tipoAquisicao) {
-        // Verifica se a aquisição é "Compra" (assumindo que só COMPRA precisa de Nota Fiscal)
-        boolean isCompra = "Compra".equalsIgnoreCase(tipoAquisicao);
 
+    private void toggleNotaFiscalFields(String tipoAquisicao) {
+        boolean isCompra = "Compra".equalsIgnoreCase(tipoAquisicao);
         if (numeroNotaFiscalField != null) {
             numeroNotaFiscalField.setDisable(!isCompra);
         }
@@ -147,7 +131,6 @@ public class CadastroMaterialController implements Initializable {
     @FXML
     private void handleRadioChange(ActionEvent event) {
 
-        // 1. Limpa todos os campos antes de mudar o formulário
         clearAllForms();
 
         RadioButton selected = (RadioButton) materialTypeGroup.getSelectedToggle();
@@ -163,7 +146,7 @@ public class CadastroMaterialController implements Initializable {
             rbTarjaVermelha.setSelected(false);
         }
 
-        // Aquisição/NF: Livro, Revista, Equipamento (OU seja, oculta apenas para TG)
+        // Aquisição/NF: Oculta apenas para TG
         boolean exigeAquisicao = !"rbTG".equals(selectedId);
 
         if (vboxTipoAquisicao != null) {
@@ -298,11 +281,6 @@ public class CadastroMaterialController implements Initializable {
         novoLivro.setLocalPublicacao(localPublicacaoLivroField.getText());
         novoLivro.setPalavrasChave(palavrasChaveLivroArea.getText());
 
-        // Total Exemplares (com segurança contra NumberFormatException)
-        String totalExemplares = totalExemplaresField.getText();
-        int total = totalExemplares.isEmpty() ? 1 : Integer.parseInt(totalExemplares);
-        novoLivro.setTotalExemplares(total);
-
         // Tarja Vermelha
         novoLivro.setTarjaVermelha(rbTarjaVermelha.isSelected());
 
@@ -363,11 +341,7 @@ public class CadastroMaterialController implements Initializable {
     private void cadastrarTG(TipoAquisicao tipoAquisicao) throws Exception {
         System.out.println("--- Iniciando Cadastro de TG ---");
 
-        // O FXML não exibe o campo 'totalExemplares' para TG,
-        // mas o banco de dados pode requerer um valor padrão (como 1).
-        // Como a entidade TG não possui 'totalExemplares', vamos omitir essa parte.
-
-        br.edu.fatecgru.model.Entity.TG novoTG = new br.edu.fatecgru.model.Entity.TG();
+        TG novoTG = new TG();
 
         // Dados Base Material (Padrão para TG)
         novoTG.setTipoMaterial(TipoMaterial.TG);
@@ -445,7 +419,6 @@ public class CadastroMaterialController implements Initializable {
     private void clearAllForms() {
 
         codigoField.clear();
-        totalExemplaresField.clear();
 
         // Limpar campos CONDICIONAIS (GRID GERAL)
         numeroNotaFiscalField.clear();

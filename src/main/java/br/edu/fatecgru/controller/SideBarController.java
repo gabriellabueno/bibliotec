@@ -20,14 +20,14 @@ public class SideBarController {
     @FXML
     private void onSearchMaterialClick() {
         if (mainController != null) {
-            mainController.loadScreen("/ui/screens/pesquisa/search-material.fxml");
+            mainController.loadScreen("/ui/screens/pesquisa/pesquisa-material.fxml");
         }
     }
 
     @FXML
     private void onSearchUserClick() {
         if (mainController != null) {
-            mainController.loadScreen("/ui/screens/pesquisa/search-user.fxml");
+            mainController.loadScreen("/ui/screens/pesquisa/pesquisa-usuario.fxml");
         }
     }
 
@@ -55,7 +55,7 @@ public class SideBarController {
     @FXML
     private void onRegisterUserClick() {
         if (mainController != null) {
-            mainController.loadScreen("/ui/screens/cadastro/cadastrou-usuario.fxml");
+            mainController.loadScreen("/ui/screens/cadastro/cadastro-usuario.fxml");
         }
     }
 

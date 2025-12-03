@@ -32,12 +32,12 @@ public class HomeController {
 
     @FXML
     private void onSearchMaterialClick() {
-        loadScreen("/ui/screens/pesquisa/search-material.fxml");
+        loadScreen("/ui/screens/pesquisa/pesquisa-material.fxml");
     }
 
     @FXML
     private void onSearchUserClick() {
-        loadScreen("/ui/screens/pesquisa/search-user.fxml");
+        loadScreen("/ui/screens/pesquisa/pesquisa-usuario.fxml");
     }
 
     @FXML
@@ -67,7 +67,7 @@ public class HomeController {
 
     @FXML
     private void onRegisterUserClick() {
-        loadScreen("/ui/screens/cadastro/cadastrou-usuario.fxml");
+        loadScreen("/ui/screens/cadastro/cadastro-usuario.fxml");
     }
 
     @FXML
