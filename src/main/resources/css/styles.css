@@ -3,135 +3,29 @@
     -fx-font-family: "Segoe UI";
 }
 
-/* ====================================
- * SIDEBAR (Menu Lateral - LEFT)
- * ==================================== */
-
-.sidebar {
-    -fx-background-color: #E5E5E5; /* Cinza da Sidebar */
-    -fx-padding: 0;
-}
-
-/* Logo "Bibliotec" (Texto) - Destaque */
-.logo-text {
-    -fx-font-size: 26px;
-    -fx-font-family: "Segoe UI";
-    -fx-font-weight: bold;
-    -fx-text-fill: #670B0B; /* BORGONHA */
-}
-
-/* Botões de Navegação (Home, etc.) */
-.nav-button {
-    -fx-background-color: transparent;
-    -fx-text-fill: #161654; /* PRETO */
-    -fx-font-size: 16px;
-    -fx-alignment: CENTER_LEFT;
-    -fx-padding: 0 20px;
-    -fx-border-color: transparent;
-    -fx-border-width: 0;
-    -fx-cursor: hand;
-    -fx-graphic-text-gap: 10;
-    -fx-font-weight: bold;
-}
-
-/* Efeito Hover (passar o mouse) */
-.nav-button:hover {
-    -fx-background-color: #C4C7C6;
-}
-
-/*VERIFICAR DEPOIS SE SERÁ MANTIDO*/
-/*!* Botão Ativo (Home) *!*/
-/*.nav-active {*/
-/*    -fx-background-color: #C4C7C6; !* Cinza do Item Selecionado *!*/
-/*    -fx-font-weight: bold;*/
-/*    -fx-text-fill: #000000;*/
-/*}*/
-
-/* SEÇÕES (PESQUISA/CADASTRAR) NA SIDEBAR */
-.nav-section {
-    -fx-background-color: #E5E5E5; /* Fundo igual ao da Sidebar */
-    -fx-padding: 10px 10px;
-    -fx-spacing: 5px;
-    -fx-background-radius: 5px;
-    -fx-border-radius: 5px;
-    -fx-border-color: #161654; /* Cor de Acentuação/Bordas */
-    -fx-border-width: 1px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 1);
-}
-
-/* Título da Seção (Pesquisa/Cadastrar) - Destaque + Linha Divisória */
-.section-header {
-    -fx-text-fill: #161654;
-    -fx-font-weight: bold;
-    -fx-font-size: 16px;
-    -fx-alignment: CENTER_LEFT;
-
-    -fx-max-width: Infinity;
-
-    /* LINHA DIVISÓRIA ABAIXO DO TÍTULO */
-    -fx-border-color: transparent transparent #161654 transparent;
-    -fx-border-width: 1px;
-    -fx-padding: 0 5px 5px 5px;
-    -fx-margin: 0 0 5px 0;
-}
-
-/* Itens de Navegação - Texto Normal */
-.nav-item-button {
-    -fx-background-color: transparent;
-    -fx-text-fill: #000000; /* PRETO */
-    -fx-alignment: CENTER_LEFT;
-    -fx-padding: 0 10px 0 30px;
-    -fx-font-size: 14px;
-    -fx-cursor: hand;
-}
-
-/* Efeito Hover nos Itens */
-.nav-item-button:hover {
-    -fx-background-color: #D0D0D0; /* Cinza claro para feedback */
-}
-
-
-.developer-label {
-    -fx-text-fill: #000000;
-    -fx-font-size: 10;
-}
-.developer-names {
-    -fx-text-fill: #000000;
-    -fx-font-size: 10;
-}
-
-
-/* ====================================
- * CONTEÚDO PRINCIPAL (CENTER)
- * ==================================== */
-
-/* Título "Bibliotec" Central - Destaque */
 .center-title {
     -fx-text-fill: #670B0B;
     -fx-font-size: 60px;
     -fx-font-weight: bold;
 }
 
-/* Subtítulo Central - Texto Normal */
 .subtitle {
     -fx-font-size: 25px;
-    -fx-text-fill: #000000; /* PRETO */
+    -fx-text-fill: #000000;
     -fx-padding: 5px 0 0 0;
 }
 
-/* CARDS DE INFORMAÇÃO/ACESSO RÁPIDO (Tornados idênticos às seções da sidebar) */
 .main-card {
-    -fx-background-color: #E5E5E5; /* Fundo igual ao da Sidebar */
+    -fx-background-color: #E5E5E5;
     -fx-padding: 10px 10px;
     -fx-spacing: 5px;
     -fx-background-radius: 5px;
     -fx-border-radius: 5px;
-    -fx-border-color: #161654; /* Cor de Acentuação/Bordas */
+    -fx-border-color: #161654;
     -fx-border-width: 1px;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);
 }
 
-/* Título do Card - Destaque + Linha Divisória */
 .card-title {
     -fx-text-fill: #000000;
     -fx-font-weight: bold;
@@ -140,27 +34,21 @@
 
     -fx-max-width: Infinity;
 
-    /* LINHA DIVISÓRIA ABAIXO DO TÍTULO */
     -fx-border-color: transparent transparent #161654 transparent;
     -fx-border-width: 1px;
     -fx-padding: 0 5px 5px 5px;
     -fx-margin: 0 0 5px 0;
 }
 
-/* Itens do Card - Agora como botões para ter hover */
 .card-item-button {
     -fx-background-color: transparent;
     -fx-text-fill: #000000;
     -fx-alignment: CENTER_LEFT;
-
-    /* MUDANÇA: Padding similar ao nav-item-button, mas ajustado ao novo padding do main-card */
-    -fx-padding: 0 10px 0 15px; /* 15px porque o main-card já tem 10px de padding */
-
+    -fx-padding: 0 10px 0 15px;
     -fx-font-size: 12px;
     -fx-cursor: hand;
 }
 
-/* Efeito Hover nos Itens do Card */
 .card-item-button:hover {
     -fx-background-color: #D0D0D0;
 }

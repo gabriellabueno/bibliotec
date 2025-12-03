@@ -1,4 +1,4 @@
-package br.edu.fatecgru.controller;
+package br.edu.fatecgru.controller.pesquisa;
 
 import br.edu.fatecgru.model.Entity.Usuario;
 import br.edu.fatecgru.model.TableView.UserResult;
@@ -9,7 +9,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TableView;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label; // Importação necessária para o Placeholder
@@ -22,7 +21,7 @@ import javafx.collections.ObservableList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SearchUserController implements Initializable {
+public class PesquisaUsuarioController implements Initializable {
 
     private final UsuarioService usuarioService = new UsuarioService();
 

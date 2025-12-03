@@ -27,53 +27,53 @@ public class HomeController {
 
     @FXML
     private void onHomeClick() {
-        loadScreen("/ui/screens/home-content.fxml");
+        loadScreen("/ui/screens/home.fxml");
     }
 
     @FXML
     private void onSearchMaterialClick() {
-        loadScreen("/ui/screens/search-material.fxml");
+        loadScreen("/ui/screens/pesquisa/search-material.fxml");
     }
 
     @FXML
     private void onSearchUserClick() {
-        loadScreen("/ui/screens/search-user.fxml");
+        loadScreen("/ui/screens/pesquisa/search-user.fxml");
     }
 
     @FXML
     private void onRegisterMaterialClick() {
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("resources/ui/screens/register-material.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("resources/ui/screens/cadastro-material.fxml"));
 
             Pane newScreen = loader.load();
             mainBorderPane.setCenter(newScreen);
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("Erro ao carregar tela: " + "/ui/screens/register-material.fxml");
+            System.err.println("Erro ao carregar tela: " + "/ui/screens/cadastro/cadastro-material.fxml");
         }
 
     }
 
     @FXML
     private void onRegisterNoteClick() {
-        loadScreen("/ui/screens/register-note.fxml");
+        loadScreen("/ui/screens/cadastro/cadastro-note.fxml");
     }
 
     @FXML
     private void onRegisterLoanClick() {
-        loadScreen("/ui/screens/register-emprestimo.fxml");
+        loadScreen("/ui/screens/cadastro/cadastro-emprestimo.fxml");
     }
 
     @FXML
     private void onRegisterUserClick() {
-        loadScreen("/ui/screens/register-user.fxml");
+        loadScreen("/ui/screens/cadastro/cadastrou-usuario.fxml");
     }
 
     @FXML
     public void initialize() {
         // Carrega a tela inicial (Home)
-        loadScreen("/ui/screens/home-content.fxml");
+        loadScreen("/ui/screens/home.fxml");
     }
 
 }

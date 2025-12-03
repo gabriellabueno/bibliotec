@@ -13,49 +13,49 @@ public class SideBarController {
     @FXML
     private void onHomeClick() {
         if (mainController != null) {
-            mainController.loadScreen("/ui/screens/home-content.fxml");
+            mainController.loadScreen("/ui/screens/home.fxml");
         }
     }
 
     @FXML
     private void onSearchMaterialClick() {
         if (mainController != null) {
-            mainController.loadScreen("/ui/screens/search-material.fxml");
+            mainController.loadScreen("/ui/screens/pesquisa/search-material.fxml");
         }
     }
 
     @FXML
     private void onSearchUserClick() {
         if (mainController != null) {
-            mainController.loadScreen("/ui/screens/search-user.fxml");
+            mainController.loadScreen("/ui/screens/pesquisa/search-user.fxml");
         }
     }
 
     @FXML
     private void onRegisterMaterialClick() {
         if (mainController != null) {
-            mainController.loadScreen("/ui/screens/register-material.fxml");
+            mainController.loadScreen("/ui/screens/cadastro/cadastro-material.fxml");
         }
     }
 
     @FXML
     private void onRegisterNoteClick() {
         if (mainController != null) {
-            mainController.loadScreen("/ui/screens/register-note.fxml");
+            mainController.loadScreen("/ui/screens/cadastro/cadastro-notafiscal.fxml");
         }
     }
 
     @FXML
     private void onRegisterLoanClick() {
         if (mainController != null) {
-            mainController.loadScreen("/ui/screens/register-emprestimo.fxml");
+            mainController.loadScreen("/ui/screens/cadastro/cadastro-emprestimo.fxml");
         }
     }
 
     @FXML
     private void onRegisterUserClick() {
         if (mainController != null) {
-            mainController.loadScreen("/ui/screens/register-user.fxml");
+            mainController.loadScreen("/ui/screens/cadastro/cadastrou-usuario.fxml");
         }
     }
 

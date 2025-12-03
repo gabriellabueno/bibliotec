@@ -1,4 +1,4 @@
-package br.edu.fatecgru.controller;
+package br.edu.fatecgru.controller.pesquisa;
 
 import br.edu.fatecgru.model.Entity.Equipamento;
 import br.edu.fatecgru.model.Entity.Livro;
@@ -17,11 +17,10 @@ import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SearchMaterialController implements Initializable {
+public class PesquisaMaterialController implements Initializable {
 
     // === Service ===
     private final MaterialService materialService = new MaterialService();

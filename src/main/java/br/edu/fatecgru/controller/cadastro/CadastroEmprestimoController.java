@@ -1,4 +1,4 @@
-package br.edu.fatecgru.controller;
+package br.edu.fatecgru.controller.cadastro;
 
 import br.edu.fatecgru.model.Entity.Emprestimo;
 import br.edu.fatecgru.service.EmprestimoService;
@@ -14,7 +14,7 @@ import javafx.fxml.Initializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class RegisterEmprestimoController implements Initializable {
+public class CadastroEmprestimoController implements Initializable {
 
     // === Dependências ===
     private final EmprestimoService emprestimoService = new EmprestimoService();

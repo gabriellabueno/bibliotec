@@ -15,5 +15,6 @@
 
     <stylesheets>
         <String fx:value="/css/styles.css" />
+        <String fx:value="/css/sidebar.css" />
     </stylesheets>
 </BorderPane>

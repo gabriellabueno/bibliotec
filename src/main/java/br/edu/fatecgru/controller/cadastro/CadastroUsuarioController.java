@@ -1,4 +1,4 @@
-package br.edu.fatecgru.controller;
+package br.edu.fatecgru.controller.cadastro;
 
 
 import br.edu.fatecgru.model.Entity.Usuario;
@@ -12,7 +12,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
 
-public class RegisterUsuarioController implements Initializable {
+public class CadastroUsuarioController implements Initializable {
 
     // === Campos FXML (Ligar com fx:id no FXML) ===
 

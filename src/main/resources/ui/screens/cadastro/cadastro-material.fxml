@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 
 <VBox alignment="TOP_CENTER" prefHeight="700.0" prefWidth="650.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="br.edu.fatecgru.controller.RegisterMaterialController">
+      fx:controller="br.edu.fatecgru.controller.cadastro.CadastroMaterialController">
 
     <padding>
         <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />

@@ -1,11 +1,9 @@
-package br.edu.fatecgru.controller; // Pacote atualizado conforme o FXML
+package br.edu.fatecgru.controller.cadastro; // Pacote atualizado conforme o FXML
 
-import br.edu.fatecgru.model.Entity.Material;
 import br.edu.fatecgru.model.Entity.Revista;
 import br.edu.fatecgru.model.Enum.TipoMaterial;
 import br.edu.fatecgru.service.MaterialService;
 import br.edu.fatecgru.model.Entity.Livro;
-import br.edu.fatecgru.model.Entity.NotaFiscal;
 import br.edu.fatecgru.model.Enum.TipoAquisicao;
 import br.edu.fatecgru.model.Enum.StatusMaterial;
 
@@ -19,13 +17,10 @@ import javafx.scene.layout.VBox; // Importação necessária para VBox
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.time.LocalDate;
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
-public class RegisterMaterialController implements Initializable {
+public class CadastroMaterialController implements Initializable {
 
 
     // --- Controles de Seleção de Material ---

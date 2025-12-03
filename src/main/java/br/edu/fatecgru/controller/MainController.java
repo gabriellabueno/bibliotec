@@ -24,7 +24,7 @@ public class MainController {
 
     @FXML
     public void initialize() {
-        loadScreen("/ui/screens/home-content.fxml");
+        loadScreen("/ui/screens/home.fxml");
         try {
             FXMLLoader sidebarLoader = new FXMLLoader(getClass().getResource("/ui/side-bar.fxml"));
             Pane sidebar = sidebarLoader.load();

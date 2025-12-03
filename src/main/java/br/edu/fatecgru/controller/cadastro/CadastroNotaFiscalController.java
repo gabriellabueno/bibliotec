@@ -1,4 +1,4 @@
-package br.edu.fatecgru.controller;
+package br.edu.fatecgru.controller.cadastro;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -9,7 +9,7 @@ import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
 
 // A interface Initializable é opcional, mas útil para inicializações
-public class RegisterNotaFiscalController implements Initializable {
+public class CadastroNotaFiscalController implements Initializable {
 
     // === Campos FXML (Ligar com fx:id no FXML) ===
 
