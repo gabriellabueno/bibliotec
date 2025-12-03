@@ -11,10 +11,7 @@ public class MainController {
     @FXML
     private BorderPane mainBorderPane;
 
-    /**
-     * Carrega uma nova tela no painel central
-     */
-    private void loadScreen(String fxmlFile) {
+   public void loadScreen(String fxmlFile) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
             Pane newScreen = loader.load();
@@ -25,46 +22,21 @@ public class MainController {
         }
     }
 
-    // Métodos chamados pelos botões da barra lateral
-    @FXML
-    private void onHomeClick() {
-        loadScreen("/ui/screens/home-content.fxml");
-    }
-
-    @FXML
-    private void onSearchMaterialClick() {
-        loadScreen("/ui/screens/search-material.fxml");
-    }
-
-    @FXML
-    private void onSearchUserClick() {
-        loadScreen("/ui/screens/search-user.fxml");
-    }
-
-    @FXML
-    private void onRegisterMaterialClick() {
-        loadScreen("/ui/screens/register-material.fxml");
-    }
-
-    @FXML
-    private void onRegisterNoteClick() {
-        loadScreen("/ui/screens/register-note.fxml");
-    }
-
-    @FXML
-    private void onRegisterLoanClick() {
-        loadScreen("/ui/screens/register-emprestimo.fxml");
-    }
-
-    @FXML
-    private void onRegisterUserClick() {
-        loadScreen("/ui/screens/register-user.fxml");
-    }
-
     @FXML
     public void initialize() {
-        // Carrega a tela inicial (Home)
         loadScreen("/ui/screens/home-content.fxml");
+        try {
+            FXMLLoader sidebarLoader = new FXMLLoader(getClass().getResource("/ui/side-bar.fxml"));
+            Pane sidebar = sidebarLoader.load();
+
+            SideBarController sidebarController = sidebarLoader.getController(); // Pega o controller
+            sidebarController.setMainController(this); // Injeta referência
+
+            mainBorderPane.setLeft(sidebar); // Coloca a barra lateral na tela
+        } catch (IOException e) {
+            System.err.println("Erro ao carregar a barra lateral.");
+            e.printStackTrace();
+        }
     }
 
 }

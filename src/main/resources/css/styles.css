@@ -23,14 +23,15 @@
 /* Botões de Navegação (Home, etc.) */
 .nav-button {
     -fx-background-color: transparent;
-    -fx-text-fill: #000000; /* PRETO */
-    -fx-font-size: 14px;
+    -fx-text-fill: #161654; /* PRETO */
+    -fx-font-size: 16px;
     -fx-alignment: CENTER_LEFT;
     -fx-padding: 0 20px;
     -fx-border-color: transparent;
     -fx-border-width: 0;
     -fx-cursor: hand;
     -fx-graphic-text-gap: 10;
+    -fx-font-weight: bold;
 }
 
 /* Efeito Hover (passar o mouse) */
@@ -60,9 +61,9 @@
 
 /* Título da Seção (Pesquisa/Cadastrar) - Destaque + Linha Divisória */
 .section-header {
-    -fx-text-fill: #000000;
+    -fx-text-fill: #161654;
     -fx-font-weight: bold;
-    -fx-font-size: 14px;
+    -fx-font-size: 16px;
     -fx-alignment: CENTER_LEFT;
 
     -fx-max-width: Infinity;
@@ -80,7 +81,7 @@
     -fx-text-fill: #000000; /* PRETO */
     -fx-alignment: CENTER_LEFT;
     -fx-padding: 0 10px 0 30px;
-    -fx-font-size: 12px;
+    -fx-font-size: 14px;
     -fx-cursor: hand;
 }
 
@@ -107,13 +108,13 @@
 /* Título "Bibliotec" Central - Destaque */
 .center-title {
     -fx-text-fill: #670B0B;
-    -fx-font-size: 36px;
+    -fx-font-size: 60px;
     -fx-font-weight: bold;
 }
 
 /* Subtítulo Central - Texto Normal */
 .subtitle {
-    -fx-font-size: 20px;
+    -fx-font-size: 25px;
     -fx-text-fill: #000000; /* PRETO */
     -fx-padding: 5px 0 0 0;
 }

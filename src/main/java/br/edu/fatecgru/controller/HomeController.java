@@ -56,7 +56,7 @@ public class HomeController {
     }
 
     @FXML
-    private void onRegisterInvoiceClick() {
+    private void onRegisterNoteClick() {
         loadScreen("/ui/screens/register-note.fxml");
     }
 

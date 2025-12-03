@@ -1,103 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-
+<?import javafx.scene.image.*?>
 <?import javafx.geometry.Insets?>
 <?import java.lang.String?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="br.edu.fatecgru.controller.HomeController">
 
-   <center>
-      <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="TOP_CENTER">
-         <children>
-            <Label text="Bibliotec" styleClass="center-title">
-               <VBox.margin>
-                  <Insets top="80.0" />
-               </VBox.margin>
-            </Label>
+<VBox alignment="TOP_CENTER" prefHeight="400.0" prefWidth="600.0"
+      xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
 
-            <Label text="Gestão inteligente de acervo e empréstimos" styleClass="subtitle" />
+    <HBox alignment="CENTER" prefHeight="60.0" prefWidth="220.0" spacing="6.0">
+        <children>
+            <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="/images/bibliotec_logo.png" />
+                </image>
+            </ImageView>
+            <Label text="Bibliotec" styleClass="center-title" />
+        </children>
+        <padding>
+            <Insets top="200.0" />
+        </padding>
+    </HBox>
 
-            <VBox prefHeight="50.0" prefWidth="100.0" />
 
-            <HBox alignment="TOP_CENTER" prefWidth="400.0" spacing="70.0">
-               <VBox prefWidth="180.0" styleClass="main-card">
+    <Label text="Gestão inteligente de acervo e empréstimos" styleClass="subtitle"/>
 
-                  <Label text="Pesquisa" styleClass="card-title">
-                     <graphic> <ImageView fitHeight="18.0" fitWidth="18.0" preserveRatio="true"> <image>
-                        <Image url="@../../icons/search_icon.png"/>
-                     </image>
-                     </ImageView>
-                     </graphic>
-                  </Label>
-
-                  <Button mnemonicParsing="false" prefHeight="30.0" maxWidth="Infinity" text="Material" styleClass="card-item-button">
-                     <graphic> <ImageView fitHeight="18.0" fitWidth="18.0" preserveRatio="true"> <image>
-                        <Image url="@../../icons/material_icon.png"/>
-                     </image>
-                     </ImageView>
-                     </graphic>
-                  </Button>
-
-                  <Button mnemonicParsing="false" prefHeight="30.0" maxWidth="Infinity" text="Usuário" styleClass="card-item-button">
-                     <graphic> <ImageView fitHeight="18.0" fitWidth="18.0" preserveRatio="true"> <image>
-                        <Image url="@../../icons/user_icon.png"/>
-                     </image>
-                     </ImageView>
-                     </graphic>
-                  </Button>
-
-               </VBox>
-
-               <VBox prefWidth="180.0" styleClass="main-card">
-
-                  <Label text="Cadastrar" styleClass="card-title">
-                     <graphic> <ImageView fitHeight="18.0" fitWidth="18.0" preserveRatio="true"> <image>
-                        <Image url="@../../icons/add_icon.png"/>
-                     </image>
-                     </ImageView>
-                     </graphic>
-                  </Label>
-
-                  <Button mnemonicParsing="false"  onAction="#onRegisterMaterialClick" prefHeight="30.0" maxWidth="Infinity" text="Material" styleClass="card-item-button">
-                     <graphic> <ImageView fitHeight="18.0" fitWidth="18.0" preserveRatio="true"> <image>
-                        <Image url="@../../icons/material_icon.png"/>
-                     </image>
-                     </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button mnemonicParsing="false" prefHeight="30.0" maxWidth="Infinity" text="Nota Fiscal" styleClass="card-item-button">
-                     <graphic> <ImageView fitHeight="18.0" fitWidth="18.0" preserveRatio="true"> <image>
-                        <Image url="@../../icons/note_icon.png"/>
-                     </image>
-                     </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button mnemonicParsing="false" prefHeight="30.0" maxWidth="Infinity" text="Empréstimo" styleClass="card-item-button">
-                     <graphic> <ImageView fitHeight="18.0" fitWidth="18.0" preserveRatio="true"> <image>
-                        <Image url="@../../icons/loan_icon.png"/>
-                     </image>
-                     </ImageView>
-                     </graphic>
-                  </Button>
-
-                  <Button mnemonicParsing="false" prefHeight="30.0" maxWidth="Infinity" text="Usuário" styleClass="card-item-button">
-                     <graphic> <ImageView fitHeight="18.0" fitWidth="18.0" preserveRatio="true"> <image>
-                        <Image url="@../../icons/user_icon.png"/>
-                     </image>
-                     </ImageView>
-                     </graphic>
-                  </Button>
-               </VBox>
-            </HBox>
-         </children>
-      </VBox>
-   </center>
-   <stylesheets>
-      <String fx:value="/css/styles.css" />
-   </stylesheets>
-</BorderPane>
+    <stylesheets>
+        <String fx:value="/css/styles.css" />
+    </stylesheets>
+</VBox>
