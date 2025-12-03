@@ -1,4 +1,4 @@
-package br.edu.fatecgru.controller.cadastro; // Pacote atualizado conforme o FXML
+package br.edu.fatecgru.controller.cadastro.material; // Pacote atualizado conforme o FXML
 
 import br.edu.fatecgru.model.Entity.Revista;
 import br.edu.fatecgru.model.Entity.TG;
@@ -37,7 +37,7 @@ public class CadastroMaterialController implements Initializable {
     @FXML private TextField codigoField;
 
 
-    // --- CAMPOS/CONTÊINERES CONDICIONAIS (Controlados no GRID GERAL) ---
+    // --- Tipo de Aquisição e NotaFiscal
     @FXML private VBox vboxTipoAquisicao; // NOVO: Container para controle de visibilidade
     @FXML private ComboBox<String> tipoAquisicaoCombo; // Usado por Livro e Revista
     @FXML private VBox vboxNotaFiscal;    // NOVO: Container para controle de visibilidade
@@ -51,8 +51,7 @@ public class CadastroMaterialController implements Initializable {
     @FXML private GridPane formTG;
     @FXML private GridPane formEquipamento;
 
-
-    // --- CAMPOS ESPECÍFICOS DO LIVRO ---
+    // LIVRO
     @FXML private TextField isbnField;
     @FXML private TextField tituloLivroField;
     @FXML private TextArea palavrasChaveLivroArea;
@@ -63,7 +62,6 @@ public class CadastroMaterialController implements Initializable {
     @FXML private TextField autorLivroField;
     @FXML private TextField editoraLivroField;
     @FXML private TextField generoLivroField;
-
 
     // --- CAMPOS ESPECÍFICOS DA REVISTA ---
     @FXML private TextField tituloRevistaField;
@@ -99,129 +97,143 @@ public class CadastroMaterialController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        // Valores padrão
+        // ESTADO INICIAL
         rbLivro.setSelected(true); // tipo de material - Livro
-        tipoAquisicaoCombo.getSelectionModel().select("Compra"); // tipo de aquisição - Compra
+        tipoAquisicaoCombo.setValue("Compra"); // tipo de aquisição - Compra);
 
-        // Listener mudança de tipo de material (Visibilidade de Formulários)
+
+        // LISTENERS
+        // Tipo de Material
         materialTypeGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            handleRadioChange(null);
+            apresentarForms(null);
         });
 
-        // Listener ativar/desativar campos da Nota Fiscal
+        // Tipo de Aquisição
         tipoAquisicaoCombo.valueProperty().addListener((obs, oldV, newV) -> {
-            toggleNotaFiscalFields(newV);
+            // Desativa NF se Aquisição = Doação
+            numeroNotaFiscalField.setDisable(
+                    newV.equals("Doação")
+            );
         });
 
-        // Garante o estado inicial (Nota Fiscal desativada e forms visíveis)
-        toggleNotaFiscalFields(tipoAquisicaoCombo.getValue());
-        handleRadioChange(null); // Chama para configurar visibilidade inicial
-    }
 
-
-    private void toggleNotaFiscalFields(String tipoAquisicao) {
-        boolean isCompra = "Compra".equalsIgnoreCase(tipoAquisicao);
-        if (numeroNotaFiscalField != null) {
-            numeroNotaFiscalField.setDisable(!isCompra);
-        }
+        apresentarForms(null); // Configurar visibilidade inicial
     }
 
     // APRESENTA PAINEL DE MATERIAL DE ACORDO COM RADIO BUTTOM
 
     @FXML
-    private void handleRadioChange(ActionEvent event) {
+    private void apresentarForms(ActionEvent event) {
 
-        clearAllForms();
+        limparTodosForms();
 
-        RadioButton selected = (RadioButton) materialTypeGroup.getSelectedToggle();
-        String selectedId =  selected.getId();
+        rbTarjaVermelha.setVisible(false);
+        tipoAquisicaoCombo.setValue("Compra");
 
-        // --- LÓGICA DE VISIBILIDADE CONDICIONAL ---
-
-        // Tarja Vermelha: SOMENTE Livro
-        boolean isLivro = "rbLivro".equals(selectedId);
-        if (rbTarjaVermelha != null) {
-            rbTarjaVermelha.setVisible(isLivro);
-            rbTarjaVermelha.setManaged(isLivro);
-            rbTarjaVermelha.setSelected(false);
-        }
-
-        // Aquisição/NF: Oculta apenas para TG
-        boolean exigeAquisicao = !"rbTG".equals(selectedId);
-
-        if (vboxTipoAquisicao != null) {
-            vboxTipoAquisicao.setVisible(exigeAquisicao);
-            vboxTipoAquisicao.setManaged(exigeAquisicao);
-            tipoAquisicaoCombo.getSelectionModel().clearSelection();
-        }
-
-        if (vboxNotaFiscal != null) {
-            vboxNotaFiscal.setVisible(exigeAquisicao);
-            vboxNotaFiscal.setManaged(exigeAquisicao);
-            numeroNotaFiscalField.clear();
-        }
-
-
-        // --- VISIBILIDADE DOS FORMULÁRIOS ESPECÍFICOS ---
-
-        // Lista de todos os painéis
+        // Lista de todos os Forms
         List<GridPane> forms = Arrays.asList(formLivro, formRevista, formTG, formEquipamento);
 
-        // Define todos como invisíveis e não gerenciados
+        // Define todos como invisíveis
         forms.forEach(form -> {
             if (form != null) {
                 form.setVisible(false);
-                form.setManaged(false); // Garante que não ocupem espaço
+                form.setManaged(false); // garante que não ocupem espaço
             }
         });
 
-        // Ativa o painel selecionado
-        if ("rbLivro".equals(selectedId) && formLivro != null) {
-            formLivro.setVisible(true);
-            formLivro.setManaged(true);
-        } else if ("rbRevista".equals(selectedId) && formRevista != null) {
-            formRevista.setVisible(true);
-            formRevista.setManaged(true);
-        } else if ("rbTG".equals(selectedId) && formTG != null) {
-            formTG.setVisible(true);
-            formTG.setManaged(true);
-        } else if ("rbEquipamento".equals(selectedId) && formEquipamento != null) {
-            formEquipamento.setVisible(true);
-            formEquipamento.setManaged(true);
+        //  Apresentar Forms de cada Tipo de Material
+        RadioButton selected = (RadioButton) materialTypeGroup.getSelectedToggle();
+
+        switch (selected.getId()) {
+            case "rbLivro":
+                camposLivros();
+                break;
+            case "rbRevista":
+                camposRevista();
+                break;
+            case "rbTG":
+                camposTG();
+                break;
+            case "rbEquipamento":
+                camposEquipamento();
+                break;
         }
 
-        // Revalida o estado da NF após a mudança (para garantir que esteja desabilitada se não for Compra)
-        toggleNotaFiscalFields(tipoAquisicaoCombo.getValue());
+
     }
+
+
+    public void camposLivros() {
+        formLivro.setVisible(true);
+        formLivro.setManaged(true);
+
+        habilitarCamposNF(true);
+
+        rbTarjaVermelha.setVisible(true);
+        rbTarjaVermelha.setManaged(true);
+        rbTarjaVermelha.setSelected(false);
+    }
+
+    public void camposRevista() {
+        formRevista.setVisible(true);
+        formRevista.setManaged(true);
+
+        habilitarCamposNF(true);
+    }
+
+    public void camposTG() {
+        formTG.setVisible(true);
+        formTG.setManaged(true);
+
+        habilitarCamposNF(false);
+
+    }
+
+    public void camposEquipamento() {
+        formEquipamento.setVisible(true);
+        formEquipamento.setManaged(true);
+
+        habilitarCamposNF(true);
+    }
+
+    public void habilitarCamposNF (boolean habilitar) {
+        vboxTipoAquisicao.setVisible(habilitar);
+        vboxTipoAquisicao.setManaged(habilitar);
+       // tipoAquisicaoCombo.getSelectionModel().clearSelection();
+
+        vboxNotaFiscal.setVisible(habilitar);
+        vboxNotaFiscal.setManaged(habilitar);
+        numeroNotaFiscalField.clear();
+    }
+
+    // ---------------------------------------------------------------------
 
     @FXML
     private void onCadastrarClick(ActionEvent event) {
 
         RadioButton selectedRb = (RadioButton) materialTypeGroup.getSelectedToggle();
-        if (selectedRb == null) {
-            System.err.println("❌ Erro: Selecione um tipo de material.");
-            return;
-        }
+
+        String aquisicaoComboOpt = tipoAquisicaoCombo.getValue().toString();
+
+        TipoAquisicao tipoAquisicao = aquisicaoComboOpt.equals("Compra") ?
+                        TipoAquisicao.COMPRA :
+                        TipoAquisicao.DOACAO;
 
         try {
-            // 1. Obter Tipo de Aquisição (e validar se não for TG)
-            TipoAquisicao tipoAquisicao = null;
-            if (!"rbTG".equals(selectedRb.getId())) {
-                tipoAquisicao = getTipoAquisicaoSelecionado();
-            }
 
-            // 2. Identificar e Cadastrar Material
-            String selectedId = selectedRb.getId();
-
-            if ("rbLivro".equals(selectedId)) {
-                cadastrarLivro(tipoAquisicao);
-            } else if ("rbRevista".equals(selectedId)) {
-                cadastrarRevista(tipoAquisicao);
-            } else if ("rbTG".equals(selectedId)) {
-                // cadastrarTG(tipoAquisicao);
-                cadastrarTG(tipoAquisicao);
-            } else if ("rbEquipamento".equals(selectedId)) {
-                cadastrarEquipamento(tipoAquisicao);
+            switch (selectedRb.getId()) {
+                case  "rbLivro":
+                    cadastrarLivro(tipoAquisicao);
+                    break;
+                case "rbRevista":
+                    cadastrarRevista(tipoAquisicao);
+                    break;
+                case "rbTG":
+                    cadastrarTG();
+                    break;
+                case "rbEquipamento":
+                    cadastrarEquipamento(tipoAquisicao);
+                    break;
             }
 
         } catch (IllegalArgumentException e) {
@@ -232,32 +244,9 @@ public class CadastroMaterialController implements Initializable {
         }
     }
 
-    /**
-     * Auxiliar para obter e validar o Tipo de Aquisição.
-     */
-    private TipoAquisicao getTipoAquisicaoSelecionado() throws IllegalArgumentException {
-        // Assume que o ComboBox usado é o tipoAquisicaoCombo principal (do GRID GERAL)
-        String tipoAquisicaoStr = tipoAquisicaoCombo.getValue();
 
-        if (tipoAquisicaoStr == null || tipoAquisicaoStr.trim().isEmpty()) {
-            throw new IllegalArgumentException("O Tipo de Aquisição é obrigatório.");
-        }
+    // CADASTRO
 
-        // Mapeamento: "Compra" -> COMPRA | "Doação" -> DOACAO
-        String nomeNormalizado = tipoAquisicaoStr.toUpperCase().replace("ÇÃO", "CAO");
-
-        try {
-            return TipoAquisicao.valueOf(nomeNormalizado);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("O valor '" + tipoAquisicaoStr + "' é inválido para Tipo de Aquisição.");
-        }
-    }
-
-// ---------------------------------------------------------------------
-
-    /**
-     * Lógica específica para cadastrar um Livro.
-     */
     private void cadastrarLivro(TipoAquisicao tipoAquisicao) throws Exception {
         System.out.println("--- Iniciando Cadastro de LIVRO ---");
         // ... (Implementação de cadastro omitida para brevidade) ...
@@ -293,11 +282,6 @@ public class CadastroMaterialController implements Initializable {
         }
     }
 
-// ---------------------------------------------------------------------
-
-    /**
-     * Lógica específica para cadastrar uma Revista.
-     */
     private void cadastrarRevista(TipoAquisicao tipoAquisicao) throws Exception {
         System.out.println("--- Iniciando Cadastro de REVISTA ---");
 
@@ -333,12 +317,7 @@ public class CadastroMaterialController implements Initializable {
         }
     }
 
-    // ---------------------------------------------------------------------
-
-    /**
-     * Lógica específica para cadastrar um TG (Trabalho de Graduação).
-     */
-    private void cadastrarTG(TipoAquisicao tipoAquisicao) throws Exception {
+    private void cadastrarTG() throws Exception {
         System.out.println("--- Iniciando Cadastro de TG ---");
 
         TG novoTG = new TG();
@@ -376,12 +355,6 @@ public class CadastroMaterialController implements Initializable {
             throw new Exception("Falha no serviço de cadastro.");
         }
     }
-
-    // ---------------------------------------------------------------------
-
-    /**
-     * Lógica específica para cadastrar um Equipamento.
-     */
     private void cadastrarEquipamento(TipoAquisicao tipoAquisicao) throws Exception {
         System.out.println("--- Iniciando Cadastro de EQUIPAMENTO ---");
 
@@ -413,20 +386,15 @@ public class CadastroMaterialController implements Initializable {
 
 // ---------------------------------------------------------------------
 
-    /**
-     * Limpa todos os campos específicos dos formulários de material.
-     */
-    private void clearAllForms() {
+    private void limparTodosForms() {
 
-        codigoField.clear();
-
-        // Limpar campos CONDICIONAIS (GRID GERAL)
         numeroNotaFiscalField.clear();
         tipoAquisicaoCombo.getSelectionModel().clearSelection();
-        rbTarjaVermelha.setSelected(false); // Desmarcar
+        rbTarjaVermelha.setSelected(false);
 
 
-        // 2. Limpar campos do LIVRO
+        // LIVRO
+        codigoField.clear();
         isbnField.clear();
         tituloLivroField.clear();
         palavrasChaveLivroArea.clear();
@@ -438,7 +406,8 @@ public class CadastroMaterialController implements Initializable {
         editoraLivroField.clear();
         generoLivroField.clear();
 
-        // 3. Limpar campos da REVISTA
+        // REVISTA
+        codigoRevistaField.clear();
         tituloRevistaField.clear();
         volumeRevistaField.clear();
         numeroRevistaField.clear();
@@ -449,7 +418,7 @@ public class CadastroMaterialController implements Initializable {
         generoRevistaField.clear();
 
 
-        // 4. Limpar campos do TG
+        // TG
         tituloTGField.clear();
         subtituloTGField.clear();
         assuntoTGField.clear();
@@ -461,11 +430,10 @@ public class CadastroMaterialController implements Initializable {
         localPublicacaoTGField.clear();
         palavrasChaveTGArea.clear();
 
-        // 5. Limpar campos do EQUIPAMENTO
+        // EQUIPAMENTO
         nomeEquipamentoField.clear();
         descricaoEquipamentoArea.clear();
-        // Não precisamos limpar os campos *Equipamento, pois estamos usando os campos comuns
-        // localizados no GRID GERAL (tipoAquisicaoCombo, numeroNotaFiscalField).
     }
+
 
 }

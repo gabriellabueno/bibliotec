@@ -6,7 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="TOP_CENTER" prefHeight="700.0" prefWidth="650.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.edu.fatecgru.controller.cadastro.CadastroMaterialController">
+<VBox alignment="TOP_CENTER" prefHeight="700.0" prefWidth="650.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.edu.fatecgru.controller.cadastro.material.CadastroMaterialController">
 
     <padding>
         <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
@@ -20,14 +20,14 @@
 
     <HBox alignment="CENTER" spacing="30.0">
         <children>
-            <RadioButton fx:id="rbLivro" onAction="#handleRadioChange" selected="true" text="Livro">
+            <RadioButton fx:id="rbLivro" onAction="#apresentarForms" selected="true" text="Livro">
                 <toggleGroup>
                     <ToggleGroup fx:id="materialTypeGroup" />
                 </toggleGroup>
             </RadioButton>
-            <RadioButton fx:id="rbRevista" onAction="#handleRadioChange" text="Revista" toggleGroup="$materialTypeGroup" />
-            <RadioButton fx:id="rbTG" onAction="#handleRadioChange" text="Trabalho de Graduação" toggleGroup="$materialTypeGroup" />
-            <RadioButton fx:id="rbEquipamento" onAction="#handleRadioChange" text="Equipamento" toggleGroup="$materialTypeGroup" />
+            <RadioButton fx:id="rbRevista" onAction="#apresentarForms" text="Revista" toggleGroup="$materialTypeGroup" />
+            <RadioButton fx:id="rbTG" onAction="#apresentarForms" text="Trabalho de Graduação" toggleGroup="$materialTypeGroup" />
+            <RadioButton fx:id="rbEquipamento" onAction="#apresentarForms" text="Equipamento" toggleGroup="$materialTypeGroup" />
         </children>
     </HBox>
 
@@ -43,7 +43,7 @@
 
         <VBox fx:id="vboxTipoAquisicao" spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
             <Label style="-fx-font-weight: bold;" text="Tipo de Aquisição" />
-            <ComboBox fx:id="tipoAquisicaoCombo" prefWidth="280.0" promptText="Selecione o tipo...">
+            <ComboBox fx:id="tipoAquisicaoCombo" prefWidth="280.0">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="Compra" />
