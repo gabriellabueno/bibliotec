@@ -49,6 +49,11 @@
                     <PropertyValueFactory property="nome" />
                 </cellValueFactory>
             </TableColumn>
+            <TableColumn text="E-mail" prefWidth="300.0">
+                <cellValueFactory>
+                    <PropertyValueFactory property="email" />
+                </cellValueFactory>
+            </TableColumn>
             <TableColumn text="Empréstimos" prefWidth="180.0" style="-fx-alignment: CENTER;">
                 <cellValueFactory>
                     <PropertyValueFactory property="emprestimosStatus" />

@@ -24,7 +24,7 @@ public class MaterialResult {
 
     public static MaterialResult fromLivro(Livro l) {
         MaterialResult m = new MaterialResult();
-        m.setCodigo(String.valueOf(l.getIdMaterial()));
+        m.setCodigo(String.valueOf(l.getCodigo()));
         m.setTitulo(l.getTitulo());
         m.setAnoPublicacao(l.getAnoPublicacao());
         m.setIsbn(l.getIsbn());
@@ -36,7 +36,7 @@ public class MaterialResult {
 
     public static MaterialResult fromRevista(Revista r) {
         MaterialResult m = new MaterialResult();
-        m.setCodigo(String.valueOf(r.getIdMaterial()));
+        m.setCodigo(String.valueOf(r.getCodigo()));
         m.setTitulo(r.getTitulo());
         m.setAnoPublicacao(r.getAnoPublicacao());
         m.setVolume(r.getVolume());
@@ -48,7 +48,6 @@ public class MaterialResult {
 
     public static MaterialResult fromTG(TG t) {
         MaterialResult m = new MaterialResult();
-        m.setCodigo(String.valueOf(t.getIdMaterial()));
         m.setTitulo(t.getTitulo());
         m.setSubtitulo(t.getSubtitulo());
         m.setAutor(t.getAutor1()); // Autor 1 na coluna Autor
@@ -62,7 +61,6 @@ public class MaterialResult {
 
     public static MaterialResult fromEquipamento(Equipamento e) {
         MaterialResult m = new MaterialResult();
-        m.setCodigo(String.valueOf(e.getIdMaterial()));
         // Note que Equipamento usa "Nome" e não "Titulo", mas mapeamos para o campo específico
         m.setNomeEquipamento(e.getNome());
         m.setDisponibilidade(e.getStatusMaterial().toString());

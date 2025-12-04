@@ -61,7 +61,8 @@ public class PesquisaUsuarioController implements Initializable {
         // Se você der fx:id nas colunas, poderá usar: colID.setCellValueFactory(...)
         resultsTable.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("id"));
         resultsTable.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("nome"));
-        resultsTable.getColumns().get(2).setCellValueFactory(new PropertyValueFactory<>("emprestimosStatus"));
+        resultsTable.getColumns().get(2).setCellValueFactory(new PropertyValueFactory<>("email"));
+        resultsTable.getColumns().get(3).setCellValueFactory(new PropertyValueFactory<>("emprestimosStatus"));
     }
 
 
@@ -141,6 +142,7 @@ public class PesquisaUsuarioController implements Initializable {
         return new UserResult(
                 usuario.getIdUsuario(),
                 usuario.getNome(),
+                usuario.getEmail(),
                 status
         );
     }

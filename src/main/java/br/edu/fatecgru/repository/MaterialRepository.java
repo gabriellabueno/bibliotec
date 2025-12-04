@@ -60,7 +60,7 @@ public class MaterialRepository {
     public List<Livro> buscarLivro(String termo) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            String jpql = "SELECT l FROM Livro l WHERE lower(l.titulo) LIKE :termo OR lower(l.autor) LIKE :termo OR l.isbn LIKE :termo";
+            String jpql = "SELECT l FROM Livro l WHERE lower(l.titulo) LIKE :termo OR lower(l.autor) LIKE :termo OR l.isbn LIKE :termo OR lower(l.codigo) LIKE :termo OR lower(l.anoPublicacao) LIKE :termo" ;
             TypedQuery<Livro> query = em.createQuery(jpql, Livro.class);
             query.setParameter("termo", "%" + termo.toLowerCase() + "%");
             return query.getResultList();
@@ -74,7 +74,7 @@ public class MaterialRepository {
     public List<Revista> buscarRevista(String termo) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            String jpql = "SELECT r FROM Revista r WHERE lower(r.titulo) LIKE :termo OR lower(r.editora) LIKE :termo";
+            String jpql = "SELECT r FROM Revista r WHERE lower(r.titulo) LIKE :termo OR lower(r.editora) LIKE :termo OR lower(r.codigo) LIKE :termo OR lower(r.anoPublicacao) LIKE :termo";
             TypedQuery<Revista> query = em.createQuery(jpql, Revista.class);
             query.setParameter("termo", "%" + termo.toLowerCase() + "%");
             return query.getResultList();

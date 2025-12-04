@@ -7,11 +7,13 @@ public class UserResult {
 
     private final StringProperty id;
     private final StringProperty nome;
+    private final StringProperty email;
     private final StringProperty emprestimosStatus;
 
-    public UserResult(String id, String nome, String emprestimosStatus) {
+    public UserResult(String id, String nome, String email, String emprestimosStatus) {
         this.id = new SimpleStringProperty(id);
         this.nome = new SimpleStringProperty(nome);
+        this.email = new SimpleStringProperty(email);
         this.emprestimosStatus = new SimpleStringProperty(emprestimosStatus);
     }
 
@@ -24,6 +26,8 @@ public class UserResult {
     public StringProperty nomeProperty() {
         return nome;
     }
+
+    public StringProperty emailProperty() {return email;}
 
     public StringProperty emprestimosStatusProperty() {
         return emprestimosStatus;
