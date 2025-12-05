@@ -13,6 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.event.ActionEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox; // Importação necessária para VBox
 
@@ -27,10 +28,8 @@ public class CadastroMaterialController implements Initializable {
     // --- Controles de Seleção de Material ---
     @FXML private ToggleGroup materialTypeGroup;
     @FXML private RadioButton rbLivro;
-    @FXML private RadioButton rbRevista;
-    @FXML private RadioButton rbTG;
-    @FXML private RadioButton rbEquipamento;
-    @FXML private RadioButton rbTarjaVermelha;
+    @FXML private TextField tarjaVermelha;
+    @FXML private HBox boxTarjaVermelha;
 
 
     // --- Campos Comuns (GRID GERAL) ---
@@ -73,7 +72,7 @@ public class CadastroMaterialController implements Initializable {
     @FXML private TextField localPublicacaoRevistaField;
     @FXML private TextField editoraRevistaField;
     @FXML private TextField generoRevistaField;
-    @FXML private TextField palavrasChaveRevistaArea;
+    @FXML private TextArea palavrasChaveRevistaArea;
 
     // --- CAMPOS ESPECÍFICOS DO TG ---
     @FXML private TextField tituloTGField;
@@ -101,6 +100,11 @@ public class CadastroMaterialController implements Initializable {
         // ESTADO INICIAL
         rbLivro.setSelected(true); // tipo de material - Livro
         tipoAquisicaoCombo.setValue("Compra"); // tipo de aquisição - Compra);
+
+        tarjaVermelha.setText("SIM"); // Sim, pois cópias somente pelo Gerenciamento
+        tarjaVermelha.setEditable(false);
+//        tarjaVermelha.setStyle("-fx-text-fill: black;");
+//        tarjaVermelha.setOpacity(1.0);
 
 
         // LISTENERS
@@ -130,7 +134,7 @@ public class CadastroMaterialController implements Initializable {
 
         limparTodosForms();
 
-        rbTarjaVermelha.setVisible(false);
+        boxTarjaVermelha.setVisible(false);
         tipoAquisicaoCombo.setValue("Compra");
 
         // Lista de todos os Forms
@@ -170,22 +174,16 @@ public class CadastroMaterialController implements Initializable {
         formLivro.setVisible(true);
         formLivro.setManaged(true);
 
+        boxTarjaVermelha.setVisible(true);
         habilitarCamposNF(true);
-
-        rbTarjaVermelha.setVisible(true);
-        rbTarjaVermelha.setManaged(true);
-        rbTarjaVermelha.setSelected(false);
     }
 
     public void camposRevista() {
         formRevista.setVisible(true);
         formRevista.setManaged(true);
 
+        boxTarjaVermelha.setVisible(true);
         habilitarCamposNF(true);
-
-        rbTarjaVermelha.setVisible(true);
-        rbTarjaVermelha.setManaged(true);
-        rbTarjaVermelha.setSelected(false);
     }
 
     public void camposTG() {
@@ -193,7 +191,6 @@ public class CadastroMaterialController implements Initializable {
         formTG.setManaged(true);
 
         habilitarCamposNF(false);
-
     }
 
     public void camposEquipamento() {
@@ -206,7 +203,6 @@ public class CadastroMaterialController implements Initializable {
     public void habilitarCamposNF (boolean habilitar) {
         vboxTipoAquisicao.setVisible(habilitar);
         vboxTipoAquisicao.setManaged(habilitar);
-       // tipoAquisicaoCombo.getSelectionModel().clearSelection();
 
         vboxNotaFiscal.setVisible(habilitar);
         vboxNotaFiscal.setManaged(habilitar);
@@ -280,7 +276,7 @@ public class CadastroMaterialController implements Initializable {
         novoLivro.setPalavrasChave(palavrasChaveLivroArea.getText());
 
         // Tarja Vermelha
-        novoLivro.setTarjaVermelha(rbTarjaVermelha.isSelected());
+        novoLivro.setTarjaVermelha(true);
 
         // Persistência
         if (materialService.cadastrarMaterial(novoLivro)) {
@@ -318,7 +314,7 @@ public class CadastroMaterialController implements Initializable {
         // O campo Tarja Vermelha está visível e usa o mesmo RadioButton,
         // mas sua lógica de persistência pode ser diferente para Revista.
         // Aqui mantemos a verificação do RadioButton principal.
-        novaRevista.setTarjaVermelha(rbTarjaVermelha.isSelected());
+        novaRevista.setTarjaVermelha(true);
 
         // Persistência
         if (materialService.cadastrarMaterial(novaRevista)) {
@@ -402,7 +398,6 @@ public class CadastroMaterialController implements Initializable {
 
         numeroNotaFiscalField.clear();
         tipoAquisicaoCombo.getSelectionModel().clearSelection();
-        rbTarjaVermelha.setSelected(false);
 
 
         // LIVRO

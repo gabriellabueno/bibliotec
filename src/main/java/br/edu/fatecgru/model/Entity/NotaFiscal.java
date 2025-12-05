@@ -24,6 +24,7 @@ public class NotaFiscal {
     @Column(name = "codigo", nullable = false)
     private String codigo;
 
+    @Column(name = "descricao", nullable = false)
     private String descricao;
 
     @Column(name = "data_aquisicao", nullable = false)

@@ -6,7 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="TOP_CENTER" prefHeight="700.0" prefWidth="650.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.edu.fatecgru.controller.cadastro.CadastroMaterialController">
+<VBox alignment="TOP_CENTER" prefHeight="881.0" prefWidth="1366.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.edu.fatecgru.controller.cadastro.CadastroMaterialController">
 
     <padding>
         <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
@@ -19,16 +19,14 @@
     </Label>
 
     <HBox alignment="CENTER" spacing="30.0">
-        <children>
-            <RadioButton fx:id="rbLivro" onAction="#apresentarForms" selected="true" text="Livro">
-                <toggleGroup>
-                    <ToggleGroup fx:id="materialTypeGroup" />
-                </toggleGroup>
-            </RadioButton>
-            <RadioButton fx:id="rbRevista" onAction="#apresentarForms" text="Revista" toggleGroup="$materialTypeGroup" />
-            <RadioButton fx:id="rbTG" onAction="#apresentarForms" text="Trabalho de Graduação" toggleGroup="$materialTypeGroup" />
-            <RadioButton fx:id="rbEquipamento" onAction="#apresentarForms" text="Equipamento" toggleGroup="$materialTypeGroup" />
-        </children>
+        <RadioButton fx:id="rbLivro" onAction="#apresentarForms" selected="true" text="Livro">
+            <toggleGroup>
+                <ToggleGroup fx:id="materialTypeGroup" />
+            </toggleGroup>
+        </RadioButton>
+        <RadioButton fx:id="rbRevista" onAction="#apresentarForms" text="Revista" toggleGroup="$materialTypeGroup" />
+        <RadioButton fx:id="rbTG" onAction="#apresentarForms" text="Trabalho de Graduação" toggleGroup="$materialTypeGroup" />
+        <RadioButton fx:id="rbEquipamento" onAction="#apresentarForms" text="Equipamento" toggleGroup="$materialTypeGroup" />
     </HBox>
 
     <Separator />
@@ -66,7 +64,7 @@
 
     <StackPane fx:id="materialFormsContainer" alignment="TOP_LEFT" prefWidth="580.0" VBox.vgrow="ALWAYS">
 
-        <GridPane fx:id="formLivro" hgap="20.0" prefWidth="580.0" vgap="15.0">
+        <GridPane fx:id="formLivro" alignment="TOP_CENTER" hgap="20.0" prefHeight="392.0" prefWidth="1286.0" vgap="15.0">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="280.0" prefWidth="280.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="280.0" prefWidth="280.0" />
@@ -74,24 +72,18 @@
 
 
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
-            <children>
-                   <Label style="-fx-font-weight: bold;" text="Ano de Publicação" />
-                   <TextField fx:id="anoPublicacaoLivroField" />
-            </children>
+                <Label style="-fx-font-weight: bold;" text="Ano de Publicação" />
+                <TextField fx:id="anoPublicacaoLivroField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
-            <children>
-                   <Label style="-fx-font-weight: bold;" text="Código" />
-                   <TextField fx:id="codigoField" />
-            </children>
+                <Label style="-fx-font-weight: bold;" text="Código" />
+                <TextField fx:id="codigoField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
-            <children>
-                   <Label style="-fx-font-weight: bold;" text="ISBN" />
-                   <TextField fx:id="isbnField" promptText="- - - - - - - - -" />
-            </children>
+                <Label style="-fx-font-weight: bold;" text="ISBN" />
+                <TextField fx:id="isbnField" promptText="- - - - - - - - -" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
@@ -100,45 +92,33 @@
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-            <children>
-                   <Label style="-fx-font-weight: bold;" text="Autor" />
-                   <TextField fx:id="autorLivroField" promptText="Nome do Autor" />
-            </children>
+                <Label style="-fx-font-weight: bold;" text="Autor" />
+                <TextField fx:id="autorLivroField" promptText="Nome do Autor" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
-            <children>
-                   <Label style="-fx-font-weight: bold;" text="Editora" />
-                   <TextField fx:id="editoraLivroField" promptText="Nome da Editora." />
-            </children>
+                <Label style="-fx-font-weight: bold;" text="Editora" />
+                <TextField fx:id="editoraLivroField" promptText="Nome da Editora." />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-            <children>
-                   <Label style="-fx-font-weight: bold;" text="Edição" />
-                   <TextField fx:id="edicaoField" />
-            </children>
+                <Label style="-fx-font-weight: bold;" text="Edição" />
+                <TextField fx:id="edicaoField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="3">
-            <children>
-                   <Label style="-fx-font-weight: bold;" text="Gênero" />
-                   <TextField fx:id="generoLivroField" promptText="Gênero ou área." />
-            </children>
+                <Label style="-fx-font-weight: bold;" text="Gênero" />
+                <TextField fx:id="generoLivroField" promptText="Gênero ou área." />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-            <children>
-                   <Label style="-fx-font-weight: bold;" text="Assunto" />
-                   <TextField fx:id="assuntoLivroField" />
-            </children>
+                <Label style="-fx-font-weight: bold;" text="Assunto" />
+                <TextField fx:id="assuntoLivroField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="4">
-            <children>
-                   <Label style="-fx-font-weight: bold;" text="Local de Publicação" />
-                   <TextField fx:id="localPublicacaoLivroField" />
-            </children>
+                <Label style="-fx-font-weight: bold;" text="Local de Publicação" />
+                <TextField fx:id="localPublicacaoLivroField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="5">
@@ -163,10 +143,8 @@
             </columnConstraints>
 
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                <children>
-                    <Label style="-fx-font-weight: bold;" text="Código" />
-                    <TextField fx:id="codigoRevistaField" />
-                </children>
+                <Label style="-fx-font-weight: bold;" text="Código" />
+                <TextField fx:id="codigoRevistaField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="1">
@@ -313,12 +291,11 @@
 
     </StackPane>
 
-    <HBox alignment="BASELINE_LEFT" spacing="30.0">
-        <children>
-            <RadioButton fx:id="rbTarjaVermelha" selected="false" text="Tarja Vermelha">
-            </RadioButton>
-        </children>
+    <HBox fx:id="boxTarjaVermelha" alignment="CENTER_LEFT" spacing="30.0">
+        <Label style="-fx-font-weight: bold;" text="Tarja Vermelha" />
+        <TextField fx:id="tarjaVermelha" editable="false" prefWidth="50.0" />
     </HBox>
+
     <HBox alignment="CENTER_RIGHT" prefWidth="580.0">
         <Button onAction="#onCadastrarClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="+ Cadastrar">
             <HBox.margin>
