@@ -1,4 +1,4 @@
-package br.edu.fatecgru.controller.cadastro.material; // Pacote atualizado conforme o FXML
+package br.edu.fatecgru.controller.cadastro; // Pacote atualizado conforme o FXML
 
 import br.edu.fatecgru.model.Entity.Revista;
 import br.edu.fatecgru.model.Entity.TG;
@@ -73,6 +73,7 @@ public class CadastroMaterialController implements Initializable {
     @FXML private TextField localPublicacaoRevistaField;
     @FXML private TextField editoraRevistaField;
     @FXML private TextField generoRevistaField;
+    @FXML private TextField palavrasChaveRevistaArea;
 
     // --- CAMPOS ESPECÍFICOS DO TG ---
     @FXML private TextField tituloTGField;
@@ -312,6 +313,7 @@ public class CadastroMaterialController implements Initializable {
         novaRevista.setLocalPublicacao(localPublicacaoRevistaField.getText());
         novaRevista.setEditora(editoraRevistaField.getText());
         novaRevista.setGenero(generoRevistaField.getText());
+        novaRevista.setPalavrasChave(palavrasChaveRevistaArea.getText());
 
         // O campo Tarja Vermelha está visível e usa o mesmo RadioButton,
         // mas sua lógica de persistência pode ser diferente para Revista.
@@ -426,6 +428,7 @@ public class CadastroMaterialController implements Initializable {
         localPublicacaoRevistaField.clear();
         editoraRevistaField.clear();
         generoRevistaField.clear();
+        palavrasChaveRevistaArea.clear();
 
 
         // TG

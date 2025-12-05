@@ -45,4 +45,7 @@ public class Revista extends Material {
 
     @Column(name = "tarja_vermelha", nullable = false)
     private boolean tarjaVermelha;
+
+    @Column(name = "palavras-chave")
+    private String palavrasChave;
 }
