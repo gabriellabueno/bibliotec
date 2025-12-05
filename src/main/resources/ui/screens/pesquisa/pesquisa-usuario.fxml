@@ -10,8 +10,9 @@
       fx:controller="br.edu.fatecgru.controller.pesquisa.PesquisaUsuarioController">
 
     <padding>
-        <Insets top="30.0" left="40.0" right="40.0" bottom="30.0" />
+        <Insets top="30.0" left="100.0" right="100.0" bottom="50.0" />
     </padding>
+
 
     <Label text="Pesquisa" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;">
         <VBox.margin>
@@ -20,20 +21,18 @@
     </Label>
 
     <HBox spacing="30.0" alignment="CENTER">
-        <children>
-            <RadioButton text="Aluno" selected="true" onAction="#handleRadioChange">
-                <toggleGroup>
-                    <ToggleGroup fx:id="userTypeGroup" />
-                </toggleGroup>
-            </RadioButton>
-            <RadioButton text="Docente" toggleGroup="$userTypeGroup" onAction="#handleRadioChange" />
-        </children>
+        <RadioButton text="Aluno" selected="true" onAction="#handleRadioChange">
+            <toggleGroup>
+                <ToggleGroup fx:id="userTypeGroup"/>
+            </toggleGroup>
+        </RadioButton>
+        <RadioButton text="Docente" toggleGroup="$userTypeGroup" onAction="#handleRadioChange"/>
     </HBox>
 
     <Separator />
 
-    <HBox spacing="10.0" alignment="CENTER_LEFT" prefWidth="720.0">
-        <TextField fx:id="searchField" HBox.hgrow="ALWAYS" promptText="Digite aqui sua busca" prefHeight="35.0" />
+    <HBox spacing="20.0" alignment="CENTER" prefWidth="720.0">
+        <TextField fx:id="searchField"  promptText="Digite aqui sua busca" prefWidth="500.0" prefHeight="35.0" />
         <Button text="Buscar" onAction="#onSearchClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 20 8 20; -fx-cursor: hand;" />
     </HBox>
 

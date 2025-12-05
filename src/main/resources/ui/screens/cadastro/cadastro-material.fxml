@@ -6,11 +6,15 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="TOP_CENTER" prefHeight="881.0" prefWidth="1366.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.edu.fatecgru.controller.cadastro.CadastroMaterialController">
+<VBox alignment="TOP_CENTER" prefHeight="881.0" prefWidth="1366.0" spacing="20.0"
+      xmlns="http://javafx.com/javafx/17.0.12"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="br.edu.fatecgru.controller.cadastro.CadastroMaterialController">
 
     <padding>
-        <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
+        <Insets bottom="30.0" left="300.0" right="300.0" top="100.0" />
     </padding>
+
 
     <Label style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;" text="Cadastro de Material">
         <VBox.margin>
@@ -55,14 +59,11 @@
             <Label style="-fx-font-weight: bold;" text="Nota Fiscal" />
             <TextField fx:id="numeroNotaFiscalField" prefWidth="280.0" />
         </VBox>
-      <rowConstraints>
-         <RowConstraints />
-         <RowConstraints />
-      </rowConstraints>
+
 
     </GridPane>
 
-    <StackPane fx:id="materialFormsContainer" alignment="TOP_LEFT" prefWidth="580.0" VBox.vgrow="ALWAYS">
+    <StackPane fx:id="materialFormsContainer" alignment="TOP_LEFT" prefWidth="580.0">
 
         <GridPane fx:id="formLivro" alignment="TOP_CENTER" hgap="20.0" prefHeight="392.0" prefWidth="1286.0" vgap="15.0">
             <columnConstraints>
@@ -125,14 +126,6 @@
                 <Label style="-fx-font-weight: bold;" text="Palavras-Chave" />
                 <TextArea fx:id="palavrasChaveLivroArea" prefHeight="60.0" promptText="Separe as palavras por vírgula." wrapText="true" />
             </VBox>
-         <rowConstraints>
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-         </rowConstraints>
 
         </GridPane>
 
@@ -191,14 +184,6 @@
                 <Label style="-fx-font-weight: bold;" text="Palavras-Chave" />
                 <TextArea fx:id="palavrasChaveRevistaArea" prefHeight="60.0" promptText="Separe as palavras por vírgula." wrapText="true" />
             </VBox>
-         <rowConstraints>
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-         </rowConstraints>
 
         </GridPane>
 
@@ -282,25 +267,25 @@
                 <Label style="-fx-font-weight: bold;" text="Descrição" />
                 <TextArea fx:id="descricaoEquipamentoArea" prefHeight="100.0" wrapText="true" />
             </VBox>
-         <rowConstraints>
-            <RowConstraints />
-            <RowConstraints />
-         </rowConstraints>
 
         </GridPane>
 
     </StackPane>
 
-    <HBox fx:id="boxTarjaVermelha" alignment="CENTER_LEFT" spacing="30.0">
-        <Label style="-fx-font-weight: bold;" text="Tarja Vermelha" />
-        <TextField fx:id="tarjaVermelha" editable="false" prefWidth="50.0" />
-    </HBox>
+    <HBox alignment="CENTER_LEFT" prefWidth="580.0" spacing="10.0">
 
-    <HBox alignment="CENTER_RIGHT" prefWidth="580.0">
-        <Button onAction="#onCadastrarClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="+ Cadastrar">
-            <HBox.margin>
-                <Insets top="10.0" />
-            </HBox.margin>
-        </Button>
+        <VBox.margin>
+            <Insets top="10.0" />
+        </VBox.margin>
+
+        <HBox fx:id="boxTarjaVermelha" alignment="CENTER_LEFT" spacing="10.0">
+            <Label style="-fx-font-weight: bold;" text="Tarja Vermelha" />
+            <TextField fx:id="tarjaVermelha" prefWidth="60.0"/>
+        </HBox>
+
+        <Region HBox.hgrow="ALWAYS" />
+
+        <Button onAction="#onCadastrarClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="+ Cadastrar" />
+
     </HBox>
 </VBox>

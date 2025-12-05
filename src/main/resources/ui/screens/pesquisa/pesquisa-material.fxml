@@ -9,7 +9,7 @@
       fx:controller="br.edu.fatecgru.controller.pesquisa.PesquisaMaterialController">
 
     <padding>
-        <Insets top="30.0" left="40.0" right="40.0" bottom="30.0" />
+        <Insets top="30.0" left="100.0" right="100.0" bottom="50.0" />
     </padding>
 
     <Label text="Pesquisa" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;">
@@ -19,22 +19,22 @@
     </Label>
 
     <HBox spacing="30.0" alignment="CENTER">
-        <children>
-            <RadioButton fx:id="rbLivro" text="Livro" selected="true" onAction="#handleRadioChange">
-                <toggleGroup>
-                    <ToggleGroup fx:id="materialTypeGroup" />
-                </toggleGroup>
-            </RadioButton>
-            <RadioButton fx:id="rbRevista" text="Revista" toggleGroup="$materialTypeGroup" onAction="#handleRadioChange" />
-            <RadioButton fx:id="rbTG" text="Trabalho de Graduação" toggleGroup="$materialTypeGroup" onAction="#handleRadioChange" />
-            <RadioButton fx:id="rbEquipamento" text="Equipamento" toggleGroup="$materialTypeGroup" onAction="#handleRadioChange" />
-        </children>
+        <RadioButton fx:id="rbLivro" text="Livro" selected="true" onAction="#handleRadioChange">
+            <toggleGroup>
+                <ToggleGroup fx:id="materialTypeGroup"/>
+            </toggleGroup>
+        </RadioButton>
+        <RadioButton fx:id="rbRevista" text="Revista" toggleGroup="$materialTypeGroup" onAction="#handleRadioChange"/>
+        <RadioButton fx:id="rbTG" text="Trabalho de Graduação" toggleGroup="$materialTypeGroup"
+                     onAction="#handleRadioChange"/>
+        <RadioButton fx:id="rbEquipamento" text="Equipamento" toggleGroup="$materialTypeGroup"
+                     onAction="#handleRadioChange"/>
     </HBox>
 
     <Separator />
 
-    <HBox spacing="10.0" alignment="CENTER_LEFT" prefWidth="720.0">
-        <TextField fx:id="searchField" HBox.hgrow="ALWAYS" promptText="Digite aqui sua busca" prefHeight="35.0" />
+    <HBox spacing="20.0" alignment="CENTER" prefWidth="720.0">
+        <TextField fx:id="searchField"  promptText="Digite aqui sua busca" prefWidth="500.0" prefHeight="35.0" />
         <Button text="Buscar" onAction="#onSearchClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 20 8 20; -fx-cursor: hand;" />
     </HBox>
 
@@ -57,10 +57,10 @@
                 <cellValueFactory><PropertyValueFactory property="autor" /></cellValueFactory>
             </TableColumn>
 
-            <TableColumn fx:id="colVolume" text="Volume" prefWidth="80.0">
+            <TableColumn fx:id="colVolume" text="Volume">
                 <cellValueFactory><PropertyValueFactory property="volume" /></cellValueFactory>
             </TableColumn>
-            <TableColumn fx:id="colNumero" text="Número" prefWidth="80.0">
+            <TableColumn fx:id="colNumero" text="Número">
                 <cellValueFactory><PropertyValueFactory property="numero" /></cellValueFactory>
             </TableColumn>
 

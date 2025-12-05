@@ -31,7 +31,6 @@ public class CadastroMaterialController implements Initializable {
     @FXML private TextField tarjaVermelha;
     @FXML private HBox boxTarjaVermelha;
 
-
     // --- Campos Comuns (GRID GERAL) ---
     @FXML private TextField codigoField;
 
@@ -103,8 +102,6 @@ public class CadastroMaterialController implements Initializable {
 
         tarjaVermelha.setText("SIM"); // Sim, pois cópias somente pelo Gerenciamento
         tarjaVermelha.setEditable(false);
-//        tarjaVermelha.setStyle("-fx-text-fill: black;");
-//        tarjaVermelha.setOpacity(1.0);
 
 
         // LISTENERS

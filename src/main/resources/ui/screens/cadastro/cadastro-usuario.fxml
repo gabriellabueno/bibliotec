@@ -9,7 +9,7 @@
       fx:controller="br.edu.fatecgru.controller.cadastro.CadastroUsuarioController">
 
     <padding>
-        <Insets top="30.0" left="40.0" right="40.0" bottom="30.0" />
+        <Insets bottom="30.0" left="300.0" right="300.0" top="100.0" />
     </padding>
 
     <Label text="Cadastro de Usuário" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;">
@@ -18,17 +18,15 @@
         </VBox.margin>
     </Label>
 
-    <VBox spacing="25.0" alignment="TOP_LEFT" maxWidth="400.0" VBox.vgrow="ALWAYS">
+    <VBox spacing="25.0" maxWidth="400.0" VBox.vgrow="ALWAYS">
 
         <HBox spacing="30.0" alignment="CENTER">
-            <children>
-                <RadioButton text="Aluno" selected="true" style="-fx-font-weight: bold;">
-                    <toggleGroup>
-                        <ToggleGroup fx:id="userTypeGroup" />
-                    </toggleGroup>
-                </RadioButton>
-                <RadioButton text="Docente" toggleGroup="$userTypeGroup" style="-fx-font-weight: bold;" />
-            </children>
+            <RadioButton text="Aluno" selected="true" style="-fx-font-weight: bold;">
+                <toggleGroup>
+                    <ToggleGroup fx:id="userTypeGroup"/>
+                </toggleGroup>
+            </RadioButton>
+            <RadioButton text="Docente" toggleGroup="$userTypeGroup" style="-fx-font-weight: bold;"/>
         </HBox>
 
         <Separator />
