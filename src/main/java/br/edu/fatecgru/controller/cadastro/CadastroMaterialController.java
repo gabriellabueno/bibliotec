@@ -1,10 +1,8 @@
-package br.edu.fatecgru.controller.cadastro; // Pacote atualizado conforme o FXML
+package br.edu.fatecgru.controller.cadastro;
 
-import br.edu.fatecgru.model.Entity.Revista;
-import br.edu.fatecgru.model.Entity.TG;
+import br.edu.fatecgru.model.Entity.*;
 import br.edu.fatecgru.model.Enum.TipoMaterial;
 import br.edu.fatecgru.service.MaterialService;
-import br.edu.fatecgru.model.Entity.Livro;
 import br.edu.fatecgru.model.Enum.TipoAquisicao;
 import br.edu.fatecgru.model.Enum.StatusMaterial;
 
@@ -15,8 +13,14 @@ import javafx.scene.layout.GridPane;
 import javafx.event.ActionEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox; // Importação necessária para VBox
+import javafx.scene.layout.VBox;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Arrays;
@@ -92,16 +96,22 @@ public class CadastroMaterialController implements Initializable {
     // --- Dependências ---
     private final MaterialService materialService = new MaterialService();
 
+    // --- VARIÁVEL DE CONTROLE DA NOTA FISCAL ---
+    private NotaFiscal notaFiscalSelecionada = null;
+
     // Inicializa o controller após o carregamento do FXML.
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
         // ESTADO INICIAL
         rbLivro.setSelected(true); // tipo de material - Livro
-        tipoAquisicaoCombo.setValue("Compra"); // tipo de aquisição - Compra);
-
         tarjaVermelha.setText("SIM"); // Sim, pois cópias somente pelo Gerenciamento
         tarjaVermelha.setEditable(false);
+        tipoAquisicaoCombo.setValue("Doação"); // tipo de aquisição - Doação);
+
+        // Bloqueia edição manual da NF, pois virá do Modal
+        numeroNotaFiscalField.setEditable(false);
+        numeroNotaFiscalField.setPromptText("Selecione \"Compra\" como Tipo de Aquisição para cadastrar");
 
 
         // LISTENERS
@@ -115,13 +125,72 @@ public class CadastroMaterialController implements Initializable {
         tipoAquisicaoCombo.valueProperty().addListener((obs, oldV, newV) -> {
 
             if (newV != null) {
-                numeroNotaFiscalField.setDisable(newV.equals("Doação")); // Desativa NF se Aquisição = Doação
+                if (newV.equals("Compra")) {
+                    habilitarCamposNF(true);
+
+                    // Garante que a NF seja solicitada ao selecionar Compra
+                    if (this.notaFiscalSelecionada == null) {
+                        abrirModalNotaFiscal();
+                        }
+                } else {
+                    habilitarCamposNF(false);
+                    // Limpa a NF se mudar para Doação
+                    this.notaFiscalSelecionada = null;
+                    numeroNotaFiscalField.clear();
+                }
             }
 
         });
 
+        // Clique no campo de NF para reabrir o modal caso tenha fechado sem querer
+        numeroNotaFiscalField.setOnMouseClicked(e -> {
+            if ("Compra".equals(tipoAquisicaoCombo.getValue())) {
+                abrirModalNotaFiscal();
+            }
+        });
+
 
         apresentarForms(null); // Configurar visibilidade inicial
+    }
+
+    // MÉTODO - MODAL NOTA FISCAL
+
+    private void abrirModalNotaFiscal() {
+        try {
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/screens/cadastro/cadastro-notafiscal.fxml"));
+            Parent root = loader.load();
+
+
+            CadastroNotaFiscalController controllerNF = loader.getController();
+
+
+            Stage stage = new Stage();
+            stage.setTitle("Cadastrar Nota Fiscal");
+            stage.setScene(new Scene(root));
+
+
+            stage.initModality(Modality.APPLICATION_MODAL);
+
+
+            stage.showAndWait();
+
+
+            NotaFiscal nfRetorno = controllerNF.getNotaFiscalSalva();
+
+            if (nfRetorno != null) {
+                this.notaFiscalSelecionada = nfRetorno;
+                numeroNotaFiscalField.setText(nfRetorno.getCodigo()); // Mostra o código visualmente
+            } else {
+                // Se o usuário fechou sem salvar
+                tipoAquisicaoCombo.setValue("Doação");
+                numeroNotaFiscalField.setText("");
+            }
+
+        } catch (IOException e) {
+            System.err.println("Erro ao abrir tela de Nota Fiscal: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     // APRESENTA PAINEL DE MATERIAL DE ACORDO COM RADIO BUTTOM
@@ -132,7 +201,7 @@ public class CadastroMaterialController implements Initializable {
         limparTodosForms();
 
         boxTarjaVermelha.setVisible(false);
-        tipoAquisicaoCombo.setValue("Compra");
+        tipoAquisicaoCombo.setValue("Doação");
 
         // Lista de todos os Forms
         List<GridPane> forms = Arrays.asList(formLivro, formRevista, formTG, formEquipamento);
@@ -172,7 +241,8 @@ public class CadastroMaterialController implements Initializable {
         formLivro.setManaged(true);
 
         boxTarjaVermelha.setVisible(true);
-        habilitarCamposNF(true);
+        vboxTipoAquisicao.setVisible(true);
+        vboxTipoAquisicao.setManaged(true);
     }
 
     public void camposRevista() {
@@ -180,30 +250,46 @@ public class CadastroMaterialController implements Initializable {
         formRevista.setManaged(true);
 
         boxTarjaVermelha.setVisible(true);
-        habilitarCamposNF(true);
+        vboxTipoAquisicao.setVisible(true);
+        vboxTipoAquisicao.setManaged(true);
     }
 
     public void camposTG() {
         formTG.setVisible(true);
         formTG.setManaged(true);
 
-        habilitarCamposNF(false);
+        vboxTipoAquisicao.setVisible(false);
+        vboxTipoAquisicao.setManaged(false);
+
+        vboxNotaFiscal.setVisible(false);
+        vboxNotaFiscal.setManaged(false);
+
+        tipoAquisicaoCombo.setValue(null);
+        this.notaFiscalSelecionada = null;
     }
 
     public void camposEquipamento() {
         formEquipamento.setVisible(true);
         formEquipamento.setManaged(true);
 
-        habilitarCamposNF(true);
+        vboxTipoAquisicao.setVisible(true);
+        vboxTipoAquisicao.setManaged(true);
     }
 
     public void habilitarCamposNF (boolean habilitar) {
-        vboxTipoAquisicao.setVisible(habilitar);
-        vboxTipoAquisicao.setManaged(habilitar);
 
-        vboxNotaFiscal.setVisible(habilitar);
-        vboxNotaFiscal.setManaged(habilitar);
-        numeroNotaFiscalField.clear();
+        // Garante que o VBox de NF esteja visível (para o caso de Livro, Revista, Equipamento)
+        vboxNotaFiscal.setVisible(true);
+        vboxNotaFiscal.setManaged(true);
+
+        if (!habilitar) {
+            // Se for Doação ou TG (quando chamado por camposTG), desabilita a interação
+            numeroNotaFiscalField.setDisable(true);
+            numeroNotaFiscalField.clear();
+        } else {
+            // Se for Compra, permite a interação
+            numeroNotaFiscalField.setDisable(false);
+        }
     }
 
     // ---------------------------------------------------------------------
@@ -213,11 +299,10 @@ public class CadastroMaterialController implements Initializable {
 
         RadioButton selectedRb = (RadioButton) materialTypeGroup.getSelectedToggle();
 
-        String aquisicaoComboOpt = tipoAquisicaoCombo.getValue().toString();
+        String aquisicaoStr = tipoAquisicaoCombo.getValue() != null ? tipoAquisicaoCombo.getValue() : "Doação"; // Proteção null
 
-        TipoAquisicao tipoAquisicao = aquisicaoComboOpt.equals("Compra") ?
-                        TipoAquisicao.COMPRA :
-                        TipoAquisicao.DOACAO;
+        TipoAquisicao tipoAquisicao = aquisicaoStr.equals("Compra") ? TipoAquisicao.COMPRA : TipoAquisicao.DOACAO;
+
 
         try {
 
@@ -257,7 +342,15 @@ public class CadastroMaterialController implements Initializable {
         novoLivro.setTipoMaterial(TipoMaterial.LIVRO);
         novoLivro.setTipoAquisicao(tipoAquisicao);
         novoLivro.setStatusMaterial(StatusMaterial.DISPONIVEL);
-        novoLivro.setNotaFiscal(null); // Sem NF por enquanto
+
+
+        // VINCULAR NOTA FISCAL
+        if (tipoAquisicao == TipoAquisicao.COMPRA) {
+            if (this.notaFiscalSelecionada == null) throw new IllegalArgumentException("Nota Fiscal Obrigatória!");
+            novoLivro.setNotaFiscal(this.notaFiscalSelecionada);
+        } else {
+            novoLivro.setNotaFiscal(null);
+        }
 
         // Dados Específicos Livro
         novoLivro.setCodigo(codigoField.getText());
@@ -294,7 +387,14 @@ public class CadastroMaterialController implements Initializable {
         novaRevista.setTipoMaterial(TipoMaterial.REVISTA);
         novaRevista.setTipoAquisicao(tipoAquisicao);
         novaRevista.setStatusMaterial(StatusMaterial.DISPONIVEL);
-        novaRevista.setNotaFiscal(null);
+
+        // VINCULAR NOTA FISCAL
+        if (tipoAquisicao == TipoAquisicao.COMPRA) {
+            if (this.notaFiscalSelecionada == null) throw new IllegalArgumentException("Nota Fiscal Obrigatória!");
+            novaRevista.setNotaFiscal(this.notaFiscalSelecionada);
+        } else {
+            novaRevista.setNotaFiscal(null);
+        }
 
         // Dados Específicos Revista
         novaRevista.setCodigo(codigoRevistaField.getText());
@@ -374,7 +474,14 @@ public class CadastroMaterialController implements Initializable {
         novoEquipamento.setTipoMaterial(TipoMaterial.EQUIPAMENTO);
         novoEquipamento.setTipoAquisicao(tipoAquisicao);
         novoEquipamento.setStatusMaterial(StatusMaterial.DISPONIVEL);
-        novoEquipamento.setNotaFiscal(null); // (A lógica para criar NotaFiscal deve ser implementada separadamente)
+
+        // VINCULAR NOTA FISCAL
+        if (tipoAquisicao == TipoAquisicao.COMPRA) {
+            if (this.notaFiscalSelecionada == null) throw new IllegalArgumentException("Nota Fiscal Obrigatória!");
+            novoEquipamento.setNotaFiscal(this.notaFiscalSelecionada);
+        } else {
+            novoEquipamento.setNotaFiscal(null);
+        }
 
         // Dados Específicos Equipamento
         novoEquipamento.setNome(nomeEquipamentoField.getText());
@@ -394,7 +501,7 @@ public class CadastroMaterialController implements Initializable {
     private void limparTodosForms() {
 
         numeroNotaFiscalField.clear();
-        tipoAquisicaoCombo.getSelectionModel().clearSelection();
+        tipoAquisicaoCombo.setValue("Doação");
 
 
         // LIVRO

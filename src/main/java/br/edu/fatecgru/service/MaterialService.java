@@ -1,7 +1,8 @@
 package br.edu.fatecgru.service;
 
 import br.edu.fatecgru.model.Entity.*;
-import br.edu.fatecgru.repository.MaterialRepository;
+import br.edu.fatecgru.model.Enum.TipoAquisicao;
+import br.edu.fatecgru.repository.MaterialRepository;;
 
 import java.util.List;
 
@@ -14,6 +15,11 @@ public class MaterialService {
 
     // Unifica o cadastro de qualquer tipo de Material
     public boolean cadastrarMaterial(Material material) {
+
+        // --- REGRA DE NEGÓCIO: Compra exige Nota Fiscal ---
+        if (material.getTipoAquisicao() == TipoAquisicao.COMPRA && material.getNotaFiscal() == null) {
+            throw new IllegalArgumentException("Erro de Negócio: Materiais comprados exigem vínculo com Nota Fiscal.");
+        }
 
         return repository.cadastrarMaterial(material);
     }

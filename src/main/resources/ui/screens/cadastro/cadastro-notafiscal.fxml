@@ -4,11 +4,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.text.Text?>
-<VBox alignment="TOP_CENTER" spacing="20.0" prefHeight="600.0" prefWidth="580.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+<VBox alignment="TOP_CENTER" spacing="20.0" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="br.edu.fatecgru.controller.cadastro.CadastroNotaFiscalController">
 
     <padding>
-        <Insets bottom="30.0" left="300.0" right="300.0" top="100.0" />
+        <Insets bottom="30.0" left="210.0" right="210.0" top="100.0" />
     </padding>
 
     <Label text="Cadastro de Nota Fiscal" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;">
@@ -43,8 +43,9 @@
         </VBox>
 
     </VBox>
-    <HBox alignment="BOTTOM_RIGHT" VBox.vgrow="ALWAYS">
+    <HBox alignment="BOTTOM_RIGHT" VBox.vgrow="ALWAYS" spacing="10">
         <Button text="+ Cadastrar" onAction="#onCadastrarClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;">
         </Button>
+        <Button text="Voltar" onAction="#fecharJanela" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;"/>
     </HBox>
 </VBox>

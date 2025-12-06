@@ -16,6 +16,8 @@ import java.time.format.DateTimeParseException;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextFormatter;
+import javafx.stage.Stage;
+import lombok.Getter;
 
 public class CadastroNotaFiscalController implements Initializable {
 
@@ -27,6 +29,12 @@ public class CadastroNotaFiscalController implements Initializable {
 
     private final NotaFiscalService notaFiscalService = new NotaFiscalService();
 
+
+    // --- Variável para armazenar o objeto criado ---
+    // --- Método Getter para o Controller Pai recuperar a NF ---
+    @Getter
+    private NotaFiscal notaFiscalSalva;
+
     // Define o formato de data esperado (Brasileiro: DD/MM/AAAA)
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -34,101 +42,84 @@ public class CadastroNotaFiscalController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Inicializações da tela, se necessário.
         formatarCamposNumericos();
+
+        // --- RESETAR O ESTADO DE EDIÇÃO NA INICIALIZAÇÃO ---
+        dataAquisicaoField.setDisable(false);
+        valorField.setEditable(true);
+        descricaoArea.setEditable(true);
+
+        codigoField.textProperty().addListener((observable, oldValue, newValue) -> {
+            // Dispara a lógica de busca/validação a cada mudança de texto
+            handleCodigoChange(newValue);
+        });
     }
 
 
-    /**
-     * Manipula o evento de clique do botão "+ Cadastrar".
-     */
     @FXML
     private void onCadastrarClick(ActionEvent event) {
-        // 1. Coletar os dados básicos (já fazemos isso dentro do cadastrarNotaFiscal)
 
-        // 2. Tenta processar o cadastro
         try {
-            if (cadastrarNotaFiscal()) {
-                System.out.println("✅ SUCESSO: Nota Fiscal cadastrada.");
-                limparCampos(); // Limpa SÓ se o cadastro foi bem-sucedido
-            } else {
-                // Esse caminho é pego se o Repository retornar false (ex: falha de restrição)
-                System.err.println("❌ FALHA: O serviço de cadastro falhou (Erro de BD ou Restrição).");
+            if (this.notaFiscalSalva != null) {
+                // Se já temos uma NF (existente ou recém-criada pelo listener), apenas feche.
+                fecharJanela();
+                return;
             }
+
+            // Se chegamos aqui, o código foi digitado, mas a NF não foi encontrada,
+            // então precisamos que o Service tente CADASTRAR.
+            NotaFiscal nfCandidata = criarObjetoCandidato();
+
+            // Vamos usar a lógica de busca/cadastro do Service como fallback
+            NotaFiscal nfResultado = notaFiscalService.buscarOuCadastrar(nfCandidata);
+
+            if (nfResultado != null) {
+                this.notaFiscalSalva = nfResultado;
+                fecharJanela(); // Fecha após o cadastro bem-sucedido
+            } else {
+                System.err.println("❌ FALHA: Não foi possível cadastrar a Nota Fiscal.");
+            }
+
         } catch (IllegalArgumentException ex) {
-            // Captura erros de validação (formato de data ou valor)
+            // Captura as exceções de validação lançadas pelo Service
             System.err.println("❌ Erro de Validação: " + ex.getMessage());
-            // Aqui você deve mostrar um alerta ou pop-up para o usuário!
+            // Mostrar alerta de erro com a mensagem de ex.getMessage()
         } catch (Exception e) {
-            System.err.println("❌ Erro inesperado durante o cadastro: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    /**
-     * Prepara e envia o objeto NotaFiscal para o serviço de persistência.
-     * @return true se o cadastro foi bem-sucedido, false caso contrário (erro no Repository).
-     * @throws IllegalArgumentException se houver erro de formatação de dados.
-     */
-    private boolean cadastrarNotaFiscal() throws IllegalArgumentException {
-        System.out.println("--- Iniciando Cadastro de NOTA FISCAL ---");
 
-        // Validação inicial
-        if (codigoField.getText().isEmpty() || dataAquisicaoField.getValue() == null || valorField.getText().isEmpty()) {
-            throw new IllegalArgumentException("Todos os campos obrigatórios (Código, Data e Valor) devem ser preenchidos.");
+    private NotaFiscal criarObjetoCandidato() {
+        if (codigoField.getText().isEmpty()) {
+            // Deixamos o service validar isso, mas é bom ter uma pré-validação mínima aqui
+            throw new IllegalArgumentException("O código da Nota Fiscal não pode ser vazio.");
         }
 
-        NotaFiscal novaNotaFiscal = new NotaFiscal();
+        NotaFiscal nf = new NotaFiscal();
+        nf.setCodigo(codigoField.getText());
 
-        // 1. Validar se a data foi selecionada (o DatePicker pode ser null)
-        LocalDate dataAquisicao = dataAquisicaoField.getValue();
-        if (dataAquisicao == null) {
-            throw new IllegalArgumentException("A Data de Aquisição deve ser selecionada.");
-        }
+        // Coletamos todos os campos, mesmo que só o código seja usado na busca
+        nf.setDescricao(descricaoArea.getText());
+        nf.setDataAquisicao(dataAquisicaoField.getValue());
 
-        novaNotaFiscal.setCodigo(codigoField.getText());
-        novaNotaFiscal.setDescricao(descricaoArea.getText());
-        novaNotaFiscal.setDataAquisicao(dataAquisicao);
-
-        // Processamento do Valor
-        processarValor(novaNotaFiscal);
-
-        // Persistência
-        return notaFiscalService.cadastrarNotaFiscal(novaNotaFiscal);
-    }
-
-    /**
-     * Tenta converter e setar o valor.
-     * @throws IllegalArgumentException se o valor não for numérico.
-     */
-    private void processarValor(NotaFiscal notaFiscal) throws IllegalArgumentException {
-        String valorString = valorField.getText();
+        String valorStr = valorField.getText().replace(',', '.');
         try {
-            // Permite a entrada com vírgula e a converte para o formato do BigDecimal (ponto)
-            String valorFormatado = valorString.replace(',', '.');
-
-            // Conversão direta da String formatada para garantir precisão
-            BigDecimal valor = new BigDecimal(valorFormatado);
-
-            // Validação de valor (opcional)
-            if (valor.compareTo(BigDecimal.ZERO) < 0) {
-                throw new IllegalArgumentException("O valor não pode ser negativo.");
-            }
-
-            notaFiscal.setValor(valor);
+            nf.setValor(new BigDecimal(valorStr));
         } catch (NumberFormatException e) {
-            // Lança a exceção de validação
-            throw new IllegalArgumentException("O Valor inserido não é um número válido. Use ponto ou vírgula como separador decimal.", e);
+            // A formatação de campo deve evitar isso, mas como fallback:
+            nf.setValor(null);
         }
+
+        return nf;
     }
 
-    // === Métodos Auxiliares ===
 
-    private void limparCampos() {
-        codigoField.clear();
-        descricaoArea.clear();
-        dataAquisicaoField.setValue(null);
-        valorField.clear();
+    @FXML
+    private void fecharJanela() {
+        // Pega a referência do palco (janela) através de um componente qualquer e fecha
+        Stage stage = (Stage) codigoField.getScene().getWindow();
+        stage.close();
     }
 
     private void formatarCamposNumericos() {
@@ -140,5 +131,78 @@ public class CadastroNotaFiscalController implements Initializable {
                 return null; // Rejeita a mudança
             }
         }));
+    }
+
+    private void preencherCampos(NotaFiscal nf) {
+        if (nf != null) {
+            // Formata a data para o DatePicker
+            dataAquisicaoField.setValue(nf.getDataAquisicao());
+
+            // Converte BigDecimal para String e formata (se necessário, usando Locale/Formatters)
+            if (nf.getValor() != null) {
+                valorField.setText(nf.getValor().toPlainString().replace('.', ','));
+            } else {
+                valorField.clear();
+            }
+
+            descricaoArea.setText(nf.getDescricao());
+            codigoField.setText(nf.getCodigo());
+
+            // OPCIONAL: Desabilitar a edição desses campos para indicar que são dados do banco.
+            dataAquisicaoField.setDisable(true);
+            valorField.setEditable(false);
+            descricaoArea.setEditable(false);
+        }
+    }
+
+    private void handleCodigoChange(String novoCodigo) {
+        // Limpa espaços em branco
+        String codigoLimpo = novoCodigo != null ? novoCodigo.trim() : "";
+
+        // 1. LIMPEZA E ESTADO INICIAL (Código vazio ou muito curto)
+        if (codigoLimpo.isEmpty() || codigoLimpo.length() < 3) {
+            limparCamposNFSecundarios();
+            destravarCamposNFSecundarios();
+            this.notaFiscalSalva = null;
+            return;
+        }
+
+        // 2. BUSCA NO SERVICE
+        // Usamos o método buscarPorCodigo, que retorna a NF ou null.
+        NotaFiscal nfEncontrada = notaFiscalService.buscarNotaFiscalPorCodigo(codigoLimpo);
+
+        if (nfEncontrada != null) {
+            // 3. NF ENCONTRADA: PREENCHE E TRAVA
+            preencherCampos(nfEncontrada);
+            travarCamposNFSecundarios(); // Novo método para travar
+            this.notaFiscalSalva = nfEncontrada; // Já define a NF a ser usada
+            System.out.println("✅ NF " + nfEncontrada.getCodigo() + " encontrada e preenchida.");
+        } else {
+            // 4. NF NÃO ENCONTRADA: DESTAVA E PERMITE NOVO CADASTRO
+            limparCamposNFSecundarios();
+            destravarCamposNFSecundarios();
+            this.notaFiscalSalva = null; // Garante que a NF é nula para um novo cadastro
+        }
+    }
+
+    private void travarCamposNFSecundarios() {
+        dataAquisicaoField.setDisable(true);
+        valorField.setEditable(false);
+        descricaoArea.setEditable(false);
+        // Se você tiver um botão Cadastrar, pode desabilitá-lo para evitar clique duplo:
+        // cadastrarButton.setDisable(true);
+    }
+
+    private void destravarCamposNFSecundarios() {
+        dataAquisicaoField.setDisable(false);
+        valorField.setEditable(true);
+        descricaoArea.setEditable(true);
+        // cadastrarButton.setDisable(false);
+    }
+
+    private void limparCamposNFSecundarios() {
+        dataAquisicaoField.setValue(null);
+        valorField.clear();
+        descricaoArea.clear();
     }
 }
