@@ -48,4 +48,7 @@ public class Revista extends Material {
 
     @Column(name = "palavras-chave")
     private String palavrasChave;
+
+    @Column(name = "total_exemplares", nullable = false)
+    private int totalExemplares;
 }
