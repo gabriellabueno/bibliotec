@@ -4,6 +4,8 @@ package br.edu.fatecgru.controller.cadastro;
 import br.edu.fatecgru.model.Entity.Usuario;
 import br.edu.fatecgru.service.UsuarioService;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.RadioButton;
@@ -16,17 +18,10 @@ public class CadastroUsuarioController implements Initializable {
 
     // === Campos FXML (Ligar com fx:id no FXML) ===
 
-    @FXML
-    private ToggleGroup userTypeGroup; // Para agrupar Aluno e Docente
-
-    @FXML
-    private TextField idField;
-
-    @FXML
-    private TextField nomeField;
-
-    @FXML
-    private TextField emailField;
+    @FXML private ToggleGroup userTypeGroup; // Para agrupar Aluno e Docente
+    @FXML private TextField idField;
+    @FXML private TextField nomeField;
+    @FXML private TextField emailField;
 
 
     // --- Dependências ---
@@ -41,11 +36,6 @@ public class CadastroUsuarioController implements Initializable {
 
 
     // === Método de Ação (Ligar com onAction="#onCadastrarClick" no FXML) ===
-
-    /**
-     * Manipula o evento de clique do botão "+ Cadastrar" para registrar o usuário.
-     * @param event O evento de ação que disparou o método.
-     */
     @FXML
     private void onCadastrarClick(ActionEvent event) {
         // 1. Coletar o tipo de usuário selecionado
@@ -53,6 +43,10 @@ public class CadastroUsuarioController implements Initializable {
         RadioButton selectedRadioButton = (RadioButton) userTypeGroup.getSelectedToggle();
         if (selectedRadioButton != null) {
             tipoUsuario = selectedRadioButton.getText();
+        } else {
+            // Validação de Apresentação (UI): Garante que o RadioButton foi marcado
+            mostrarAlerta(AlertType.ERROR,"Erro", "Selecione o tipo de usuário.");
+            return;
         }
 
         // 2. Coletar os dados dos campos
@@ -61,9 +55,8 @@ public class CadastroUsuarioController implements Initializable {
         String email = emailField.getText();
 
         // 3. Realizar validações
-        if (idUsuario.isEmpty() || nome.isEmpty() || email.isEmpty() || tipoUsuario.isEmpty()) {
-            System.out.println("❌ ERRO: Preencha todos os campos e selecione o tipo de usuário.");
-            // Exibir mensagem de erro na interface
+        if (idUsuario == null || nome == null || email == null) {
+            mostrarAlerta(AlertType.ERROR,"Erro", "Dados de entrada inválidos.");
             return;
         }
 
@@ -82,41 +75,47 @@ public class CadastroUsuarioController implements Initializable {
             // Novos usuários sempre começam sem penalidade
             novoUsuario.setPenalidade(false);
 
-            // 5. Processar o cadastro (salvar) - CHAMADA REAL AO SERVIÇO
+            // 5. CHAMADA REAL AO SERVICE
+            // A validação de campos obrigatórios ocorre dentro do Service.
+            // Se o Service for bem-sucedido, ele retorna true.
             if (usuarioService.cadastrarUsuario(novoUsuario)) {
-                System.out.println("✅ SUCESSO: Usuário (" + tipoUsuario + ") cadastrado.");
-                clearFields(); // <-- ADIÇÃO: Limpa os campos após o sucesso
+
+                // Se o Service retornar true, o cadastro foi bem-sucedido.
+                mostrarAlerta(AlertType.INFORMATION, "Sucesso", "✅ Usuário (" + tipoUsuario + ") cadastrado com sucesso!");
+                limparCampos(); // Limpa os campos após o sucesso
+
             } else {
-                System.err.println("❌ FALHA: Não foi possível cadastrar o usuário. (Verifique e-mail duplicado ou outros erros de restrição).");
+                // Se o Service retornar 'false' (erro de persistência genérico)
+                mostrarAlerta(AlertType.ERROR, "Falha no Cadastro", "Não foi possível cadastrar o usuário. Retorno inesperado do serviço.");
             }
 
+        } catch (IllegalArgumentException e) {
+            // Captura erros de validação (lançados pelo Service)
+            mostrarAlerta(AlertType.ERROR, "Erro de Validação", "❌ " + e.getMessage());
         } catch (Exception e) {
-            System.err.println("❌ Erro inesperado durante o cadastro do usuário: " + e.getMessage());
+            // Captura outros erros (ex: falha de conexão com o banco)
+            mostrarAlerta(AlertType.ERROR, "Erro Inesperado", "❌ Erro durante o cadastro: " + e.getMessage());
             e.printStackTrace();
         }
-
-        //        // 4. Processar o cadastro (salvar)
-//        System.out.println("--- Dados do Usuário ---");
-//        System.out.println("Tipo: " + tipoUsuario);
-//        System.out.println("ID: " + idUsuario);
-//        System.out.println("Nome: " + nome);
-//        System.out.println("E-mail: " + email);
-//        System.out.println("Usuário registrado com sucesso (simulado).");
-
-        // 5. (Opcional) Implementar a lógica de registro real aqui.
-
     }
 
-    /**
-     * Limpa os campos após o cadastro.
-     */
-    private void clearFields() {
+    //Limpa os campos após o cadastro.
+    private void limparCampos() {
         idField.clear();
         nomeField.clear();
         emailField.clear();
         if (userTypeGroup.getSelectedToggle() != null) {
             userTypeGroup.getSelectedToggle().setSelected(false);
         }
+    }
+
+    //Método auxiliar para exibir Alertas padronizados.
+    private void mostrarAlerta(AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
 

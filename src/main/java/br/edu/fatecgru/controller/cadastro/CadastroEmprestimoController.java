@@ -21,14 +21,11 @@ public class CadastroEmprestimoController implements Initializable {
 
     // === Campos FXML (Nomes ajustados para coincidir com o FXML: 'usuario' e 'material') ===
 
-    @FXML
-    private TextField usuario; // Campo de entrada para o ID do usuário
+    @FXML private TextField usuario; // Campo de entrada para o ID do usuário
 
-    @FXML
-    private TextField material; // Campo de entrada para o ID do material
+    @FXML private TextField material; // Campo de entrada para o ID do material
 
-    @FXML
-    private TextField dataEmprestimoField; // Apenas informativo, preenchido automaticamente
+    @FXML private TextField dataEmprestimoField; // Apenas informativo, preenchido automaticamente
 
 
     // === Inicialização ===
@@ -43,9 +40,6 @@ public class CadastroEmprestimoController implements Initializable {
 
     // === Método de Ação ===
 
-    /**
-     * Manipula o evento de clique do botão "+ Cadastrar" para registrar o empréstimo.
-     */
     @FXML
     private void onCadastrarClick(ActionEvent event) {
         // 1. Coletar os dados dos campos (IDs)

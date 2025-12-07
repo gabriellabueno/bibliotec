@@ -16,12 +16,112 @@ public class MaterialService {
     // Unifica o cadastro de qualquer tipo de Material
     public boolean cadastrarMaterial(Material material) {
 
-        // --- REGRA DE NEGÓCIO: Compra exige Nota Fiscal ---
-        if (material.getTipoAquisicao() == TipoAquisicao.COMPRA && material.getNotaFiscal() == null) {
-            throw new IllegalArgumentException("Erro de Negócio: Materiais comprados exigem vínculo com Nota Fiscal.");
+        validarMaterial(material);
+
+        // Inicializar quantidadeExemplares para Livro e Revista
+        if (material instanceof Livro livro) {
+            // Ao cadastrar o material base, ele representa o primeiro exemplar físico.
+            livro.setTotalExemplares(1);
+        } else if (material instanceof Revista revista) {
+            revista.setTotalExemplares(1);
+
         }
 
         return repository.cadastrarMaterial(material);
+    }
+
+    // --- NOVO: MÉTODO PRIVADO DE VALIDAÇÃO DE REGRAS DE NEGÓCIO ---
+    private void validarMaterial(Material material) {
+
+        // --- REGRAS ESPECÍFICAS DE LIVRO ---
+        if (material instanceof Livro livro) {
+            if (livro.getCodigo() == null || livro.getCodigo().trim().isEmpty()) {
+                throw new IllegalArgumentException("LIVRO: O Código é obrigatório.");
+            }
+            if (livro.getIsbn() == null || livro.getIsbn().trim().isEmpty()) {
+                throw new IllegalArgumentException("LIVRO: O ISBN é obrigatório.");
+            }
+            if (livro.getTitulo() == null || livro.getTitulo().trim().isEmpty()) {
+                throw new IllegalArgumentException("LIVRO: O Título é obrigatório.");
+            }
+            if (livro.getAutor() == null || livro.getAutor().trim().isEmpty()) {
+                throw new IllegalArgumentException("LIVRO: O Autor é obrigatório.");
+            }
+            if (livro.getEditora() == null || livro.getEditora().trim().isEmpty()) {
+                throw new IllegalArgumentException("LIVRO: A Editora é obrigatória.");
+            }
+            if (livro.getGenero() == null || livro.getGenero().trim().isEmpty()) {
+                throw new IllegalArgumentException("LIVRO: O Gênero é obrigatório.");
+            }
+            if (livro.getAnoPublicacao() == null || livro.getAnoPublicacao().trim().isEmpty()) {
+                throw new IllegalArgumentException("LIVRO: O Ano de Publicação é obrigatório.");
+            }
+            if (livro.getPalavrasChave() == null || livro.getPalavrasChave().trim().isEmpty()) {
+                throw new IllegalArgumentException("LIVRO: As Palavras-chave são obrigatórias.");
+            }
+
+            // --- REGRAS ESPECÍFICAS DE REVISTA ---
+        } else if (material instanceof Revista revista) {
+            if (revista.getCodigo() == null || revista.getCodigo().trim().isEmpty()) {
+                throw new IllegalArgumentException("REVISTA: O Código é obrigatório.");
+            }
+            if (revista.getTitulo() == null || revista.getTitulo().trim().isEmpty()) {
+                throw new IllegalArgumentException("REVISTA: O Título é obrigatório.");
+            }
+            if (revista.getVolume() == null || revista.getVolume().trim().isEmpty()) {
+                throw new IllegalArgumentException("REVISTA: O Volume é obrigatório.");
+            }
+            if (revista.getEditora() == null || revista.getEditora().trim().isEmpty()) {
+                throw new IllegalArgumentException("REVISTA: A Editora é obrigatória.");
+            }
+            if (revista.getGenero() == null || revista.getGenero().trim().isEmpty()) {
+                throw new IllegalArgumentException("REVISTA: O Gênero é obrigatório.");
+            }
+            if (revista.getAnoPublicacao() == null || revista.getAnoPublicacao().trim().isEmpty()) {
+                throw new IllegalArgumentException("REVISTA: O Ano de Publicação é obrigatório.");
+            }
+            if (revista.getPalavrasChave() == null || revista.getPalavrasChave().trim().isEmpty()) {
+                throw new IllegalArgumentException("REVISTA: As Palavras-chave são obrigatórias.");
+            }
+
+            // --- REGRAS ESPECÍFICAS DE TG ---
+        } else if (material instanceof TG tg) {
+            if (tg.getTitulo() == null || tg.getTitulo().trim().isEmpty()) {
+                throw new IllegalArgumentException("TG: O Título é obrigatório.");
+            }
+            if (tg.getSubtitulo() == null || tg.getSubtitulo().trim().isEmpty()) {
+                throw new IllegalArgumentException("TG: O Subtítulo é obrigatório.");
+            }
+            if (tg.getAssunto() == null || tg.getAssunto().trim().isEmpty()) {
+                throw new IllegalArgumentException("TG: O Assunto é obrigatório.");
+            }
+            if (tg.getAutor1() == null || tg.getAutor1().trim().isEmpty()) {
+                throw new IllegalArgumentException("TG: O Autor 1 é obrigatório.");
+            }
+            if (tg.getRa1() == null || tg.getRa1().trim().isEmpty()) {
+                throw new IllegalArgumentException("TG: O RA 1 é obrigatório.");
+            }
+            if (tg.getAnoPublicacao() == null || tg.getAnoPublicacao().trim().isEmpty()) {
+                throw new IllegalArgumentException("TG: O Ano de Publicação é obrigatório.");
+            }
+            if (tg.getPalavrasChave() == null || tg.getPalavrasChave().trim().isEmpty()) {
+                throw new IllegalArgumentException("TG: As Palavras-chave são obrigatórias.");
+            }
+
+            // --- REGRAS ESPECÍFICAS DE EQUIPAMENTO ---
+        } else if (material instanceof Equipamento equipamento) {
+            if (equipamento.getNome() == null || equipamento.getNome().trim().isEmpty()) {
+                throw new IllegalArgumentException("EQUIPAMENTO: O Nome é obrigatório.");
+            }
+            if (equipamento.getDescricao() == null || equipamento.getDescricao().trim().isEmpty()) {
+                throw new IllegalArgumentException("EQUIPAMENTO: A Descrição é obrigatória.");
+            }
+        }
+
+        // --- REGRA DE NEGÓCIO: Compra exige Nota Fiscal ---
+        if (material.getTipoAquisicao() == TipoAquisicao.COMPRA && material.getNotaFiscal() == null) {
+            throw new IllegalArgumentException("Materiais comprados exigem vínculo com Nota Fiscal.");
+        }
     }
 
     // Os métodos de busca ficam no Service, mas chamando o Repository.

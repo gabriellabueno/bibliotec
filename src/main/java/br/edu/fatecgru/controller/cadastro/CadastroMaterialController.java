@@ -8,6 +8,7 @@ import br.edu.fatecgru.model.Enum.StatusMaterial;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.event.ActionEvent;
@@ -25,6 +26,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 public class CadastroMaterialController implements Initializable {
 
@@ -111,7 +113,8 @@ public class CadastroMaterialController implements Initializable {
 
         // Bloqueia edição manual da NF, pois virá do Modal
         numeroNotaFiscalField.setEditable(false);
-        numeroNotaFiscalField.setPromptText("Selecione \"Compra\" como Tipo de Aquisição para cadastrar");
+        numeroNotaFiscalField.setDisable(true);
+        numeroNotaFiscalField.setPromptText("Selecione \"Compra\" para cadastrar");
 
 
         // LISTENERS
@@ -148,6 +151,41 @@ public class CadastroMaterialController implements Initializable {
                 abrirModalNotaFiscal();
             }
         });
+
+        // --- APLICAÇÃO DE MÁSCARAS E RESTRIÇÕES NUMÉRICAS ---
+
+        // === LIVRO ===
+
+        // MÁSCARA & NUMÉRICO: Ano de Publicação (Apenas números, 4 dígitos)
+        aplicarRestricaoNumerica(anoPublicacaoLivroField);
+        aplicarMascaraTamanhoFixo(anoPublicacaoLivroField, 4);
+
+        // MÁSCARA: ISBN (Tamanho fixo, ex: 13 dígitos)
+        // Vamos supor 13 dígitos + 4 traços = 17 chars para ser seguro.
+        aplicarMascaraTamanhoFixo(isbnField, 17);
+
+        // NUMÉRICO: Edição
+        aplicarRestricaoNumerica(edicaoField);
+
+
+        // === REVISTA ===
+
+        // MÁSCARA & NUMÉRICO: Ano de Publicação (Apenas números, 4 dígitos)
+        aplicarRestricaoNumerica(anoPublicacaoRevistaField);
+        aplicarMascaraTamanhoFixo(anoPublicacaoRevistaField, 4);
+
+        // NUMÉRICO: Volume
+        aplicarRestricaoNumerica(volumeRevistaField);
+
+        // NUMÉRICO: Número
+        aplicarRestricaoNumerica(numeroRevistaField);
+
+
+        // === TG ===
+
+        // NUMÉRICO: Ano de Publicação (Apenas números, 4 dígitos)
+        aplicarRestricaoNumerica(anoPublicacaoTGField);
+        aplicarMascaraTamanhoFixo(anoPublicacaoTGField, 4);
 
 
         apresentarForms(null); // Configurar visibilidade inicial
@@ -321,10 +359,16 @@ public class CadastroMaterialController implements Initializable {
                     break;
             }
 
+            // Se o cadastro foi bem-sucedido (sem exceções), exibe sucesso geral
+            mostrarAlerta(AlertType.INFORMATION, "Sucesso", "✅ Material cadastrado com sucesso!");
+            limparTodosForms(); // Limpa os campos após o sucesso
+
         } catch (IllegalArgumentException e) {
-            System.err.println("❌ Erro de Validação: " + e.getMessage());
+            // Erros de validação (campos obrigatórios, NF, etc.)
+            mostrarAlerta(AlertType.ERROR, "Erro de Validação", "❌ " + e.getMessage());
         } catch (Exception e) {
-            System.err.println("❌ Erro inesperado durante o cadastro.");
+            // Erros de persistência/sistema
+            mostrarAlerta(AlertType.ERROR, "Erro Inesperado", "❌ Erro durante o cadastro: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -332,7 +376,6 @@ public class CadastroMaterialController implements Initializable {
 
     // CADASTRO
     private void cadastrarLivro(TipoAquisicao tipoAquisicao) throws Exception {
-        MaterialService materialService = new MaterialService();
 
         System.out.println("--- Iniciando Cadastro de LIVRO ---");
 
@@ -346,7 +389,6 @@ public class CadastroMaterialController implements Initializable {
 
         // VINCULAR NOTA FISCAL
         if (tipoAquisicao == TipoAquisicao.COMPRA) {
-            if (this.notaFiscalSelecionada == null) throw new IllegalArgumentException("Nota Fiscal Obrigatória!");
             novoLivro.setNotaFiscal(this.notaFiscalSelecionada);
         } else {
             novoLivro.setNotaFiscal(null);
@@ -370,10 +412,12 @@ public class CadastroMaterialController implements Initializable {
 
         // Persistência
         if (materialService.cadastrarMaterial(novoLivro)) {
-            System.out.println("✅ SUCESSO: Livro cadastrado.");
+            // Se o método retorna true, simplesmente finaliza.
+            // O sucesso será notificado pelo onCadastrarClick.
+            return;
         } else {
-            System.err.println("❌ FALHA: Não foi possível cadastrar o livro.");
-            throw new Exception("Falha no serviço de cadastro.");
+            // Se o Service retornar 'false' (erro de persistência genérico que não lançou exceção)
+            throw new Exception("Falha no serviço de cadastro de livro.");
         }
     }
 
@@ -390,7 +434,6 @@ public class CadastroMaterialController implements Initializable {
 
         // VINCULAR NOTA FISCAL
         if (tipoAquisicao == TipoAquisicao.COMPRA) {
-            if (this.notaFiscalSelecionada == null) throw new IllegalArgumentException("Nota Fiscal Obrigatória!");
             novaRevista.setNotaFiscal(this.notaFiscalSelecionada);
         } else {
             novaRevista.setNotaFiscal(null);
@@ -415,10 +458,12 @@ public class CadastroMaterialController implements Initializable {
 
         // Persistência
         if (materialService.cadastrarMaterial(novaRevista)) {
-            System.out.println("✅ SUCESSO: Revista cadastrada.");
+            // Se o método retorna true, simplesmente finaliza.
+            // O sucesso será notificado pelo onCadastrarClick.
+            return;
         } else {
-            System.err.println("❌ FALHA: Não foi possível cadastrar a revista.");
-            throw new Exception("Falha no serviço de cadastro.");
+            // Se o Service retornar 'false' (erro de persistência genérico que não lançou exceção)
+            throw new Exception("Falha no serviço de cadastro de revista.");
         }
     }
 
@@ -453,22 +498,19 @@ public class CadastroMaterialController implements Initializable {
         novoTG.setPalavrasChave(palavrasChaveTGArea.getText());
 
         // Persistência
-        if (materialService.cadastrarMaterial(novoTG)) { // Assume que você implementou cadastrarTG no MaterialService
-            System.out.println("✅ SUCESSO: TG cadastrado.");
+        if (materialService.cadastrarMaterial(novoTG)) {
+            // Se o método retorna true, simplesmente finaliza.
+            // O sucesso será notificado pelo onCadastrarClick.
+            return;
         } else {
-            System.err.println("❌ FALHA: Não foi possível cadastrar o TG.");
-            throw new Exception("Falha no serviço de cadastro.");
+            // Se o Service retornar 'false' (erro de persistência genérico que não lançou exceção)
+            throw new Exception("Falha no serviço de cadastro de TG.");
         }
     }
     private void cadastrarEquipamento(TipoAquisicao tipoAquisicao) throws Exception {
         System.out.println("--- Iniciando Cadastro de EQUIPAMENTO ---");
 
-        if (tipoAquisicao == null) {
-            // Equipamento exige Tipo de Aquisição, ao contrário de TG.
-            throw new IllegalArgumentException("O Tipo de Aquisição é obrigatório para Equipamento.");
-        }
-
-        br.edu.fatecgru.model.Entity.Equipamento novoEquipamento = new br.edu.fatecgru.model.Entity.Equipamento();
+        Equipamento novoEquipamento = new Equipamento();
 
         // Dados Base Material
         novoEquipamento.setTipoMaterial(TipoMaterial.EQUIPAMENTO);
@@ -477,7 +519,6 @@ public class CadastroMaterialController implements Initializable {
 
         // VINCULAR NOTA FISCAL
         if (tipoAquisicao == TipoAquisicao.COMPRA) {
-            if (this.notaFiscalSelecionada == null) throw new IllegalArgumentException("Nota Fiscal Obrigatória!");
             novoEquipamento.setNotaFiscal(this.notaFiscalSelecionada);
         } else {
             novoEquipamento.setNotaFiscal(null);
@@ -489,10 +530,12 @@ public class CadastroMaterialController implements Initializable {
 
         // Persistência
         if (materialService.cadastrarMaterial(novoEquipamento)) {
-            System.out.println("✅ SUCESSO: Equipamento cadastrado.");
+            // Se o método retorna true, simplesmente finaliza.
+            // O sucesso será notificado pelo onCadastrarClick.
+            return;
         } else {
-            System.err.println("❌ FALHA: Não foi possível cadastrar o equipamento.");
-            throw new Exception("Falha no serviço de cadastro.");
+            // Se o Service retornar 'false' (erro de persistência genérico que não lançou exceção)
+            throw new Exception("Falha no serviço de cadastro de equipamento.");
         }
     }
 
@@ -547,5 +590,33 @@ public class CadastroMaterialController implements Initializable {
         descricaoEquipamentoArea.clear();
     }
 
+    private void aplicarRestricaoNumerica(TextField textField) {
+        // Cria um UnaryOperator que aceita apenas dígitos (0-9)
+        UnaryOperator<TextFormatter.Change> integerFilter = change -> {
+            String newText = change.getControlNewText();
+            if (newText.matches("\\d*")) {
+                return change;
+            }
+            return null; // Não aceita a mudança
+        };
+        textField.setTextFormatter(new TextFormatter<>(integerFilter));
+    }
+
+    private void aplicarMascaraTamanhoFixo(TextField textField, int maxLength) {
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && newValue.length() > maxLength) {
+                textField.setText(oldValue);
+            }
+        });
+    }
+
+    //Método auxiliar para exibir Alertas padronizados.
+    private void mostrarAlerta(AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 
 }

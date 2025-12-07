@@ -47,6 +47,14 @@ public class EmprestimoService {
      */
     public Emprestimo registrarEmprestimo(Long idUsuario, Long idMaterial) throws IllegalArgumentException, IllegalStateException, Exception {
 
+        // --- VALIDAÇÃO DE OBRIGATÓRIOS (IDs de Entrada) ---
+        if (idUsuario == null) {
+            throw new IllegalArgumentException("EMPRÉSTIMO: O ID do Usuário é obrigatório.");
+        }
+        if (idMaterial == null) {
+            throw new IllegalArgumentException("EMPRÉSTIMO: O ID do Material é obrigatório.");
+        }
+
         // 1. Buscar entidades e validar existência (CHAMA REPOSITORY)
         Usuario usuario = usuarioRepository.buscarUsuarioPorId(idUsuario);
         Material material = materialRepository.buscarMaterialPorId(idMaterial);
