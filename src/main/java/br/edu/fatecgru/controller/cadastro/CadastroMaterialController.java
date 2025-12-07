@@ -160,9 +160,8 @@ public class CadastroMaterialController implements Initializable {
         aplicarRestricaoNumerica(anoPublicacaoLivroField);
         aplicarMascaraTamanhoFixo(anoPublicacaoLivroField, 4);
 
-        // MÁSCARA: ISBN (Tamanho fixo, ex: 13 dígitos)
-        // Vamos supor 13 dígitos + 4 traços = 17 chars para ser seguro.
-        aplicarMascaraTamanhoFixo(isbnField, 17);
+        // MÁSCARA: ISBN
+        aplicarMascaraISBN(isbnField);
 
         // NUMÉRICO: Edição
         aplicarRestricaoNumerica(edicaoField);
@@ -606,6 +605,47 @@ public class CadastroMaterialController implements Initializable {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null && newValue.length() > maxLength) {
                 textField.setText(oldValue);
+            }
+        });
+    }
+
+    private void aplicarMascaraISBN(TextField textField) {
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            // Se o valor for nulo ou igual ao anterior (para evitar loop), retorna
+            if (newValue == null || newValue.equals(oldValue)) {
+                return;
+            }
+
+            // 1. Remove tudo que não for dígito (limpa a string)
+            String digits = newValue.replaceAll("\\D", "");
+
+            // 2. Limita a 13 dígitos numéricos (padrão ISBN-13)
+            if (digits.length() > 13) {
+                digits = digits.substring(0, 13);
+            }
+
+            // 3. Reconstrói a String aplicando a formatação: 978-85-12345-12-3
+            StringBuilder formatted = new StringBuilder();
+
+            for (int i = 0; i < digits.length(); i++) {
+                char c = digits.charAt(i);
+
+                // Adiciona o caractere atual
+                formatted.append(c);
+
+                // Adiciona os traços nas posições corretas se houver mais números à frente
+                // Padrão adotado: ###-##-#####-##-#
+                if (i == 2 || i == 4 || i == 9 || i == 11) {
+                    if (i < digits.length() - 1) { // Só adiciona o traço se não for o último caractere
+                        formatted.append("-");
+                    }
+                }
+            }
+
+            // 4. Atualiza o campo apenas se o texto formatado for diferente do atual
+            if (!formatted.toString().equals(newValue)) {
+                textField.setText(formatted.toString());
+                textField.positionCaret(formatted.length()); // Mantém o cursor no final
             }
         });
     }
