@@ -1,16 +1,20 @@
 package br.edu.fatecgru.controller.cadastro;
 
 import br.edu.fatecgru.model.Entity.Emprestimo;
+import br.edu.fatecgru.model.Enum.TipoMaterial;
 import br.edu.fatecgru.service.EmprestimoService;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.event.ActionEvent;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ToggleGroup;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -19,12 +23,16 @@ public class CadastroEmprestimoController implements Initializable {
     // === Dependências ===
     private final EmprestimoService emprestimoService = new EmprestimoService();
 
+    // CAMPOS PARA VERIFICAR TIPO DO MATERIAL
+    @FXML private ToggleGroup materialTypeGroup;
+    @FXML private RadioButton rbLivro;
+    @FXML private RadioButton rbRevista;
+    @FXML private RadioButton rbTG;
+    @FXML private RadioButton rbEquipamento;
+
     // === Campos FXML (Nomes ajustados para coincidir com o FXML: 'usuario' e 'material') ===
-
     @FXML private TextField usuario; // Campo de entrada para o ID do usuário
-
     @FXML private TextField material; // Campo de entrada para o ID do material
-
     @FXML private TextField dataEmprestimoField; // Apenas informativo, preenchido automaticamente
 
 
@@ -44,10 +52,31 @@ public class CadastroEmprestimoController implements Initializable {
     private void onCadastrarClick(ActionEvent event) {
         // 1. Coletar os dados dos campos (IDs)
         String usuarioIdStr = usuario.getText();
-        String materialIdStr = material.getText();
+        String materialCodStr = material.getText();
+        TipoMaterial tipoMaterial;
+
+        RadioButton selectedRb = (RadioButton) materialTypeGroup.getSelectedToggle();
+
+        switch (selectedRb.getId()) {
+            case "rbLivro":
+                tipoMaterial = TipoMaterial.LIVRO;
+                break;
+            case "rbRevista":
+                tipoMaterial = TipoMaterial.REVISTA;
+                break;
+            case "rbTG":
+                tipoMaterial = TipoMaterial.TG;
+                break;
+            case "rbEquipamento":
+                tipoMaterial = TipoMaterial.EQUIPAMENTO;
+                break;
+            default:
+                mostrarAlerta(AlertType.ERROR, "Erro de Configuração", "Tipo de material selecionado é inválido.");
+                return;
+        }
 
         if (usuarioIdStr == null || usuarioIdStr.trim().isEmpty() ||
-                materialIdStr == null || materialIdStr.trim().isEmpty()) {
+                materialCodStr == null || materialCodStr.trim().isEmpty()) {
 
             mostrarAlerta(AlertType.ERROR, "Erro de Validação", "Os IDs de Usuário e Material são obrigatórios.");
             return;
@@ -56,10 +85,9 @@ public class CadastroEmprestimoController implements Initializable {
         try {
             // Conversão segura
             Long idUsuario = Long.parseLong(usuarioIdStr.trim());
-            Long idMaterial = Long.parseLong(materialIdStr.trim());
 
             // 2. Registrar o empréstimo através do Service. O service calcula a data de devolução.
-            Emprestimo emprestimoSalvo = emprestimoService.registrarEmprestimo(idUsuario, idMaterial);
+            Emprestimo emprestimoSalvo = emprestimoService.registrarEmprestimo(idUsuario, materialCodStr, tipoMaterial);
 
             if (emprestimoSalvo != null) {
 

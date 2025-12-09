@@ -1,6 +1,7 @@
 package br.edu.fatecgru.repository;
 
 import br.edu.fatecgru.model.Entity.*;
+import br.edu.fatecgru.model.Enum.TipoMaterial;
 import br.edu.fatecgru.util.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -38,12 +39,68 @@ public class MaterialRepository {
         }
     }
 
+    // Estrutura auxiliar para mapeamento
+    private static class EntityMapping {
+        String entityName;
+        String alias;
 
-    /**
-     * Busca um Material por ID.
-     * @param idMaterial O ID do material.
-     * @return O objeto Material ou null se não for encontrado.
-     */
+        public EntityMapping(String entityName, String alias) {
+            this.entityName = entityName;
+            this.alias = alias;
+        }
+    }
+
+    // Mapeamento baseado no Enum TipoMaterial
+    private EntityMapping getEntityMapping(TipoMaterial tipoMaterial) {
+        switch (tipoMaterial) {
+            case LIVRO:
+                return new EntityMapping("Livro", "l");
+            case REVISTA:
+                return new EntityMapping("Revista", "r");
+            case TG: // Assumindo que a classe se chama TG
+                return new EntityMapping("TG", "t");
+            case EQUIPAMENTO: // Assumindo que a classe se chama Equipamento
+                return new EntityMapping("Equipamento", "e");
+            default:
+                throw new IllegalArgumentException("Tipo de material não mapeado para busca: " + tipoMaterial);
+        }
+    }
+
+    public Long buscarIdPorCodigoETipo(String codigo, TipoMaterial tipoMaterial) {
+
+        EntityMapping mapping;
+        try {
+            mapping = getEntityMapping(tipoMaterial);
+        } catch (IllegalArgumentException e) {
+            // Se o enum for inválido, não há como buscar.
+            return null;
+        }
+
+        // 1. Montagem da JPQL Dinâmica:
+        String jpql = "SELECT " + mapping.alias + ".idMaterial FROM " + mapping.entityName + " " + mapping.alias +
+                " WHERE " + mapping.alias + ".codigo = :cod";
+
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            // 2. Criação e execução da query
+            TypedQuery<Long> query = em.createQuery(jpql, Long.class);
+            query.setParameter("cod", codigo);
+
+            return query.getSingleResult();
+
+        } catch (jakarta.persistence.NoResultException e) {
+            // Nenhuma entidade com esse código foi encontrada na tabela específica.
+            return null;
+        } catch (Exception e) {
+            // Tratamento genérico de outros erros (ex: erro de conexão)
+            System.err.println("Erro ao executar busca: " + e.getMessage());
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
+
     public Material buscarMaterialPorId(Long idMaterial) {
         EntityManager em = JPAUtil.getEntityManager();
         try {

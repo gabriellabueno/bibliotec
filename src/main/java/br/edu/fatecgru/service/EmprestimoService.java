@@ -5,13 +5,10 @@ import br.edu.fatecgru.model.Entity.Material;
 import br.edu.fatecgru.model.Entity.Usuario;
 import br.edu.fatecgru.model.Enum.StatusEmprestimo;
 import br.edu.fatecgru.model.Enum.StatusMaterial;
+import br.edu.fatecgru.model.Enum.TipoMaterial;
 import br.edu.fatecgru.repository.EmprestimoRepository;
 import br.edu.fatecgru.repository.MaterialRepository;
 import br.edu.fatecgru.repository.UsuarioRepository;
-import br.edu.fatecgru.util.JPAUtil;
-
-import jakarta.persistence.EntityManager;
-import org.hibernate.exception.ConstraintViolationException;
 
 import java.time.LocalDate;
 
@@ -45,17 +42,22 @@ public class EmprestimoService {
     /**
      * Registra um novo empréstimo no banco de dados (Lógica de Negócios Central)
      */
-    public Emprestimo registrarEmprestimo(Long idUsuario, Long idMaterial) throws IllegalArgumentException, IllegalStateException, Exception {
+    public Emprestimo registrarEmprestimo(Long idUsuario, String codMaterial, TipoMaterial tipoMaterial) throws IllegalArgumentException, IllegalStateException, Exception {
 
         // --- VALIDAÇÃO DE OBRIGATÓRIOS (IDs de Entrada) ---
         if (idUsuario == null) {
             throw new IllegalArgumentException("EMPRÉSTIMO: O ID do Usuário é obrigatório.");
         }
-        if (idMaterial == null) {
-            throw new IllegalArgumentException("EMPRÉSTIMO: O ID do Material é obrigatório.");
+        if (codMaterial == null) {
+            throw new IllegalArgumentException("EMPRÉSTIMO: O Código do Material é obrigatório.");
+        }
+        if (tipoMaterial == null) {
+            throw new IllegalArgumentException("EMPRÉSTIMO: É necessário selecionar o Tipo do Material.");
         }
 
-        // 1. Buscar entidades e validar existência (CHAMA REPOSITORY)
+        // 1. Buscar entidades e validar existência
+        Long idMaterial = materialRepository.buscarIdPorCodigoETipo(codMaterial, tipoMaterial);
+
         Usuario usuario = usuarioRepository.buscarUsuarioPorId(idUsuario);
         Material material = materialRepository.buscarMaterialPorId(idMaterial);
 
@@ -67,11 +69,25 @@ public class EmprestimoService {
         }
 
         // 2. Validação de Disponibilidade
+
+        // Verificar Penalidade
+        if (usuario.isPenalidade()) { // Assumindo o método isPenalidade()
+            throw new IllegalStateException("Usuário está penalizado e não pode realizar novos empréstimos.");
+        }
+
+        // 2. Verificar Limite de Empréstimos (Máximo 3)
+        Long qtdEmprestimosAtivos = emprestimoRepository.contarEmprestimosAtivosPorUsuario(idUsuario);
+
+        if (qtdEmprestimosAtivos >= 3) {
+            throw new IllegalStateException("Limite de empréstimos atingido. O usuário possui " + qtdEmprestimosAtivos + " empréstimos ativos.");
+        }
+
         if (material.getStatusMaterial() != StatusMaterial.DISPONIVEL) {
             throw new IllegalStateException("Material indisponível. Status: " + material.getStatusMaterial());
         }
 
-        // 3. Preparar Empréstimo (LÓGICA DE NEGÓCIOS)
+        // 3. Preparar Empréstimo e Atualizar Status (O material é atualizado antes de ser enviado ao Repository)
+        material.setStatusMaterial(StatusMaterial.EMPRESTADO);
 
 
         // Determina o prazo com base no usuário
@@ -87,12 +103,12 @@ public class EmprestimoService {
         novoEmprestimo.setStatusEmprestimo(StatusEmprestimo.ATIVO);
 
         // 4. Persistir Empréstimo (Delegado ao Repository)
-        Emprestimo emprestimoPersistido = emprestimoRepository.cadastrarEmprestimo(novoEmprestimo);
 
-        // 5. Atualizar Status do Material (Delegado ao Repository)
-        material.setStatusMaterial(StatusMaterial.EMPRESTADO);
-        materialRepository.cadastrarMaterial(material); // Reutiliza o método de salvar do MaterialRepository para o merge
 
-        return emprestimoPersistido;
+//        // 5. Atualizar Status do Material (Delegado ao Repository)
+//        material.setStatusMaterial(StatusMaterial.EMPRESTADO);
+//        materialRepository.cadastrarMaterial(material); // Reutiliza o método de salvar do MaterialRepository para o merge
+
+        return emprestimoRepository.cadastrarEmprestimo(novoEmprestimo);
     }
 }

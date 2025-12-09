@@ -16,6 +16,17 @@
         </VBox.margin>
     </Label>
 
+    <HBox alignment="CENTER" spacing="30.0">
+        <RadioButton fx:id="rbLivro" selected="true" text="Livro">
+            <toggleGroup>
+                <ToggleGroup fx:id="materialTypeGroup" />
+            </toggleGroup>
+        </RadioButton>
+        <RadioButton fx:id="rbRevista" text="Revista" toggleGroup="$materialTypeGroup" />
+        <RadioButton fx:id="rbTG" text="Trabalho de Graduação" toggleGroup="$materialTypeGroup" />
+        <RadioButton fx:id="rbEquipamento" text="Equipamento" toggleGroup="$materialTypeGroup" />
+    </HBox>
+
     <VBox maxWidth="400.0" spacing="25.0" VBox.vgrow="ALWAYS">
 
         <VBox spacing="5.0">
@@ -26,7 +37,7 @@
 
         <VBox spacing="5.0">
             <Label style="-fx-font-weight: bold;" text="Material" />
-            <TextField fx:id="material" prefWidth="400.0" promptText="Insira o ID do material">
+            <TextField fx:id="material" prefWidth="400.0" promptText="Insira o Código do material">
             </TextField>
         </VBox>
 
