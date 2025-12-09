@@ -48,6 +48,7 @@ public class MaterialResult {
 
     public static MaterialResult fromTG(TG t) {
         MaterialResult m = new MaterialResult();
+        m.setCodigo(String.valueOf(t.getCodigo()));
         m.setTitulo(t.getTitulo());
         m.setSubtitulo(t.getSubtitulo());
         m.setAutor(t.getAutor1()); // Autor 1 na coluna Autor
@@ -62,6 +63,7 @@ public class MaterialResult {
     public static MaterialResult fromEquipamento(Equipamento e) {
         MaterialResult m = new MaterialResult();
         // Note que Equipamento usa "Nome" e não "Titulo", mas mapeamos para o campo específico
+        m.setCodigo(String.valueOf(e.getCodigo()));
         m.setNomeEquipamento(e.getNome());
         m.setDisponibilidade(e.getStatusMaterial().toString());
         m.setTarjaVermelha("-");
