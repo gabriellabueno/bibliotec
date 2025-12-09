@@ -1,9 +1,8 @@
 package br.edu.fatecgru.controller.pesquisa;
 
-import br.edu.fatecgru.model.Entity.Equipamento;
-import br.edu.fatecgru.model.Entity.Livro;
-import br.edu.fatecgru.model.Entity.Revista;
-import br.edu.fatecgru.model.Entity.TG;
+import br.edu.fatecgru.controller.MainController;
+import br.edu.fatecgru.controller.gerenciamento.GerenciamentoMaterialController;
+import br.edu.fatecgru.model.Entity.*;
 import br.edu.fatecgru.model.TableView.MaterialResult;
 import br.edu.fatecgru.service.MaterialService;
 
@@ -11,11 +10,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.event.ActionEvent;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
 import javafx.scene.control.cell.PropertyValueFactory;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,6 +53,9 @@ public class PesquisaMaterialController implements Initializable {
 
     // Lista Observável para atualizar a UI automaticamente
     private ObservableList<MaterialResult> listaResultados = FXCollections.observableArrayList();
+
+    @Setter
+    private MainController mainController;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -188,4 +192,39 @@ public class PesquisaMaterialController implements Initializable {
             erro.showAndWait();
         }
     }
+
+    @FXML
+    public void handleRowClick(MouseEvent event) {
+        // Verifica se houve clique duplo e se algum item está selecionado
+        if (event.getClickCount() == 2 && !resultsTable.getSelectionModel().isEmpty()) {
+
+            MaterialResult selectedResult = resultsTable.getSelectionModel().getSelectedItem();
+            Material materialParaEdicao = selectedResult.getMaterialOriginal();
+
+            try {
+                if (materialParaEdicao != null) {
+                    String fxmlPath = "/ui/screens/gerenciamento/gerenciamento-material.fxml";
+
+                    Material finalMaterialParaEdicao = materialParaEdicao;
+                    mainController.loadScreenWithCallback(fxmlPath, (GerenciamentoMaterialController controller) -> {
+                        controller.setMaterialToEdit(finalMaterialParaEdicao);
+                        controller.setMainController(mainController);
+                    });
+
+                } else {
+                    Alert info = new Alert(Alert.AlertType.INFORMATION,
+                            "Material não encontrado ou erro na busca.", ButtonType.OK);
+                    info.showAndWait();
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Alert erro = new Alert(Alert.AlertType.ERROR,
+                        "Erro ao carregar material para edição: " + e.getMessage(), ButtonType.OK);
+                erro.showAndWait();
+            }
+
+        }
+    }
+
 }

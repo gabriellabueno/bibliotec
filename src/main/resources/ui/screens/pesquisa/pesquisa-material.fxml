@@ -38,7 +38,7 @@
         <Button text="Buscar" onAction="#onSearchClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 20 8 20; -fx-cursor: hand;" />
     </HBox>
 
-    <TableView fx:id="resultsTable" VBox.vgrow="ALWAYS" prefHeight="400.0">
+    <TableView fx:id="resultsTable" onMouseClicked="#handleRowClick" VBox.vgrow="ALWAYS" prefHeight="400.0">
         <columns>
             <TableColumn fx:id="colCodigo" text="Código" prefWidth="60.0">
                 <cellValueFactory><PropertyValueFactory property="codigo" /></cellValueFactory>

@@ -1,7 +1,11 @@
 package br.edu.fatecgru.model.TableView;
 
 import br.edu.fatecgru.model.Entity.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@Data
 public class MaterialResult {
     // Usamos String para tudo na tabela para facilitar a exibição
     private String codigo;
@@ -16,9 +20,9 @@ public class MaterialResult {
     private String nomeEquipamento;
     private String tarjaVermelha;
     private String disponibilidade;
+    private Material materialOriginal;
 
-    // Construtor vazio
-    public MaterialResult() {}
+
 
     // --- Métodos "Factory" para converter Entidades em MaterialResult ---
 
@@ -31,6 +35,8 @@ public class MaterialResult {
         m.setAutor(l.getAutor());
         m.setTarjaVermelha(l.isTarjaVermelha() ? "SIM" : "NÃO");
         m.setDisponibilidade(l.getStatusMaterial().toString());
+
+        m.materialOriginal = l;
         return m;
     }
 
@@ -43,6 +49,8 @@ public class MaterialResult {
         m.setNumero(r.getNumero());
         m.setTarjaVermelha(r.isTarjaVermelha() ? "SIM" : "NÃO");
         m.setDisponibilidade(r.getStatusMaterial().toString());
+
+        m.materialOriginal = r;
         return m;
     }
 
@@ -55,8 +63,9 @@ public class MaterialResult {
         m.setAutor2(t.getAutor2());
         m.setAnoPublicacao(t.getAnoPublicacao());
         m.setDisponibilidade(t.getStatusMaterial().toString());
-        // TG não tem Tarja Vermelha no seu modelo, definimos padrão ou vazio
         m.setTarjaVermelha("-");
+
+        m.materialOriginal = t;
         return m;
     }
 
@@ -67,44 +76,8 @@ public class MaterialResult {
         m.setNomeEquipamento(e.getNome());
         m.setDisponibilidade(e.getStatusMaterial().toString());
         m.setTarjaVermelha("-");
+
+        m.materialOriginal = e;
         return m;
     }
-
-    // --- Getters e Setters (Necessários para a TableView ler os dados) ---
-
-    public String getCodigo() { return codigo; }
-    public void setCodigo(String codigo) { this.codigo = codigo; }
-
-    public String getTitulo() { return titulo; }
-    public void setTitulo(String titulo) { this.titulo = titulo; }
-
-    public String getAnoPublicacao() { return anoPublicacao; }
-    public void setAnoPublicacao(String anoPublicacao) { this.anoPublicacao = anoPublicacao; }
-
-    public String getIsbn() { return isbn; }
-    public void setIsbn(String isbn) { this.isbn = isbn; }
-
-    public String getAutor() { return autor; }
-    public void setAutor(String autor) { this.autor = autor; }
-
-    public String getVolume() { return volume; }
-    public void setVolume(String volume) { this.volume = volume; }
-
-    public String getNumero() { return numero; }
-    public void setNumero(String numero) { this.numero = numero; }
-
-    public String getSubtitulo() { return subtitulo; }
-    public void setSubtitulo(String subtitulo) { this.subtitulo = subtitulo; }
-
-    public String getAutor2() { return autor2; }
-    public void setAutor2(String autor2) { this.autor2 = autor2; }
-
-    public String getNomeEquipamento() { return nomeEquipamento; }
-    public void setNomeEquipamento(String nomeEquipamento) { this.nomeEquipamento = nomeEquipamento; }
-
-    public String getTarjaVermelha() { return tarjaVermelha; }
-    public void setTarjaVermelha(String tarjaVermelha) { this.tarjaVermelha = tarjaVermelha; }
-
-    public String getDisponibilidade() { return disponibilidade; }
-    public void setDisponibilidade(String disponibilidade) { this.disponibilidade = disponibilidade; }
 }
