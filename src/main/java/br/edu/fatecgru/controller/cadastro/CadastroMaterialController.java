@@ -31,6 +31,8 @@ import java.util.function.UnaryOperator;
 public class CadastroMaterialController implements Initializable {
 
 
+
+
     // --- Controles de Seleção de Material ---
     @FXML private ToggleGroup materialTypeGroup;
     @FXML private RadioButton rbLivro;
@@ -80,6 +82,7 @@ public class CadastroMaterialController implements Initializable {
     @FXML private TextArea palavrasChaveRevistaArea;
 
     // --- CAMPOS ESPECÍFICOS DO TG ---
+    @FXML public TextField codigoTGField;
     @FXML private TextField tituloTGField;
     @FXML private TextField subtituloTGField;
     @FXML private TextField assuntoTGField;
@@ -92,6 +95,7 @@ public class CadastroMaterialController implements Initializable {
     @FXML private TextArea palavrasChaveTGArea;
 
     // --- CAMPOS ESPECÍFICOS DO EQUIPAMENTO ---
+    @FXML public TextField codigoEquipamentoField;
     @FXML private TextField nomeEquipamentoField;
     @FXML private TextArea descricaoEquipamentoArea;
 
@@ -230,7 +234,7 @@ public class CadastroMaterialController implements Initializable {
         }
     }
 
-    // APRESENTA PAINEL DE MATERIAL DE ACORDO COM RADIO BUTTOM
+    // APRESENTA PAINEL DE MATERIAL DE ACORDO COM RADIO BUTTON
 
     @FXML
     private void apresentarForms(ActionEvent event) {
@@ -482,6 +486,7 @@ public class CadastroMaterialController implements Initializable {
         novoTG.setNotaFiscal(null);
 
         // Dados Específicos TG
+        novoTG.setCodigo(codigoTGField.getText());
         novoTG.setTitulo(tituloTGField.getText());
         novoTG.setSubtitulo(subtituloTGField.getText());
         novoTG.setAssunto(assuntoTGField.getText());
@@ -524,6 +529,7 @@ public class CadastroMaterialController implements Initializable {
         }
 
         // Dados Específicos Equipamento
+        novoEquipamento.setCodigo(codigoEquipamentoField.getText());
         novoEquipamento.setNome(nomeEquipamentoField.getText());
         novoEquipamento.setDescricao(descricaoEquipamentoArea.getText());
 
@@ -573,6 +579,7 @@ public class CadastroMaterialController implements Initializable {
 
 
         // TG
+        codigoTGField.clear();
         tituloTGField.clear();
         subtituloTGField.clear();
         assuntoTGField.clear();
@@ -585,6 +592,7 @@ public class CadastroMaterialController implements Initializable {
         palavrasChaveTGArea.clear();
 
         // EQUIPAMENTO
+        codigoEquipamentoField.clear();
         nomeEquipamentoField.clear();
         descricaoEquipamentoArea.clear();
     }

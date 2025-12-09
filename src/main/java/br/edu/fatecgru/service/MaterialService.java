@@ -86,6 +86,9 @@ public class MaterialService {
 
             // --- REGRAS ESPECÍFICAS DE TG ---
         } else if (material instanceof TG tg) {
+            if (tg.getCodigo() == null || tg.getCodigo().trim().isEmpty()) {
+                throw new IllegalArgumentException("TG: O Código é obrigatório.");
+            }
             if (tg.getTitulo() == null || tg.getTitulo().trim().isEmpty()) {
                 throw new IllegalArgumentException("TG: O Título é obrigatório.");
             }
@@ -101,6 +104,9 @@ public class MaterialService {
             if (tg.getRa1() == null || tg.getRa1().trim().isEmpty()) {
                 throw new IllegalArgumentException("TG: O RA 1 é obrigatório.");
             }
+            if (tg.getLocalPublicacao() == null || tg.getLocalPublicacao().trim().isEmpty()) {
+                throw new IllegalArgumentException("TG: O Local de Publicação é obrigatório.");
+            }
             if (tg.getAnoPublicacao() == null || tg.getAnoPublicacao().trim().isEmpty()) {
                 throw new IllegalArgumentException("TG: O Ano de Publicação é obrigatório.");
             }
@@ -110,6 +116,9 @@ public class MaterialService {
 
             // --- REGRAS ESPECÍFICAS DE EQUIPAMENTO ---
         } else if (material instanceof Equipamento equipamento) {
+            if (equipamento.getCodigo() == null || equipamento.getCodigo().trim().isEmpty()) {
+                throw new IllegalArgumentException("EQUIPAMENTO: O Código é obrigatório.");
+            }
             if (equipamento.getNome() == null || equipamento.getNome().trim().isEmpty()) {
                 throw new IllegalArgumentException("EQUIPAMENTO: O Nome é obrigatório.");
             }

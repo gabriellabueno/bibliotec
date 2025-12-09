@@ -192,7 +192,13 @@
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="280.0" prefWidth="280.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="280.0" prefWidth="280.0" />
             </columnConstraints>
+
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <Label style="-fx-font-weight: bold;" text="Código" />
+                <TextField fx:id="codigoTGField" />
+            </VBox>
+
+            <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
                 <Label style="-fx-font-weight: bold;" text="Título" />
                 <TextField fx:id="tituloTGField" />
             </VBox>
@@ -202,7 +208,7 @@
                 <TextField fx:id="subtituloTGField" />
             </VBox>
 
-            <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+            <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                 <Label style="-fx-font-weight: bold;" text="Assunto" />
                 <TextField fx:id="assuntoTGField" />
             </VBox>
@@ -217,12 +223,12 @@
                 <TextField fx:id="ra1TGField" />
             </VBox>
 
-            <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                 <Label style="-fx-font-weight: bold;" text="Autor 2" />
                 <TextField fx:id="autor2TGField" />
             </VBox>
 
-            <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                 <Label style="-fx-font-weight: bold;" text="RA 2" />
                 <TextField fx:id="ra2TGField" />
             </VBox>
@@ -232,7 +238,7 @@
                 <TextField fx:id="anoPublicacaoTGField" />
             </VBox>
 
-            <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                 <Label style="-fx-font-weight: bold;" text="Local de Publicação" />
                 <TextField fx:id="localPublicacaoTGField" />
             </VBox>
@@ -259,6 +265,11 @@
             </columnConstraints>
 
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <Label style="-fx-font-weight: bold;" text="Código" />
+                <TextField fx:id="codigoEquipamentoField" />
+            </VBox>
+
+            <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
                 <Label style="-fx-font-weight: bold;" text="Nome" />
                 <TextField fx:id="nomeEquipamentoField" />
             </VBox>

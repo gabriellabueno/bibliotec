@@ -15,6 +15,9 @@ import lombok.NoArgsConstructor;
 public class Equipamento extends Material {
     // A chave primária é herdada e mapeada pela PrimaryKeyJoinColumn
 
+    @Column(name = "codigo", nullable = false)
+    private String codigo;
+
     @Column(name = "nome", nullable = false)
     private String nome;
 

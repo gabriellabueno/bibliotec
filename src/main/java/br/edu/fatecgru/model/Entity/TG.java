@@ -14,6 +14,9 @@ import lombok.NoArgsConstructor;
 @PrimaryKeyJoinColumn(name = "pk_tg")
 public class TG extends Material {
 
+    @Column(name = "codigo", nullable = false)
+    private String codigo;
+
     @Column(name = "titulo", nullable = false)
     private String titulo;
 
