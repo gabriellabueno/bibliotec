@@ -41,7 +41,7 @@ public class SideBarController {
     @FXML
     private void onRegisterNoteClick() {
         if (mainController != null) {
-            mainController.loadScreen("/ui/screens/cadastro/cadastro-notafiscal.fxml");
+            mainController.loadNotaFiscalScreen("/ui/screens/cadastro/cadastro-notafiscal.fxml");
         }
     }
 

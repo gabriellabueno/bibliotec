@@ -1,5 +1,6 @@
 package br.edu.fatecgru.controller;
 
+import br.edu.fatecgru.controller.cadastro.CadastroNotaFiscalController;
 import br.edu.fatecgru.controller.gerenciamento.GerenciamentoMaterialController;
 import br.edu.fatecgru.controller.pesquisa.PesquisaMaterialController;
 import javafx.fxml.FXML;
@@ -17,6 +18,15 @@ public class MainController {
 
     @FXML
     private BorderPane mainBorderPane;
+
+    // PARA A TELA DE CADASTRO DE NOTA FISCAL NÃO FECHAR APÓS CADASTRAR
+    public void loadNotaFiscalScreen(String fxmlPath) {
+        loadScreenWithCallback( fxmlPath,
+                (CadastroNotaFiscalController controller) -> {
+                    controller.setIsModal(false);
+                }
+        );
+    }
 
     public void loadScreen(String fxmlFile) {
         try {

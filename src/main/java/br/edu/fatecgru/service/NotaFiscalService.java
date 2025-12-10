@@ -74,4 +74,11 @@ public class NotaFiscalService {
     public List<NotaFiscal> buscarNotaFiscal(String termo) {
         return repository.buscarNotaFiscal(termo);
     }
+
+    public NotaFiscal atualizarNotaFiscal(NotaFiscal nf) {
+        // Aqui você pode adicionar validações de negócio antes de chamar o repositório
+        // Ex: if (nf.getCodigo() == null) throw new IllegalArgumentException("Código não pode ser nulo.");
+
+        return repository.atualizarNotaFiscal(nf);
+    }
 }

@@ -26,7 +26,7 @@
 
         <VBox spacing="5.0">
             <Label text="Descrição" style="-fx-font-weight: bold;" />
-            <TextArea fx:id="descricaoArea" prefHeight="70.0" wrapText="true" promptText="Exibido ao selecionar a nota fiscal da obra." />
+            <TextArea fx:id="descricaoArea" prefHeight="70.0" wrapText="true" promptText="Descreva os materiais e valores individuais." />
         </VBox>
 
         <VBox spacing="5.0">
@@ -35,7 +35,7 @@
         </VBox>
 
         <VBox spacing="5.0">
-            <Label text="Valor" style="-fx-font-weight: bold;" />
+            <Label text="Valor Total da Compra" style="-fx-font-weight: bold;" />
             <HBox spacing="5.0" alignment="CENTER_LEFT">
                 <Text text="R$" style="-fx-font-weight: bold;" />
                 <TextField fx:id="valorField" HBox.hgrow="ALWAYS" />
@@ -46,6 +46,6 @@
     <HBox alignment="BOTTOM_RIGHT" VBox.vgrow="ALWAYS" spacing="10">
         <Button fx:id="cadastrarButton" text="+ Cadastrar" onAction="#onCadastrarClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;">
         </Button>
-        <Button text="Voltar" onAction="#fecharJanela" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;"/>
+        <Button fx:id="voltarButton" text="Voltar" onAction="#fecharJanela" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;"/>
     </HBox>
 </VBox>

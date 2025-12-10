@@ -205,6 +205,10 @@ public class CadastroMaterialController implements Initializable {
 
             CadastroNotaFiscalController controllerNF = loader.getController();
 
+            if (this.notaFiscalSelecionada != null) {
+                controllerNF.setNotaFiscalParaEdicao(this.notaFiscalSelecionada);
+            }
+
 
             Stage stage = new Stage();
             stage.setTitle("Cadastrar Nota Fiscal");

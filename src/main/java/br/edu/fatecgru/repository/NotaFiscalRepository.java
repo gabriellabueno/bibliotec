@@ -75,4 +75,28 @@ public class NotaFiscalRepository {
             em.close();
         }
     }
+
+    public NotaFiscal atualizarNotaFiscal(NotaFiscal notaFiscal) {
+        EntityManager em = JPAUtil.getEntityManager();
+        NotaFiscal nfAtualizada = null;
+
+        try {
+            em.getTransaction().begin();
+            // O merge() retorna a instância gerenciada (anexada) da entidade,
+            // que reflete os dados salvos no banco.
+            nfAtualizada = em.merge(notaFiscal);
+            em.getTransaction().commit();
+            return nfAtualizada;
+
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            System.err.println("❌ Erro inesperado ao atualizar Nota Fiscal (Código: " + notaFiscal.getCodigo() + ")");
+            e.printStackTrace();
+            return null;
+        } finally {
+            em.close();
+        }
+    }
 }
