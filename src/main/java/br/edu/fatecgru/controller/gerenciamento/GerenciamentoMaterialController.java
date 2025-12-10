@@ -43,7 +43,6 @@ public class GerenciamentoMaterialController implements Initializable {
     @FXML private RadioButton rbEquipamento;
 
     // Campos Comuns de Entrada (GridPane de Aquisição)
-    @FXML private TextField codigoField;
     @FXML private ComboBox<String> tipoAquisicaoCombo;
     @FXML private TextField numeroNotaFiscalField;
     @FXML private VBox vboxNotaFiscal;
@@ -60,6 +59,7 @@ public class GerenciamentoMaterialController implements Initializable {
     @FXML private GridPane formEquipamento;
 
     // === Campos de LIVRO ===
+    @FXML private TextField codigoField;
     @FXML private TextField isbnField;
     @FXML private TextField tituloLivroField;
     @FXML private TextField autorLivroField;
@@ -72,6 +72,7 @@ public class GerenciamentoMaterialController implements Initializable {
     @FXML private TextArea palavrasChaveLivroArea;
 
     // === Campos de REVISTA ===
+    @FXML private TextField codigoRevistaField;
     @FXML private TextField tituloRevistaField;
     @FXML private TextField volumeRevistaField;
     @FXML private TextField numeroRevistaField;
@@ -83,6 +84,7 @@ public class GerenciamentoMaterialController implements Initializable {
     @FXML private TextArea palavrasChaveRevistaArea;
 
     // === Campos de TG (IMPLEMENTADOS) ===
+    @FXML private TextField codigoTGField;
     @FXML private TextField tituloTGField;
     @FXML private TextField subtituloTGField;
     @FXML private TextField assuntoTGField;
@@ -95,6 +97,7 @@ public class GerenciamentoMaterialController implements Initializable {
     @FXML private TextArea palavrasChaveTGArea;
 
     // === Campos de EQUIPAMENTO (IMPLEMENTADOS) ===
+    @FXML private TextField codigoEquipamentoField;
     @FXML private TextField nomeEquipamentoField;
     @FXML private TextArea descricaoEquipamentoArea;
 
@@ -108,8 +111,14 @@ public class GerenciamentoMaterialController implements Initializable {
         rbRevista.setDisable(true);
         rbTG.setDisable(true);
         rbEquipamento.setDisable(true);
-        codigoField.setEditable(false);
 
+        // Campos náo editáveis
+        codigoField.setEditable(false);
+        codigoRevistaField.setEditable(false);
+        codigoTGField.setEditable(false);
+        codigoEquipamentoField.setEditable(false);
+        qntExemplares.setEditable(false);
+        tipoAquisicaoCombo.setDisable(true);
 
         ocultarTodosFormularios();
 
@@ -209,7 +218,7 @@ public class GerenciamentoMaterialController implements Initializable {
         formRevista.setVisible(true);
         formRevista.setManaged(true);
 
-        codigoField.setText(revista.getCodigo());
+        codigoRevistaField.setText(revista.getCodigo());
         tituloRevistaField.setText(revista.getTitulo());
         volumeRevistaField.setText(revista.getVolume());
         numeroRevistaField.setText(revista.getNumero());
@@ -233,7 +242,7 @@ public class GerenciamentoMaterialController implements Initializable {
         formTG.setVisible(true);
         formTG.setManaged(true);
 
-        codigoField.setText(tg.getCodigo());
+        codigoTGField.setText(tg.getCodigo());
         tituloTGField.setText(tg.getTitulo());
         subtituloTGField.setText(tg.getSubtitulo());
         assuntoTGField.setText(tg.getAssunto());
@@ -257,7 +266,7 @@ public class GerenciamentoMaterialController implements Initializable {
         formEquipamento.setVisible(true);
         formEquipamento.setManaged(true);
 
-        codigoField.setText(equipamento.getCodigo());
+        codigoEquipamentoField.setText(equipamento.getCodigo());
         nomeEquipamentoField.setText(equipamento.getNome());
         descricaoEquipamentoArea.setText(equipamento.getDescricao());
 
@@ -334,6 +343,7 @@ public class GerenciamentoMaterialController implements Initializable {
 
         // Coleta de dados específicos
         if (material instanceof Livro livro) {
+            livro.setCodigo(codigoField.getText());
             livro.setIsbn(isbnField.getText());
             livro.setTitulo(tituloLivroField.getText());
             livro.setAutor(autorLivroField.getText());
@@ -344,8 +354,10 @@ public class GerenciamentoMaterialController implements Initializable {
             livro.setLocalPublicacao(localPublicacaoLivroField.getText());
             livro.setAnoPublicacao(anoPublicacaoLivroField.getText());
             livro.setPalavrasChave(palavrasChaveLivroArea.getText());
-            livro.setTarjaVermelha(tarjaVermelha.getText().equalsIgnoreCase("sim"));
+            livro.setTarjaVermelha(tarjaVermelha.getText().equalsIgnoreCase("SIM"));
+
         } else if (material instanceof Revista revista) {
+            revista.setCodigo(codigoRevistaField.getText());
             revista.setTitulo(tituloRevistaField.getText());
             revista.setVolume(volumeRevistaField.getText());
             revista.setNumero(numeroRevistaField.getText());
@@ -355,9 +367,10 @@ public class GerenciamentoMaterialController implements Initializable {
             revista.setLocalPublicacao(localPublicacaoRevistaField.getText());
             revista.setGenero(generoRevistaField.getText());
             revista.setPalavrasChave(palavrasChaveRevistaArea.getText());
-            revista.setTarjaVermelha(tarjaVermelha.getText().equalsIgnoreCase("sim"));
+            revista.setTarjaVermelha(tarjaVermelha.getText().equalsIgnoreCase("SIM"));
 
-        } else if (material instanceof TG tg) { // COLETANDO DADOS DO TG
+        } else if (material instanceof TG tg) {
+            tg.setCodigo(codigoTGField.getText());
             tg.setTitulo(tituloTGField.getText());
             tg.setSubtitulo(subtituloTGField.getText());
             tg.setAssunto(assuntoTGField.getText());
@@ -369,7 +382,8 @@ public class GerenciamentoMaterialController implements Initializable {
             tg.setLocalPublicacao(localPublicacaoTGField.getText());
             tg.setPalavrasChave(palavrasChaveTGArea.getText());
 
-        } else if (material instanceof Equipamento equipamento) { // COLETANDO DADOS DO EQUIPAMENTO
+        } else if (material instanceof Equipamento equipamento) {
+            equipamento.setCodigo(codigoEquipamentoField.getText());
             equipamento.setNome(nomeEquipamentoField.getText());
             equipamento.setDescricao(descricaoEquipamentoArea.getText());
         }
