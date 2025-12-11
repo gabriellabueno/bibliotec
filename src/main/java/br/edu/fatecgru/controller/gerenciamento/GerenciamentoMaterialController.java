@@ -7,6 +7,7 @@ import br.edu.fatecgru.model.Entity.*;
 import br.edu.fatecgru.model.Enum.TipoAquisicao;
 import br.edu.fatecgru.service.MaterialService;
 
+import br.edu.fatecgru.util.InterfaceUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -144,6 +145,21 @@ public class GerenciamentoMaterialController implements Initializable {
             }
         });
 
+        // MÁSCARAS
+        InterfaceUtil.aplicarMascaraTamanhoFixo(anoPublicacaoLivroField, 4);
+        InterfaceUtil.aplicarMascaraTamanhoFixo(anoPublicacaoRevistaField, 4);
+        InterfaceUtil.aplicarMascaraTamanhoFixo(anoPublicacaoTGField, 4);
+
+        InterfaceUtil.aplicarRestricaoNumerica(anoPublicacaoLivroField);
+        InterfaceUtil.aplicarMascaraISBN(isbnField);
+
+
+        // CAMPOS NÚMÉRICOS
+        InterfaceUtil.aplicarRestricaoNumerica(edicaoField);
+        InterfaceUtil.aplicarRestricaoNumerica(anoPublicacaoRevistaField);
+        InterfaceUtil.aplicarRestricaoNumerica(volumeRevistaField);
+        InterfaceUtil.aplicarRestricaoNumerica(numeroRevistaField);
+        InterfaceUtil.aplicarRestricaoNumerica(anoPublicacaoTGField);
 
     }
 
@@ -159,10 +175,6 @@ public class GerenciamentoMaterialController implements Initializable {
 
     @FXML
     private void onSalvarClick() {
-        if (materialEmEdicao == null) {
-            new Alert(Alert.AlertType.ERROR, "Nenhum material selecionado para edição.", ButtonType.OK).showAndWait();
-            return;
-        }
 
         try {
             // 1. Coletar e transferir dados atualizados para 'materialEmEdicao'
@@ -172,14 +184,14 @@ public class GerenciamentoMaterialController implements Initializable {
             boolean sucesso = materialService.atualizarMaterial(materialEmEdicao);
 
             if (sucesso) {
-                new Alert(Alert.AlertType.INFORMATION, "Material atualizado com sucesso!", ButtonType.OK).showAndWait();
+                InterfaceUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "✅ Material atualizado com sucesso!");
             }
 
         } catch (IllegalArgumentException e) {
-            new Alert(Alert.AlertType.WARNING, "Validação: " + e.getMessage(), ButtonType.OK).showAndWait();
+            InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro de Validação", "❌ " + e.getMessage());
         } catch (Exception e) {
-            new Alert(Alert.AlertType.ERROR, "Erro ao salvar alterações: " + e.getMessage(), ButtonType.OK).showAndWait();
-        }
+            InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro Inesperado", "❌ Erro durante a atualização: " + e.getMessage());
+            e.printStackTrace();        }
     }
 
     @FXML

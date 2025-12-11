@@ -6,6 +6,7 @@
     import br.edu.fatecgru.model.Enum.TipoAquisicao;
     import br.edu.fatecgru.model.Enum.StatusMaterial;
 
+    import br.edu.fatecgru.util.InterfaceUtil;
     import javafx.fxml.FXML;
     import javafx.fxml.Initializable;
     import javafx.scene.control.Alert.AlertType;
@@ -26,7 +27,6 @@
     import java.util.ResourceBundle;
     import java.util.Arrays;
     import java.util.List;
-    import java.util.function.UnaryOperator;
 
     public class CadastroMaterialController implements Initializable {
 
@@ -163,42 +163,21 @@
                 }
             });
 
-            // --- APLICAÇÃO DE MÁSCARAS E RESTRIÇÕES NUMÉRICAS ---
+            // MÁSCARAS
+            InterfaceUtil.aplicarMascaraTamanhoFixo(anoPublicacaoLivroField, 4);
+            InterfaceUtil.aplicarMascaraTamanhoFixo(anoPublicacaoRevistaField, 4);
+            InterfaceUtil.aplicarMascaraTamanhoFixo(anoPublicacaoTGField, 4);
 
-            // === LIVRO ===
-
-            // MÁSCARA & NUMÉRICO: Ano de Publicação (Apenas números, 4 dígitos)
-            aplicarRestricaoNumerica(anoPublicacaoLivroField);
-            aplicarMascaraTamanhoFixo(anoPublicacaoLivroField, 4);
-
-            // MÁSCARA: ISBN
-            aplicarMascaraISBN(isbnField);
-
-            // NUMÉRICO: Edição
-            aplicarRestricaoNumerica(edicaoField);
+            InterfaceUtil.aplicarRestricaoNumerica(anoPublicacaoLivroField);
+            InterfaceUtil.aplicarMascaraISBN(isbnField);
 
 
-            // === REVISTA ===
-
-            // MÁSCARA & NUMÉRICO: Ano de Publicação (Apenas números, 4 dígitos)
-            aplicarRestricaoNumerica(anoPublicacaoRevistaField);
-            aplicarMascaraTamanhoFixo(anoPublicacaoRevistaField, 4);
-
-            // NUMÉRICO: Volume
-            aplicarRestricaoNumerica(volumeRevistaField);
-
-            // NUMÉRICO: Número
-            aplicarRestricaoNumerica(numeroRevistaField);
-
-
-            // === TG ===
-
-            // NUMÉRICO: Ano de Publicação (Apenas números, 4 dígitos)
-            aplicarRestricaoNumerica(anoPublicacaoTGField);
-            aplicarMascaraTamanhoFixo(anoPublicacaoTGField, 4);
-
-
-            apresentarForms(null); // Configurar visibilidade inicial
+            // CAMPOS NÚMÉRICOS
+            InterfaceUtil.aplicarRestricaoNumerica(edicaoField);
+            InterfaceUtil.aplicarRestricaoNumerica(anoPublicacaoRevistaField);
+            InterfaceUtil.aplicarRestricaoNumerica(volumeRevistaField);
+            InterfaceUtil.aplicarRestricaoNumerica(numeroRevistaField);
+            InterfaceUtil.aplicarRestricaoNumerica(anoPublicacaoTGField);
         }
 
         // MÉTODO - MODAL NOTA FISCAL
@@ -345,7 +324,6 @@
             RadioButton selectedRb = (RadioButton) materialTypeGroup.getSelectedToggle();
             String aquisicaoStr = tipoAquisicaoCombo.getValue() != null ? tipoAquisicaoCombo.getValue() : "Doação"; // Proteção null
             TipoAquisicao tipoAquisicao = aquisicaoStr.equals("Compra") ? TipoAquisicao.COMPRA : TipoAquisicao.DOACAO;
-
             try {
 
                 switch (selectedRb.getId()) {
@@ -364,15 +342,15 @@
                 }
 
                 // Se o cadastro foi bem-sucedido (sem exceções), exibe sucesso geral
-                mostrarAlerta(AlertType.INFORMATION, "Sucesso", "✅ Material cadastrado com sucesso!");
+                InterfaceUtil.mostrarAlerta(AlertType.INFORMATION, "Sucesso", "✅ Material cadastrado com sucesso!");
                 limparTodosForms(); // Limpa os campos após o sucesso
 
             } catch (IllegalArgumentException e) {
                 // Erros de validação (campos obrigatórios, NF, etc.)
-                mostrarAlerta(AlertType.ERROR, "Erro de Validação", "❌ " + e.getMessage());
+                InterfaceUtil.mostrarAlerta(AlertType.ERROR, "Erro de Validação", "❌ " + e.getMessage());
             } catch (Exception e) {
                 // Erros de persistência/sistema
-                mostrarAlerta(AlertType.ERROR, "Erro Inesperado", "❌ Erro durante o cadastro: " + e.getMessage());
+                InterfaceUtil.mostrarAlerta(AlertType.ERROR, "Erro Inesperado", "❌ Erro durante o cadastro: " + e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -600,76 +578,6 @@
             codigoEquipamentoField.clear();
             nomeEquipamentoField.clear();
             descricaoEquipamentoArea.clear();
-        }
-
-        private void aplicarRestricaoNumerica(TextField textField) {
-            // Cria um UnaryOperator que aceita apenas dígitos (0-9)
-            UnaryOperator<TextFormatter.Change> integerFilter = change -> {
-                String newText = change.getControlNewText();
-                if (newText.matches("\\d*")) {
-                    return change;
-                }
-                return null; // Não aceita a mudança
-            };
-            textField.setTextFormatter(new TextFormatter<>(integerFilter));
-        }
-
-        private void aplicarMascaraTamanhoFixo(TextField textField, int maxLength) {
-            textField.textProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue != null && newValue.length() > maxLength) {
-                    textField.setText(oldValue);
-                }
-            });
-        }
-
-        private void aplicarMascaraISBN(TextField textField) {
-            textField.textProperty().addListener((observable, oldValue, newValue) -> {
-                // Se o valor for nulo ou igual ao anterior (para evitar loop), retorna
-                if (newValue == null || newValue.equals(oldValue)) {
-                    return;
-                }
-
-                // 1. Remove tudo que não for dígito (limpa a string)
-                String digits = newValue.replaceAll("\\D", "");
-
-                // 2. Limita a 13 dígitos numéricos (padrão ISBN-13)
-                if (digits.length() > 13) {
-                    digits = digits.substring(0, 13);
-                }
-
-                // 3. Reconstrói a String aplicando a formatação: 978-85-12345-12-3
-                StringBuilder formatted = new StringBuilder();
-
-                for (int i = 0; i < digits.length(); i++) {
-                    char c = digits.charAt(i);
-
-                    // Adiciona o caractere atual
-                    formatted.append(c);
-
-                    // Adiciona os traços nas posições corretas se houver mais números à frente
-                    // Padrão adotado: ###-##-#####-##-#
-                    if (i == 2 || i == 4 || i == 9 || i == 11) {
-                        if (i < digits.length() - 1) { // Só adiciona o traço se não for o último caractere
-                            formatted.append("-");
-                        }
-                    }
-                }
-
-                // 4. Atualiza o campo apenas se o texto formatado for diferente do atual
-                if (!formatted.toString().equals(newValue)) {
-                    textField.setText(formatted.toString());
-                    textField.positionCaret(formatted.length()); // Mantém o cursor no final
-                }
-            });
-        }
-
-        //Método auxiliar para exibir Alertas padronizados.
-        private void mostrarAlerta(AlertType type, String title, String message) {
-            Alert alert = new Alert(type);
-            alert.setTitle(title);
-            alert.setHeaderText(null);
-            alert.setContentText(message);
-            alert.showAndWait();
         }
 
         public void preencherFormularioParaCopia(Material material, Long idPai) {
