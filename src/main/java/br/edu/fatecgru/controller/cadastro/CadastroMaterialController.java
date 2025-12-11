@@ -1,10 +1,9 @@
     package br.edu.fatecgru.controller.cadastro;
 
+    import br.edu.fatecgru.builder.MaterialBuilder;
     import br.edu.fatecgru.model.Entity.*;
-    import br.edu.fatecgru.model.Enum.TipoMaterial;
     import br.edu.fatecgru.service.MaterialService;
     import br.edu.fatecgru.model.Enum.TipoAquisicao;
-    import br.edu.fatecgru.model.Enum.StatusMaterial;
 
     import br.edu.fatecgru.util.InterfaceUtil;
     import javafx.fxml.FXML;
@@ -14,7 +13,6 @@
     import javafx.scene.layout.GridPane;
     import javafx.event.ActionEvent;
     import javafx.scene.layout.HBox;
-    import javafx.scene.layout.StackPane;
     import javafx.scene.layout.VBox;
     import javafx.fxml.FXMLLoader;
     import javafx.scene.Parent;
@@ -30,12 +28,9 @@
 
     public class CadastroMaterialController implements Initializable {
 
-        private Long codigoPai;
-        private boolean modoCopia;
-
         @FXML private Label titulo;
 
-        // --- Controles de Seleção de Material ---
+        // --- Controles de Seleção de Material
         @FXML private ToggleGroup materialTypeGroup;
         @FXML private RadioButton rbLivro;
         @FXML private RadioButton rbRevista;
@@ -44,25 +39,21 @@
         @FXML private TextField tarjaVermelha;
         @FXML private HBox boxTarjaVermelha;
 
-        // --- Campos Comuns (GRID GERAL) ---
-        @FXML private TextField codigoField;
-
-
         // --- Tipo de Aquisição e NotaFiscal
-        @FXML private VBox vboxTipoAquisicao; // NOVO: Container para controle de visibilidade
-        @FXML private ComboBox<String> tipoAquisicaoCombo; // Usado por Livro e Revista
-        @FXML private VBox vboxNotaFiscal;    // NOVO: Container para controle de visibilidade
-        @FXML private TextField numeroNotaFiscalField; // Usado por Livro e Revista
+        @FXML private VBox vboxTipoAquisicao;
+        @FXML private VBox vboxNotaFiscal;
+        @FXML private ComboBox<String> tipoAquisicaoCombo;
+        @FXML private TextField numeroNotaFiscalField;
 
 
-        // --- Contêineres de Formulário Específicos ---
-        @FXML private StackPane materialFormsContainer; // Contêiner pai dos forms específicos
+        // --- Contêineres de Formulários
         @FXML private GridPane formLivro;
         @FXML private GridPane formRevista;
         @FXML private GridPane formTG;
         @FXML private GridPane formEquipamento;
 
         // LIVRO
+        @FXML private TextField codigoField;
         @FXML private TextField isbnField;
         @FXML private TextField tituloLivroField;
         @FXML private TextArea palavrasChaveLivroArea;
@@ -74,7 +65,7 @@
         @FXML private TextField editoraLivroField;
         @FXML private TextField generoLivroField;
 
-        // --- CAMPOS ESPECÍFICOS DA REVISTA ---
+        // REVISTA
         @FXML private TextField tituloRevistaField;
         @FXML private TextField codigoRevistaField;
         @FXML private TextField volumeRevistaField;
@@ -86,7 +77,7 @@
         @FXML private TextField generoRevistaField;
         @FXML private TextArea palavrasChaveRevistaArea;
 
-        // --- CAMPOS ESPECÍFICOS DO TG ---
+        // TG
         @FXML public TextField codigoTGField;
         @FXML private TextField tituloTGField;
         @FXML private TextField subtituloTGField;
@@ -99,18 +90,21 @@
         @FXML private TextField localPublicacaoTGField;
         @FXML private TextArea palavrasChaveTGArea;
 
-        // --- CAMPOS ESPECÍFICOS DO EQUIPAMENTO ---
+        // EQUIPAMENTO
         @FXML public TextField codigoEquipamentoField;
         @FXML private TextField nomeEquipamentoField;
         @FXML private TextArea descricaoEquipamentoArea;
 
-        // --- Dependências ---
+        // Dependências
         private final MaterialService materialService = new MaterialService();
 
-        // --- VARIÁVEL DE CONTROLE DA NOTA FISCAL ---
+        // Variável de controle para NF
         private NotaFiscal notaFiscalSelecionada = null;
 
-        // Inicializa o controller após o carregamento do FXML.
+        // Variáveis de controle para Cadastro de Cópia
+        private Long codigoPai;
+        private boolean modoCopia;
+
         @Override
         public void initialize(URL url, ResourceBundle rb) {
 
@@ -118,7 +112,6 @@
             // ESTADO INICIAL
             rbLivro.setSelected(true); // tipo de material - Livro
             tarjaVermelha.setEditable(false);
-
             if(!modoCopia) {
                 tarjaVermelha.setText("SIM");
                 tipoAquisicaoCombo.setValue("Doação");
@@ -156,7 +149,7 @@
 
             });
 
-            // Clique no campo de NF para reabrir o modal caso tenha fechado sem querer
+            // Abrir Modal NF a partir do campo
             numeroNotaFiscalField.setOnMouseClicked(e -> {
                 if ("Compra".equals(tipoAquisicaoCombo.getValue())) {
                     abrirModalNotaFiscal();
@@ -167,20 +160,172 @@
             InterfaceUtil.aplicarMascaraTamanhoFixo(anoPublicacaoLivroField, 4);
             InterfaceUtil.aplicarMascaraTamanhoFixo(anoPublicacaoRevistaField, 4);
             InterfaceUtil.aplicarMascaraTamanhoFixo(anoPublicacaoTGField, 4);
-
-            InterfaceUtil.aplicarRestricaoNumerica(anoPublicacaoLivroField);
             InterfaceUtil.aplicarMascaraISBN(isbnField);
 
 
             // CAMPOS NÚMÉRICOS
             InterfaceUtil.aplicarRestricaoNumerica(edicaoField);
+            InterfaceUtil.aplicarRestricaoNumerica(anoPublicacaoLivroField);
             InterfaceUtil.aplicarRestricaoNumerica(anoPublicacaoRevistaField);
             InterfaceUtil.aplicarRestricaoNumerica(volumeRevistaField);
             InterfaceUtil.aplicarRestricaoNumerica(numeroRevistaField);
             InterfaceUtil.aplicarRestricaoNumerica(anoPublicacaoTGField);
         }
 
-        // MÉTODO - MODAL NOTA FISCAL
+
+        @FXML
+        private void apresentarForms(ActionEvent event) {
+
+            limparTodosForms();
+
+            boxTarjaVermelha.setVisible(false);
+
+            // Oculta todos os Forms
+            List<GridPane> forms = Arrays.asList(formLivro, formRevista, formTG, formEquipamento);
+            forms.forEach(form -> {
+                if (form != null) {
+                    form.setVisible(false);
+                    form.setManaged(false);
+                }
+            });
+
+            // Apresentar Forms de cada Tipo de Material
+            RadioButton selected = (RadioButton) materialTypeGroup.getSelectedToggle();
+
+            switch (selected.getId()) {
+                case "rbLivro":
+                    setCamposComuns(formLivro, true, true);
+                    break;
+                case "rbRevista":
+                    setCamposComuns(formRevista, true, true);
+                    break;
+                case "rbTG":
+                    setCamposComuns(formTG, false, false);
+
+                    vboxNotaFiscal.setVisible(false);
+                    vboxNotaFiscal.setManaged(false);
+                    vboxTipoAquisicao.setVisible(false);
+                    vboxTipoAquisicao.setManaged(false);
+                    //this.notaFiscalSelecionada = null;
+                    break;
+                case "rbEquipamento":
+                    setCamposComuns(formRevista, true, true);
+                    break;
+            }
+
+        }
+
+        public void setCamposComuns(GridPane form, boolean tarjaVermelha, boolean tipoAquisicao) {
+            form.setVisible(true);
+            form.setManaged(true);
+
+            boxTarjaVermelha.setVisible(tarjaVermelha);
+            boxTarjaVermelha.setManaged(tarjaVermelha);
+            vboxTipoAquisicao.setVisible(tipoAquisicao);
+            vboxTipoAquisicao.setManaged(tipoAquisicao);
+        }
+
+
+        public void habilitarCamposNF (boolean habilitar) {
+
+            vboxNotaFiscal.setVisible(true);
+            vboxNotaFiscal.setManaged(true);
+
+            if (!habilitar) {
+                numeroNotaFiscalField.setDisable(true);
+                numeroNotaFiscalField.clear();
+            } else {
+                numeroNotaFiscalField.setDisable(false);
+            }
+        }
+
+        // ---------------------------------------------------------------------
+
+        //  CADASTRO - CREATE
+
+
+        @FXML
+        private void onCadastrarClick(ActionEvent event) {
+
+            RadioButton selectedRb = (RadioButton) materialTypeGroup.getSelectedToggle();
+            String aquisicaoStr = tipoAquisicaoCombo.getValue() != null ? tipoAquisicaoCombo.getValue() : "Doação"; // Proteção null
+            TipoAquisicao tipoAquisicao = aquisicaoStr.equals("Compra") ? TipoAquisicao.COMPRA : TipoAquisicao.DOACAO;
+            try {
+
+                switch (selectedRb.getId()) {
+                    case  "rbLivro":
+                       cadastrarLivro(tipoAquisicao);
+                        break;
+                    case "rbRevista":
+                        cadastrarRevista(tipoAquisicao);
+                        break;
+                    case "rbTG":
+                        cadastrarTG();
+                        break;
+                    case "rbEquipamento":
+                        cadastrarEquipamento(tipoAquisicao);
+                        break;
+                }
+
+                InterfaceUtil.mostrarAlerta(AlertType.INFORMATION, "Sucesso", "✅ Material cadastrado com sucesso!");
+                limparTodosForms();
+
+            } catch (IllegalArgumentException e) {
+                InterfaceUtil.mostrarAlerta(AlertType.ERROR, "Erro de Validação", "❌ " + e.getMessage());
+            } catch (Exception e) {
+                InterfaceUtil.mostrarAlerta(AlertType.ERROR, "Erro Inesperado", "❌ Erro durante o cadastro: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        private void cadastrarLivro(TipoAquisicao tipoAquisicao) {
+
+            Livro novoLivro = MaterialBuilder.toLivro(
+                    codigoField, isbnField, tituloLivroField, autorLivroField,
+                    editoraLivroField, edicaoField, generoLivroField, assuntoLivroField,
+                    localPublicacaoLivroField, anoPublicacaoLivroField, palavrasChaveLivroArea,
+                    tipoAquisicao, this.notaFiscalSelecionada, codigoPai, modoCopia
+            );
+
+            materialService.cadastrarMaterial(novoLivro);
+        }
+
+
+        private void cadastrarRevista(TipoAquisicao tipoAquisicao) {
+
+            Revista novaRevista = MaterialBuilder.toRevista(
+                    codigoRevistaField, tituloRevistaField, volumeRevistaField, numeroRevistaField,
+                    editoraRevistaField, assuntoRevistaField, anoPublicacaoRevistaField,
+                    localPublicacaoRevistaField, generoRevistaField, palavrasChaveRevistaArea,
+                    tipoAquisicao, this.notaFiscalSelecionada, codigoPai, modoCopia
+            );
+
+            materialService.cadastrarMaterial(novaRevista);
+        }
+
+        private void cadastrarTG() {
+
+            TG novoTG = MaterialBuilder.toTG(
+                    codigoTGField, tituloTGField, subtituloTGField, assuntoTGField,
+                    autor1TGField, ra1TGField, autor2TGField, ra2TGField,
+                    anoPublicacaoTGField, localPublicacaoTGField, palavrasChaveTGArea
+            );
+
+            materialService.cadastrarMaterial(novoTG);
+        }
+
+        private void cadastrarEquipamento(TipoAquisicao tipoAquisicao)  {
+
+            Equipamento novoEquipamento = MaterialBuilder.toEquipamento(
+                    codigoEquipamentoField, nomeEquipamentoField, descricaoEquipamentoArea,
+                    tipoAquisicao, this.notaFiscalSelecionada
+            );
+
+            materialService.cadastrarMaterial(novoEquipamento);
+        }
+
+    // ---------------------------------------------------------------------
+
 
         private void abrirModalNotaFiscal() {
             try {
@@ -218,318 +363,64 @@
             }
         }
 
-        // APRESENTA PAINEL DE MATERIAL DE ACORDO COM RADIO BUTTON
+        public void preencherFormularioParaCopia(Material material, Long idPai) {
 
-        @FXML
-        private void apresentarForms(ActionEvent event) {
+            titulo.setText("Cadastro de Cópia");
 
-            limparTodosForms();
+            codigoPai = idPai;
+            modoCopia = true;
 
-            boxTarjaVermelha.setVisible(false);
+            // CAMPOS COMUNS
+            codigoField.setText("");
+            codigoField.setEditable(true);
+            tarjaVermelha.setText("NÃO");
+            tarjaVermelha.setEditable(false);
 
-            // Lista de todos os Forms
-            List<GridPane> forms = Arrays.asList(formLivro, formRevista, formTG, formEquipamento);
-
-            // Define todos como invisíveis
-            forms.forEach(form -> {
-                if (form != null) {
-                    form.setVisible(false);
-                    form.setManaged(false); // garante que não ocupem espaço
-                }
-            });
-
-            //  Apresentar Forms de cada Tipo de Material
-            RadioButton selected = (RadioButton) materialTypeGroup.getSelectedToggle();
-
-            switch (selected.getId()) {
-                case "rbLivro":
-                    camposLivros();
-                    break;
-                case "rbRevista":
-                    camposRevista();
-                    break;
-                case "rbTG":
-                    camposTG();
-                    break;
-                case "rbEquipamento":
-                    camposEquipamento();
-                    break;
-            }
-
-
-        }
-
-
-        public void camposLivros() {
-            formLivro.setVisible(true);
-            formLivro.setManaged(true);
-
-            boxTarjaVermelha.setVisible(true);
-            vboxTipoAquisicao.setVisible(true);
-            vboxTipoAquisicao.setManaged(true);
-        }
-
-        public void camposRevista() {
-            formRevista.setVisible(true);
-            formRevista.setManaged(true);
-
-            boxTarjaVermelha.setVisible(true);
-            vboxTipoAquisicao.setVisible(true);
-            vboxTipoAquisicao.setManaged(true);
-        }
-
-        public void camposTG() {
-            formTG.setVisible(true);
-            formTG.setManaged(true);
-
-            vboxTipoAquisicao.setVisible(false);
-            vboxTipoAquisicao.setManaged(false);
-
-            vboxNotaFiscal.setVisible(false);
-            vboxNotaFiscal.setManaged(false);
-
-            tipoAquisicaoCombo.setValue(null);
-            this.notaFiscalSelecionada = null;
-        }
-
-        public void camposEquipamento() {
-            formEquipamento.setVisible(true);
-            formEquipamento.setManaged(true);
-
-            vboxTipoAquisicao.setVisible(true);
-            vboxTipoAquisicao.setManaged(true);
-        }
-
-        public void habilitarCamposNF (boolean habilitar) {
-
-            // Garante que o VBox de NF esteja visível (para o caso de Livro, Revista, Equipamento)
-            vboxNotaFiscal.setVisible(true);
-            vboxNotaFiscal.setManaged(true);
-
-            if (!habilitar) {
-                // Se for Doação ou TG (quando chamado por camposTG), desabilita a interação
+            // TIPO DE AQUISIÇÃO
+            if (material.getTipoAquisicao() == TipoAquisicao.COMPRA) {
+                tipoAquisicaoCombo.getSelectionModel().select("Compra");
+                numeroNotaFiscalField.setText(material.getCodigoNotaFiscal());
+            } else {
+                tipoAquisicaoCombo.getSelectionModel().select("Doação");
+                numeroNotaFiscalField.setText("");
                 numeroNotaFiscalField.setDisable(true);
-                numeroNotaFiscalField.clear();
-            } else {
-                // Se for Compra, permite a interação
-                numeroNotaFiscalField.setDisable(false);
+            }
+
+            // PREENCHE DE ACORDO COM TIPO
+            if (material instanceof Livro livro) {
+                rbLivro.setSelected(true);
+                apresentarForms(null);
+
+                MaterialBuilder.fromLivro(livro, isbnField, tituloLivroField, autorLivroField,
+                        editoraLivroField, edicaoField, generoLivroField, assuntoLivroField,
+                        localPublicacaoLivroField, anoPublicacaoLivroField, palavrasChaveLivroArea);
+
+            } else if (material instanceof Revista revista) {
+                rbRevista.setSelected(true);
+                apresentarForms(null);
+
+                MaterialBuilder.fromRevista(revista, tituloRevistaField, volumeRevistaField, numeroRevistaField,
+                        editoraRevistaField, assuntoRevistaField, anoPublicacaoRevistaField,
+                        localPublicacaoRevistaField, generoRevistaField, palavrasChaveRevistaArea);
+
+
+            } else if (material instanceof TG tg) {
+                rbTG.setSelected(true);
+                apresentarForms(null);
+
+                MaterialBuilder.fromTG(tg, tituloTGField, subtituloTGField, assuntoTGField,
+                        autor1TGField, ra1TGField, autor2TGField, ra2TGField,
+                        localPublicacaoTGField, anoPublicacaoTGField, palavrasChaveTGArea);
+
+            } else if (material instanceof Equipamento equipamento) {
+                rbEquipamento.setSelected(true);
+                apresentarForms(null);
+
+                MaterialBuilder.fromEquipamento(equipamento, nomeEquipamentoField, descricaoEquipamentoArea);
+
             }
         }
 
-        // ---------------------------------------------------------------------
-
-        @FXML
-        private void onCadastrarClick(ActionEvent event) {
-
-            RadioButton selectedRb = (RadioButton) materialTypeGroup.getSelectedToggle();
-            String aquisicaoStr = tipoAquisicaoCombo.getValue() != null ? tipoAquisicaoCombo.getValue() : "Doação"; // Proteção null
-            TipoAquisicao tipoAquisicao = aquisicaoStr.equals("Compra") ? TipoAquisicao.COMPRA : TipoAquisicao.DOACAO;
-            try {
-
-                switch (selectedRb.getId()) {
-                    case  "rbLivro":
-                       cadastrarLivro(tipoAquisicao);
-                        break;
-                    case "rbRevista":
-                        cadastrarRevista(tipoAquisicao);
-                        break;
-                    case "rbTG":
-                        cadastrarTG();
-                        break;
-                    case "rbEquipamento":
-                        cadastrarEquipamento(tipoAquisicao);
-                        break;
-                }
-
-                // Se o cadastro foi bem-sucedido (sem exceções), exibe sucesso geral
-                InterfaceUtil.mostrarAlerta(AlertType.INFORMATION, "Sucesso", "✅ Material cadastrado com sucesso!");
-                limparTodosForms(); // Limpa os campos após o sucesso
-
-            } catch (IllegalArgumentException e) {
-                // Erros de validação (campos obrigatórios, NF, etc.)
-                InterfaceUtil.mostrarAlerta(AlertType.ERROR, "Erro de Validação", "❌ " + e.getMessage());
-            } catch (Exception e) {
-                // Erros de persistência/sistema
-                InterfaceUtil.mostrarAlerta(AlertType.ERROR, "Erro Inesperado", "❌ Erro durante o cadastro: " + e.getMessage());
-                e.printStackTrace();
-            }
-        }
-
-
-        // CADASTRO
-        private void cadastrarLivro(TipoAquisicao tipoAquisicao) throws Exception {
-
-            System.out.println("--- Iniciando Cadastro de LIVRO ---");
-
-            Livro novoLivro = new Livro();
-
-            // Dados Base Material
-            novoLivro.setTipoMaterial(TipoMaterial.LIVRO);
-            novoLivro.setTipoAquisicao(tipoAquisicao);
-            novoLivro.setStatusMaterial(StatusMaterial.DISPONIVEL);
-            if(codigoPai != null) {
-                novoLivro.setIdPai(codigoPai);
-            }
-
-
-            // VINCULAR NOTA FISCAL
-            if (tipoAquisicao == TipoAquisicao.COMPRA) {
-                novoLivro.setNotaFiscal(this.notaFiscalSelecionada);
-            } else {
-                novoLivro.setNotaFiscal(null);
-            }
-
-            // Tarja Vermelha
-            novoLivro.setTarjaVermelha(!modoCopia);
-
-            // Dados Específicos Livro
-            novoLivro.setCodigo(codigoField.getText());
-            novoLivro.setIsbn(isbnField.getText());
-            novoLivro.setTitulo(tituloLivroField.getText());
-            novoLivro.setAutor(autorLivroField.getText());
-            novoLivro.setEditora(editoraLivroField.getText());
-            novoLivro.setEdicao(edicaoField.getText());
-            novoLivro.setGenero(generoLivroField.getText());
-            novoLivro.setAssunto(assuntoLivroField.getText());
-            novoLivro.setAnoPublicacao(anoPublicacaoLivroField.getText());
-            novoLivro.setLocalPublicacao(localPublicacaoLivroField.getText());
-            novoLivro.setPalavrasChave(palavrasChaveLivroArea.getText());
-
-
-            // Persistência
-            if (materialService.cadastrarMaterial(novoLivro)) {
-                // Se o método retorna true, simplesmente finaliza.
-                // O sucesso será notificado pelo onCadastrarClick.
-                return;
-            } else {
-                // Se o Service retornar 'false' (erro de persistência genérico que não lançou exceção)
-                throw new Exception("Falha no serviço de cadastro de livro.");
-            }
-        }
-
-
-        private void cadastrarRevista(TipoAquisicao tipoAquisicao) throws Exception {
-            System.out.println("--- Iniciando Cadastro de REVISTA ---");
-
-            Revista novaRevista = new Revista();
-
-            // Dados Base Material
-            novaRevista.setTipoMaterial(TipoMaterial.REVISTA);
-            novaRevista.setTipoAquisicao(tipoAquisicao);
-            novaRevista.setStatusMaterial(StatusMaterial.DISPONIVEL);
-            if(codigoPai != null) {
-                novaRevista.setIdPai(codigoPai);
-            }
-
-
-            // VINCULAR NOTA FISCAL
-            if (tipoAquisicao == TipoAquisicao.COMPRA) {
-                novaRevista.setNotaFiscal(this.notaFiscalSelecionada);
-            } else {
-                novaRevista.setNotaFiscal(null);
-            }
-
-            // Tarja Vermelha
-            novaRevista.setTarjaVermelha(!modoCopia);
-
-            // Dados Específicos Revista
-            novaRevista.setCodigo(codigoRevistaField.getText());
-            novaRevista.setTitulo(tituloRevistaField.getText());
-            novaRevista.setVolume(volumeRevistaField.getText());
-            novaRevista.setNumero(numeroRevistaField.getText());
-            novaRevista.setAssunto(assuntoRevistaField.getText());
-            novaRevista.setAnoPublicacao(anoPublicacaoRevistaField.getText());
-            novaRevista.setLocalPublicacao(localPublicacaoRevistaField.getText());
-            novaRevista.setEditora(editoraRevistaField.getText());
-            novaRevista.setGenero(generoRevistaField.getText());
-            novaRevista.setPalavrasChave(palavrasChaveRevistaArea.getText());
-
-            // Persistência
-            if (materialService.cadastrarMaterial(novaRevista)) {
-                // Se o método retorna true, simplesmente finaliza.
-                // O sucesso será notificado pelo onCadastrarClick.
-                return;
-            } else {
-                // Se o Service retornar 'false' (erro de persistência genérico que não lançou exceção)
-                throw new Exception("Falha no serviço de cadastro de revista.");
-            }
-        }
-
-        private void cadastrarTG() throws Exception {
-            System.out.println("--- Iniciando Cadastro de TG ---");
-
-            TG novoTG = new TG();
-
-            // Dados Base Material (Padrão para TG)
-            novoTG.setTipoMaterial(TipoMaterial.TG);
-
-            // Define TipoAquisicao como DOACAO para satisfazer a restrição NOT NULL
-            // no banco de dados, já que TG não é comprado.
-            novoTG.setTipoAquisicao(TipoAquisicao.DOACAO);
-
-            novoTG.setStatusMaterial(StatusMaterial.DISPONIVEL);
-            novoTG.setNotaFiscal(null);
-
-            // Dados Específicos TG
-            novoTG.setCodigo(codigoTGField.getText());
-            novoTG.setTitulo(tituloTGField.getText());
-            novoTG.setSubtitulo(subtituloTGField.getText());
-            novoTG.setAssunto(assuntoTGField.getText());
-            novoTG.setRa1(ra1TGField.getText());
-            novoTG.setAutor1(autor1TGField.getText());
-
-            // Campos opcionais (RA2 e Autor2)
-            novoTG.setRa2(ra2TGField.getText());
-            novoTG.setAutor2(autor2TGField.getText());
-
-            novoTG.setAnoPublicacao(anoPublicacaoTGField.getText());
-            novoTG.setLocalPublicacao(localPublicacaoTGField.getText());
-            novoTG.setPalavrasChave(palavrasChaveTGArea.getText());
-
-            // Persistência
-            if (materialService.cadastrarMaterial(novoTG)) {
-                // Se o método retorna true, simplesmente finaliza.
-                // O sucesso será notificado pelo onCadastrarClick.
-                return;
-            } else {
-                // Se o Service retornar 'false' (erro de persistência genérico que não lançou exceção)
-                throw new Exception("Falha no serviço de cadastro de TG.");
-            }
-        }
-        private void cadastrarEquipamento(TipoAquisicao tipoAquisicao) throws Exception {
-            System.out.println("--- Iniciando Cadastro de EQUIPAMENTO ---");
-
-            Equipamento novoEquipamento = new Equipamento();
-
-            // Dados Base Material
-            novoEquipamento.setTipoMaterial(TipoMaterial.EQUIPAMENTO);
-            novoEquipamento.setTipoAquisicao(tipoAquisicao);
-            novoEquipamento.setStatusMaterial(StatusMaterial.DISPONIVEL);
-
-            // VINCULAR NOTA FISCAL
-            if (tipoAquisicao == TipoAquisicao.COMPRA) {
-                novoEquipamento.setNotaFiscal(this.notaFiscalSelecionada);
-            } else {
-                novoEquipamento.setNotaFiscal(null);
-            }
-
-            // Dados Específicos Equipamento
-            novoEquipamento.setCodigo(codigoEquipamentoField.getText());
-            novoEquipamento.setNome(nomeEquipamentoField.getText());
-            novoEquipamento.setDescricao(descricaoEquipamentoArea.getText());
-
-            // Persistência
-            if (materialService.cadastrarMaterial(novoEquipamento)) {
-                // Se o método retorna true, simplesmente finaliza.
-                // O sucesso será notificado pelo onCadastrarClick.
-                return;
-            } else {
-                // Se o Service retornar 'false' (erro de persistência genérico que não lançou exceção)
-                throw new Exception("Falha no serviço de cadastro de equipamento.");
-            }
-        }
-
-    // ---------------------------------------------------------------------
 
         private void limparTodosForms() {
 
@@ -560,7 +451,6 @@
             generoRevistaField.clear();
             palavrasChaveRevistaArea.clear();
 
-
             // TG
             codigoTGField.clear();
             tituloTGField.clear();
@@ -578,89 +468,5 @@
             codigoEquipamentoField.clear();
             nomeEquipamentoField.clear();
             descricaoEquipamentoArea.clear();
-        }
-
-        public void preencherFormularioParaCopia(Material material, Long idPai) {
-
-            codigoPai = idPai;
-            modoCopia = true;
-
-            if (material == null) return;
-
-            codigoField.setText("");
-            codigoField.setEditable(true);
-            tarjaVermelha.setText("NÃO");
-            tarjaVermelha.setEditable(false);
-            //rtipoAquisicaoCombo.setDisable(true);
-
-
-            if (material.getTipoAquisicao() == TipoAquisicao.COMPRA) {
-                tipoAquisicaoCombo.getSelectionModel().select("Compra");
-                numeroNotaFiscalField.setText(material.getCodigoNotaFiscal());
-            } else {
-                tipoAquisicaoCombo.getSelectionModel().select("Doação");
-                numeroNotaFiscalField.setText("");
-                numeroNotaFiscalField.setDisable(true);
-            }
-
-
-            // 2. Lógica Específica por Tipo
-            if (material instanceof Livro livro) {
-                rbLivro.setSelected(true);
-                apresentarForms(null); // Atualiza a visibilidade do GridPane correto
-
-                isbnField.setText(livro.getIsbn());
-                tituloLivroField.setText(livro.getTitulo());
-                autorLivroField.setText(livro.getAutor());
-                editoraLivroField.setText(livro.getEditora());
-                edicaoField.setText(livro.getEdicao());
-                generoLivroField.setText(livro.getGenero());
-                assuntoLivroField.setText(livro.getAssunto());
-                localPublicacaoLivroField.setText(livro.getLocalPublicacao());
-                anoPublicacaoLivroField.setText(livro.getAnoPublicacao());
-                palavrasChaveLivroArea.setText(livro.getPalavrasChave());
-
-            } else if (material instanceof Revista revista) {
-                rbRevista.setSelected(true);
-                apresentarForms(null);
-
-                tituloRevistaField.setText(revista.getTitulo());
-                volumeRevistaField.setText(revista.getVolume());
-                numeroRevistaField.setText(revista.getNumero());
-                editoraRevistaField.setText(revista.getEditora());
-                assuntoRevistaField.setText(revista.getAssunto());
-                anoPublicacaoRevistaField.setText(revista.getAnoPublicacao());
-                localPublicacaoRevistaField.setText(revista.getLocalPublicacao());
-                generoRevistaField.setText(revista.getGenero());
-                palavrasChaveRevistaArea.setText(revista.getPalavrasChave());
-
-
-            } else if (material instanceof TG tg) {
-                rbTG.setSelected(true);
-                apresentarForms(null);
-
-                tituloTGField.setText(tg.getTitulo());
-                subtituloTGField.setText(tg.getSubtitulo());
-                assuntoTGField.setText(tg.getAssunto());
-                autor1TGField.setText(tg.getAutor1());
-                ra1TGField.setText(tg.getRa1());
-                autor2TGField.setText(tg.getAutor2());
-                ra2TGField.setText(tg.getRa2());
-                anoPublicacaoTGField.setText(tg.getAnoPublicacao());
-                localPublicacaoTGField.setText(tg.getLocalPublicacao());
-                palavrasChaveTGArea.setText(tg.getPalavrasChave());
-
-            } else if (material instanceof Equipamento equipamento) {
-                rbEquipamento.setSelected(true);
-                apresentarForms(null);
-
-                nomeEquipamentoField.setText(equipamento.getNome());
-                descricaoEquipamentoArea.setText(equipamento.getDescricao());
-
-            }
-
-            // Atualiza o título da tela para dar feedback ao usuário
-            titulo.setText("Cadastro de Cópia");
-
         }
     }
