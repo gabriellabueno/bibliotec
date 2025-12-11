@@ -59,7 +59,19 @@ public class MaterialService {
         // Verifica se é um livro PAI com cópias
         if (material instanceof Livro livro && livro.isTarjaVermelha()) {
             // Busca se existem cópias deste livro
-            int totalCopias = repository.contarCopiasPorIdPai(material.getIdMaterial());
+            int totalCopias = repository.contarCopiasPorIdPai(material.getIdMaterial(), material.getTipoMaterial());
+
+            if (totalCopias > 0) {
+                throw new IllegalArgumentException(
+                        "Não é possível excluir este livro. Existem " + totalCopias +
+                                " cópia(s) vinculada(s). Exclua as cópias primeiro."
+                );
+            }
+        }
+
+        if (material instanceof Revista revista && revista.isTarjaVermelha()) {
+            // Busca se existem cópias deste livro
+            int totalCopias = repository.contarCopiasPorIdPai(material.getIdMaterial(), material.getTipoMaterial());
 
             if (totalCopias > 0) {
                 throw new IllegalArgumentException(
@@ -84,12 +96,12 @@ public class MaterialService {
 
         if (pai instanceof Livro livroPai) {
             int totalAtual = livroPai.getTotalExemplares();
-            System.out.println("DEBUG: Total atual do PAI: " + totalAtual);
             livroPai.setTotalExemplares(totalAtual + 1);
-            System.out.println("DEBUG: Novo total do PAI: " + (totalAtual + 1));
+            repository.atualizarMaterial(pai);
 
-
-            // Atualiza no banco
+        } else if(pai instanceof Revista revistaPai) {
+            int totalAtual = revistaPai.getTotalExemplares();
+            revistaPai.setTotalExemplares(totalAtual + 1);
             repository.atualizarMaterial(pai);
         }
     }
@@ -100,13 +112,16 @@ public class MaterialService {
         if (pai instanceof Livro livroPai) {
             int totalAtual = livroPai.getTotalExemplares();
 
-            // Garante que não fique negativo
             if (totalAtual > 1) {
                 livroPai.setTotalExemplares(totalAtual - 1);
                 repository.atualizarMaterial(pai);
-                System.out.println("DEBUG: Total de exemplares do PAI decrementado: " + (totalAtual - 1));
-            } else {
-                System.err.println("AVISO: Total de exemplares do PAI já está em " + totalAtual + ", não será decrementado.");
+            }
+        } else if (pai instanceof Revista revistaPai) {
+            int totalAtual = revistaPai.getTotalExemplares();
+
+            if (totalAtual > 1) {
+                revistaPai.setTotalExemplares(totalAtual - 1);
+                repository.atualizarMaterial(pai);
             }
         }
     }

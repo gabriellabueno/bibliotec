@@ -391,7 +391,6 @@
             novoLivro.setStatusMaterial(StatusMaterial.DISPONIVEL);
             if(codigoPai != null) {
                 novoLivro.setIdPai(codigoPai);
-                System.out.println("DEBUG: Setando idPai = " + codigoPai); // Debug
             }
 
 

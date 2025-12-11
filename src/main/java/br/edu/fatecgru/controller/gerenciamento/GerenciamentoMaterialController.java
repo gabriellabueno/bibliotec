@@ -192,14 +192,13 @@ public class GerenciamentoMaterialController implements Initializable {
         // Mensagem de confirmação personalizada
         String mensagemConfirmacao = "Tem certeza que deseja excluir o material?";
 
-        // Se for um livro PAI, avisa sobre as cópias
-        if (materialEmEdicao instanceof Livro livro && livro.isTarjaVermelha()) {
-            mensagemConfirmacao = "Tem certeza que deseja excluir este livro?\n\n" +
-                    "⚠️ ATENÇÃO: Este é o livro original (Tarja Vermelha).\n" +
+        if (materialEmEdicao.getIdPai() != null) {
+            mensagemConfirmacao = "Tem certeza que deseja excluir esta cópia?";
+        } else {
+            mensagemConfirmacao = "Tem certeza que deseja excluir?\n\n" +
+                    "⚠️ ATENÇÃO: Este é o material original (tarja vermelha).\n" +
                     "Se houver cópias vinculadas, a exclusão não será permitida.";
-        } else if (materialEmEdicao.getIdPai() != null) {
-            mensagemConfirmacao = "Tem certeza que deseja excluir esta cópia?\n\n" +
-                    "O total de exemplares do livro original será decrementado.";
+
         }
 
         Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION,
@@ -464,6 +463,12 @@ public class GerenciamentoMaterialController implements Initializable {
 
         tarjaVermelha.setText(revista.isTarjaVermelha() ? "SIM" : "NÃO");
         disponibilidade.setText(revista.getStatusMaterial().toString());
+
+        if(!revista.isTarjaVermelha()) {
+            btnCadastrarCopia.setVisible(false);
+            btnCadastrarCopia.setDisable(true);
+            boxQntExemplares.setVisible(false);
+        }
     }
 
     /**
