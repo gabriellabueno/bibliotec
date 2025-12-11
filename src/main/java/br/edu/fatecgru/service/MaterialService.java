@@ -18,16 +18,97 @@ public class MaterialService {
 
         validarMaterial(material);
 
+
         // Inicializar quantidadeExemplares para Livro e Revista
         if (material instanceof Livro livro) {
-            // Ao cadastrar o material base, ele representa o primeiro exemplar físico.
-            livro.setTotalExemplares(1);
+
+            if(livro.isTarjaVermelha()) {
+                // Livro PAI (Tarja Vermelha) começa com 1 exemplar
+                livro.setTotalExemplares(1);
+
+            } else {
+                // Livro CÓPIA (sem Tarja Vermelha) tem totalExemplares = 0
+                livro.setTotalExemplares(0);
+
+                if (livro.getIdPai() != null) {
+                    incrementarTotalExemplaresDoPai(livro.getIdPai());
+                }
+            }
+
+
         } else if (material instanceof Revista revista) {
             revista.setTotalExemplares(1);
 
         }
 
         return repository.cadastrarMaterial(material);
+    }
+
+    public boolean atualizarMaterial(Material material) {
+
+        validarMaterial(material);
+       return repository.atualizarMaterial(material);
+    }
+
+    public boolean excluirMaterial(Material material) throws IllegalArgumentException {
+
+        if (material == null) {
+            throw new IllegalArgumentException("Material não pode ser nulo.");
+        }
+
+        // Verifica se é um livro PAI com cópias
+        if (material instanceof Livro livro && livro.isTarjaVermelha()) {
+            // Busca se existem cópias deste livro
+            int totalCopias = repository.contarCopiasPorIdPai(material.getIdMaterial());
+
+            if (totalCopias > 0) {
+                throw new IllegalArgumentException(
+                        "Não é possível excluir este livro. Existem " + totalCopias +
+                                " cópia(s) vinculada(s). Exclua as cópias primeiro."
+                );
+            }
+        }
+
+        // Se for uma cópia (tem idPai), decrementa o contador do PAI
+        if (material.getIdPai() != null) {
+            decrementarTotalExemplaresDoPai(material.getIdPai());
+        }
+
+        // Exclui o material
+        return repository.excluirMaterial(material);
+    }
+
+
+    public void incrementarTotalExemplaresDoPai(Long idPai) {
+        Material pai = repository.buscarMaterialPorId(idPai);
+
+        if (pai instanceof Livro livroPai) {
+            int totalAtual = livroPai.getTotalExemplares();
+            System.out.println("DEBUG: Total atual do PAI: " + totalAtual);
+            livroPai.setTotalExemplares(totalAtual + 1);
+            System.out.println("DEBUG: Novo total do PAI: " + (totalAtual + 1));
+
+
+            // Atualiza no banco
+            repository.atualizarMaterial(pai);
+        }
+    }
+
+    private void decrementarTotalExemplaresDoPai(Long idPai) {
+        Material pai = repository.buscarMaterialPorId(idPai);
+
+        if (pai instanceof Livro livroPai) {
+            int totalAtual = livroPai.getTotalExemplares();
+
+            // Garante que não fique negativo
+            if (totalAtual > 1) {
+                livroPai.setTotalExemplares(totalAtual - 1);
+                repository.atualizarMaterial(pai);
+                System.out.println("DEBUG: Total de exemplares do PAI decrementado: " + (totalAtual - 1));
+            } else {
+                System.err.println("AVISO: Total de exemplares do PAI já está em " + totalAtual + ", não será decrementado.");
+            }
+        }
     }
 
     // --- NOVO: MÉTODO PRIVADO DE VALIDAÇÃO DE REGRAS DE NEGÓCIO ---
@@ -149,4 +230,6 @@ public class MaterialService {
     public List<Equipamento> buscarEquipamentos(String termo) {
         return repository.buscarEquipamento(termo);
     }
+
+
 }

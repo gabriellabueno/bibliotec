@@ -205,9 +205,8 @@ public class PesquisaMaterialController implements Initializable {
                 if (materialParaEdicao != null) {
                     String fxmlPath = "/ui/screens/gerenciamento/gerenciamento-material.fxml";
 
-                    Material finalMaterialParaEdicao = materialParaEdicao;
                     mainController.loadScreenWithCallback(fxmlPath, (GerenciamentoMaterialController controller) -> {
-                        controller.setMaterialToEdit(finalMaterialParaEdicao);
+                        controller.preencherFormularioParaEdicao(materialParaEdicao);
                         controller.setMainController(mainController);
                     });
 

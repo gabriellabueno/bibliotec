@@ -39,6 +39,79 @@ public class MaterialRepository {
         }
     }
 
+    public boolean atualizarMaterial(Material material) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+
+            // Merge atualiza uma entidade existente
+            em.merge(material);
+
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            System.err.println("Erro ao atualizar Material: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+
+    public boolean excluirMaterial(Material material) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+
+            // Busca a entidade gerenciada (attached) antes de remover
+            Material materialGerenciado = em.find(Material.class, material.getIdMaterial());
+
+            if (materialGerenciado != null) {
+                em.remove(materialGerenciado);
+                em.getTransaction().commit();
+                System.out.println("Material excluído com sucesso: ");
+                return true;
+            } else {
+                System.err.println("Material não encontrado no banco para exclusão.");
+                em.getTransaction().rollback();
+                return false;
+            }
+
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            System.err.println("Erro ao excluir Material: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+
+    /**
+     * Conta quantas cópias existem de um livro PAI
+     */
+    public int contarCopiasPorIdPai(Long idPai) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            String jpql = "SELECT COUNT(l) FROM Livro l WHERE l.idPai = :idPai";
+            TypedQuery<Long> query = em.createQuery(jpql, Long.class);
+            query.setParameter("idPai", idPai);
+
+            Long resultado = query.getSingleResult();
+            return resultado != null ? resultado.intValue() : 0;
+
+        } catch (Exception e) {
+            System.err.println("Erro ao contar cópias: " + e.getMessage());
+            return 0;
+        } finally {
+            em.close();
+        }
+    }
     // Estrutura auxiliar para mapeamento
     private static class EntityMapping {
         String entityName;

@@ -6,14 +6,15 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="TOP_CENTER" prefHeight="881.0" prefWidth="1366.0" spacing="20.0"
-      xmlns="http://javafx.com/javafx/17.0.12"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="br.edu.fatecgru.controller.gerenciamento.GerenciamentoMaterialController">
+<VBox alignment="TOP_CENTER" prefHeight="935.0" prefWidth="1589.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.edu.fatecgru.controller.gerenciamento.GerenciamentoMaterialController">
 
     <padding>
         <Insets bottom="30.0" left="300.0" right="300.0" top="100.0" />
     </padding>
+
+    <HBox alignment="CENTER_LEFT" prefWidth="580.0" spacing="10.0">
+        <Button onAction="#voltar" style="-fx-background-color: #5a1a1a; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Voltar" />
+    </HBox>
 
 
     <Label style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;" text="Gerenciamento de Material">
@@ -48,7 +49,7 @@
             <ComboBox fx:id="tipoAquisicaoCombo" prefWidth="280.0">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="Compra" />
+                        <String fx:value="Z" />
                         <String fx:value="Doação" />
                     </FXCollections>
                 </items>
@@ -283,30 +284,39 @@
 
     </StackPane>
 
-    <VBox alignment="CENTER_LEFT" prefWidth="580.0" spacing="10.0">
+    <HBox alignment="CENTER" prefWidth="580.0" spacing="50.0"
+              style="-fx-border-color: #D3D3D3; -fx-border-width: 1; -fx-padding: 10; -fx-background-color: #f7f7f7;">
 
         <HBox fx:id="boxTarjaVermelha" alignment="CENTER_LEFT" spacing="10.0">
                 <Label style="-fx-font-weight: bold;" text="Tarja Vermelha" />
-                <TextField fx:id="tarjaVermelha" prefWidth="60.0"/>
+                <TextField fx:id="tarjaVermelha" prefWidth="60.0" />
+        </HBox>
+
+        <HBox fx:id="boxDisponibilidade" alignment="CENTER_LEFT" spacing="10.0">
+            <Label style="-fx-font-weight: bold;" text="Status" />
+            <TextField fx:id="disponibilidade" prefWidth="130.0" />
         </HBox>
 
         <HBox fx:id="boxQntExemplares" alignment="CENTER_LEFT" spacing="10.0">
             <Label style="-fx-font-weight: bold;" text="Exemplares" />
-            <TextField fx:id="qntExemplares" prefWidth="60.0"/>
+            <TextField fx:id="qntExemplares" prefWidth="60.0" />
         </HBox>
-    </VBox>
+    </HBox>
 
-    <HBox alignment="CENTER_RIGHT" prefWidth="580.0" spacing="10.0">
+    <HBox alignment="CENTER" prefWidth="580.0" spacing="10.0" style="-fx-padding: 50 0 0 0">
 
         <VBox.margin>
             <Insets top="10.0" />
         </VBox.margin>
 
         <Region HBox.hgrow="ALWAYS" />
-        <Button text="Voltar" onAction="#voltar" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;"/>
+        <HBox alignment="CENTER_LEFT" prefWidth="580.0" spacing="10.0">
+            <Button fx:id="btnCadastrarCopia"  onAction="#cadastrarCopia" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20 10 20; -fx-cursor: hand;" text="Cadastrar Cópia" />
+        </HBox>
 
-        <Button onAction="#onExcluirClick" style="-fx-background-color: #b70c0c; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Excluir" />
-        <Button onAction="#onSalvarClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Salvar Alterações" />
-
+        <HBox alignment="CENTER_RIGHT" prefWidth="580.0" spacing="10.0">
+            <Button onAction="#onExcluirClick" style="-fx-background-color: #b70c0c; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20 10 20; -fx-cursor: hand;" text="Excluir" />
+            <Button onAction="#onSalvarClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20 10 20; -fx-cursor: hand;" text="Salvar Alterações" />
+        </HBox>
     </HBox>
 </VBox>

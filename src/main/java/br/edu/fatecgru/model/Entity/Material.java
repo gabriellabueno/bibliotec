@@ -37,4 +37,11 @@ public abstract class Material {
     @Enumerated(EnumType.STRING)
     @Column(name = "status_material", nullable = false)
     private StatusMaterial statusMaterial;
+
+    private Long idPai;
+
+
+    public String getCodigoNotaFiscal() {
+        return notaFiscal.getCodigo();
+    }
 }

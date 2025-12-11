@@ -1,6 +1,7 @@
 package br.edu.fatecgru.controller.gerenciamento;
 
 import br.edu.fatecgru.controller.MainController;
+import br.edu.fatecgru.controller.cadastro.CadastroMaterialController;
 import br.edu.fatecgru.controller.cadastro.CadastroNotaFiscalController;
 import br.edu.fatecgru.model.Entity.*;
 import br.edu.fatecgru.model.Enum.TipoAquisicao;
@@ -13,7 +14,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -25,6 +25,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class GerenciamentoMaterialController implements Initializable {
+
+    @FXML private Button btnCadastrarCopia;
+
 
     // === Injeção de Dependências ===
     @Setter
@@ -50,6 +53,7 @@ public class GerenciamentoMaterialController implements Initializable {
     @FXML private HBox boxTarjaVermelha;
     @FXML private TextField qntExemplares;
     @FXML private HBox boxQntExemplares;
+    @FXML private TextField disponibilidade;
 
 
     // === Containers Específicos (StackPane) ===
@@ -117,8 +121,11 @@ public class GerenciamentoMaterialController implements Initializable {
         codigoRevistaField.setEditable(false);
         codigoTGField.setEditable(false);
         codigoEquipamentoField.setEditable(false);
+
         qntExemplares.setEditable(false);
+        tarjaVermelha.setEditable(false);
         tipoAquisicaoCombo.setDisable(true);
+        disponibilidade.setEditable(false);
 
         ocultarTodosFormularios();
 
@@ -148,133 +155,6 @@ public class GerenciamentoMaterialController implements Initializable {
         if (formEquipamento != null) { formEquipamento.setVisible(false); formEquipamento.setManaged(false); }
     }
 
-    /**
-     * Recebe o objeto Material e preenche todos os campos do formulário.
-     */
-    public void setMaterialToEdit(Material material) {
-        if (material == null) return;
-
-        this.materialEmEdicao = material;
-
-        // --- Lógica de Nota Fiscal ---
-        this.notaFiscalAtual = material.getNotaFiscal(); // Armazena o OBJETO NotaFiscal
-
-        if (tipoAquisicaoCombo != null && material.getTipoAquisicao() != null) {
-            // Seleciona o valor no ComboBox (ex: "COMPRA" ou "DOACAO")
-            tipoAquisicaoCombo.getSelectionModel().select(material.getTipoAquisicao().toString());
-        }
-
-        // Preenche o campo visual com o CÓDIGO da Nota Fiscal, se existir
-        if (this.notaFiscalAtual != null) {
-            numeroNotaFiscalField.setText(this.notaFiscalAtual.getCodigo());
-        } else {
-            numeroNotaFiscalField.setText("");
-        }
-
-        // 2. Despacha para o preenchimento específico e ativa o RadioButton
-        ocultarTodosFormularios();
-
-        if (material instanceof Livro livro) {
-            rbLivro.setSelected(true);
-            preencherFormularioLivro(livro);
-        } else if (material instanceof Revista revista) {
-            rbRevista.setSelected(true);
-            preencherFormularioRevista(revista);
-        } else if (material instanceof TG tg) {
-            rbTG.setSelected(true);
-            preencherFormularioTG(tg);
-        } else if (material instanceof Equipamento equipamento) {
-            rbEquipamento.setSelected(true);
-            preencherFormularioEquipamento(equipamento);
-        }
-    }
-
-    // --- Métodos de Preenchimento Específico ---
-
-    private void preencherFormularioLivro(Livro livro) {
-        if (formLivro == null) return;
-        formLivro.setVisible(true);
-        formLivro.setManaged(true);
-
-        codigoField.setText(livro.getCodigo());
-        isbnField.setText(livro.getIsbn());
-        tituloLivroField.setText(livro.getTitulo());
-        autorLivroField.setText(livro.getAutor());
-        editoraLivroField.setText(livro.getEditora());
-        edicaoField.setText(livro.getEdicao());
-        generoLivroField.setText(livro.getGenero());
-        assuntoLivroField.setText(livro.getAssunto());
-        localPublicacaoLivroField.setText(livro.getLocalPublicacao());
-        anoPublicacaoLivroField.setText(livro.getAnoPublicacao());
-        palavrasChaveLivroArea.setText(livro.getPalavrasChave());
-
-        qntExemplares.setText(String.valueOf((livro.getTotalExemplares() )));
-        tarjaVermelha.setText(livro.isTarjaVermelha() ? "SIM" : "NÃO");
-
-    }
-
-    private void preencherFormularioRevista(Revista revista) {
-        if (formRevista == null) return;
-        formRevista.setVisible(true);
-        formRevista.setManaged(true);
-
-        codigoRevistaField.setText(revista.getCodigo());
-        tituloRevistaField.setText(revista.getTitulo());
-        volumeRevistaField.setText(revista.getVolume());
-        numeroRevistaField.setText(revista.getNumero());
-        editoraRevistaField.setText(revista.getEditora());
-        assuntoRevistaField.setText(revista.getAssunto());
-        anoPublicacaoRevistaField.setText(revista.getAnoPublicacao());
-        localPublicacaoRevistaField.setText(revista.getLocalPublicacao());
-        generoRevistaField.setText(revista.getGenero());
-        palavrasChaveRevistaArea.setText(revista.getPalavrasChave());
-        qntExemplares.setText(String.valueOf((revista.getTotalExemplares() )));
-
-        tarjaVermelha.setText(revista.isTarjaVermelha() ? "SIM" : "NÃO");
-
-    }
-
-    /**
-     * Preenche os campos específicos do Trabalho de Graduação (TG).
-     */
-    private void preencherFormularioTG(TG tg) {
-        if (formTG == null) return;
-        formTG.setVisible(true);
-        formTG.setManaged(true);
-
-        codigoTGField.setText(tg.getCodigo());
-        tituloTGField.setText(tg.getTitulo());
-        subtituloTGField.setText(tg.getSubtitulo());
-        assuntoTGField.setText(tg.getAssunto());
-        autor1TGField.setText(tg.getAutor1());
-        ra1TGField.setText(tg.getRa1());
-        autor2TGField.setText(tg.getAutor2());
-        ra2TGField.setText(tg.getRa2());
-        anoPublicacaoTGField.setText(tg.getAnoPublicacao());
-        localPublicacaoTGField.setText(tg.getLocalPublicacao());
-        palavrasChaveTGArea.setText(tg.getPalavrasChave());
-
-        boxTarjaVermelha.setVisible(false);
-        boxQntExemplares.setVisible(false);
-    }
-
-    /**
-     * Preenche os campos específicos do Equipamento.
-     */
-    private void preencherFormularioEquipamento(Equipamento equipamento) {
-        if (formEquipamento == null) return;
-        formEquipamento.setVisible(true);
-        formEquipamento.setManaged(true);
-
-        codigoEquipamentoField.setText(equipamento.getCodigo());
-        nomeEquipamentoField.setText(equipamento.getNome());
-        descricaoEquipamentoArea.setText(equipamento.getDescricao());
-
-        boxTarjaVermelha.setVisible(false);
-        boxQntExemplares.setVisible(false);
-    }
-
-
     // --- Métodos de Ação (Conectados aos botões Salvar/Excluir no FXML) ---
 
     @FXML
@@ -289,8 +169,7 @@ public class GerenciamentoMaterialController implements Initializable {
             coletarDadosAtualizados(materialEmEdicao);
 
             // 2. Chamar o serviço (Você precisará de um método 'atualizarMaterial' no Service)
-            // boolean sucesso = materialService.atualizarMaterial(materialEmEdicao);
-            boolean sucesso = true; // Simulação
+            boolean sucesso = materialService.atualizarMaterial(materialEmEdicao);
 
             if (sucesso) {
                 new Alert(Alert.AlertType.INFORMATION, "Material atualizado com sucesso!", ButtonType.OK).showAndWait();
@@ -305,39 +184,99 @@ public class GerenciamentoMaterialController implements Initializable {
 
     @FXML
     private void onExcluirClick() {
-        if (materialEmEdicao == null) return;
+        if (materialEmEdicao == null) {
+            new Alert(Alert.AlertType.ERROR, "Nenhum material selecionado para exclusão.", ButtonType.OK).showAndWait();
+            return;
+        }
+
+        // Mensagem de confirmação personalizada
+        String mensagemConfirmacao = "Tem certeza que deseja excluir o material?";
+
+        // Se for um livro PAI, avisa sobre as cópias
+        if (materialEmEdicao instanceof Livro livro && livro.isTarjaVermelha()) {
+            mensagemConfirmacao = "Tem certeza que deseja excluir este livro?\n\n" +
+                    "⚠️ ATENÇÃO: Este é o livro original (Tarja Vermelha).\n" +
+                    "Se houver cópias vinculadas, a exclusão não será permitida.";
+        } else if (materialEmEdicao.getIdPai() != null) {
+            mensagemConfirmacao = "Tem certeza que deseja excluir esta cópia?\n\n" +
+                    "O total de exemplares do livro original será decrementado.";
+        }
 
         Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION,
-                "Tem certeza que deseja excluir o material?",
+                mensagemConfirmacao,
                 ButtonType.YES, ButtonType.NO);
         confirmacao.setHeaderText("Confirmação de Exclusão");
 
         confirmacao.showAndWait().ifPresent(response -> {
             if (response == ButtonType.YES) {
                 try {
-                    // Você precisará de um método 'excluirMaterial' no Service
-                    // boolean sucesso = materialService.excluirMaterial(materialEmEdicao);
-                    boolean sucesso = true; // Simulação
+                    // Chama o serviço de exclusão
+                    boolean sucesso = materialService.excluirMaterial(materialEmEdicao);
 
                     if (sucesso) {
-                        new Alert(Alert.AlertType.INFORMATION, "Material excluído com sucesso!", ButtonType.OK).showAndWait();
-                        // Opcional: Navegar de volta para a tela de pesquisa
-                        // mainController.loadSearchScreen();
+                        Alert sucesso_alert = new Alert(Alert.AlertType.INFORMATION,
+                                "✅ Material excluído com sucesso!", ButtonType.OK);
+                        sucesso_alert.showAndWait();
+
+                        // Volta para a tela de pesquisa
+                        if (mainController != null) {
+                            mainController.loadScreen("/ui/screens/pesquisa/pesquisa-material.fxml");
+                        }
+                    } else {
+                        new Alert(Alert.AlertType.ERROR,
+                                "❌ Erro ao excluir o material. Tente novamente.", ButtonType.OK).showAndWait();
                     }
+
+                } catch (IllegalArgumentException e) {
+                    // Erro de validação (ex: livro PAI com cópias)
+                    Alert erro = new Alert(Alert.AlertType.WARNING,
+                            "⚠️ " + e.getMessage(), ButtonType.OK);
+                    erro.setHeaderText("Não é possível excluir");
+                    erro.showAndWait();
+
                 } catch (Exception e) {
-                    new Alert(Alert.AlertType.ERROR, "Erro ao excluir: " + e.getMessage(), ButtonType.OK).showAndWait();
+                    // Erro inesperado
+                    e.printStackTrace();
+                    Alert erro = new Alert(Alert.AlertType.ERROR,
+                            "❌ Erro inesperado ao excluir: " + e.getMessage(), ButtonType.OK);
+                    erro.showAndWait();
                 }
             }
         });
+    }
+
+    @FXML
+    private void cadastrarCopia() {
+
+        try {
+
+            String fxmlPath = "/ui/screens/cadastro/cadastro-material.fxml";
+
+            mainController.loadScreenWithCallback(fxmlPath, (CadastroMaterialController controller) -> {
+                controller.preencherFormularioParaCopia(materialEmEdicao, materialEmEdicao.getIdMaterial());
+                System.out.println("ID MATERIAL PAI" + materialEmEdicao.getIdMaterial());
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Erro ao abrir tela de cópia: " + e.getMessage(), ButtonType.OK).showAndWait();
+        }
     }
 
     /**
      * Coleta os dados dos campos de entrada e transfere para o objeto Material.
      */
     private void coletarDadosAtualizados(Material material) throws IllegalArgumentException {
+
+        String tipoAq = tipoAquisicaoCombo.getSelectionModel().getSelectedItem();
+
         // Coleta de dados comuns
-        if (tipoAquisicaoCombo.getSelectionModel().getSelectedItem() != null) {
-            material.setTipoAquisicao(TipoAquisicao.valueOf(tipoAquisicaoCombo.getSelectionModel().getSelectedItem().toUpperCase()));
+        if (tipoAquisicaoCombo != null) {
+            if(tipoAquisicaoCombo.equals("Compra")) {
+                material.setTipoAquisicao(TipoAquisicao.COMPRA);
+            } else {
+            material.setTipoAquisicao(TipoAquisicao.DOACAO);
+            }
         }
         material.setNotaFiscal(this.notaFiscalAtual);
 
@@ -396,6 +335,9 @@ public class GerenciamentoMaterialController implements Initializable {
             Parent root = loader.load();
             CadastroNotaFiscalController controllerNF = loader.getController();
 
+            if (this.notaFiscalSelecionada != null) {
+                controllerNF.setNotaFiscalParaEdicao(this.notaFiscalSelecionada);
+            }
 
             Stage stage = new Stage();
             stage.setTitle("Cadastrar Nota Fiscal");
@@ -405,15 +347,11 @@ public class GerenciamentoMaterialController implements Initializable {
 
             NotaFiscal nfRetorno = controllerNF.getNotaFiscalSalva();
 
+
             if (nfRetorno != null) {
                 this.notaFiscalSelecionada = nfRetorno;
                 numeroNotaFiscalField.setText(nfRetorno.getCodigo()); // Mostra o código visualmente
-            } else {
-                // Se o usuário fechou sem salvar
-                tipoAquisicaoCombo.setValue("Doação");
-                numeroNotaFiscalField.setText("");
             }
-
         } catch (IOException e) {
             System.err.println("Erro ao abrir tela de Nota Fiscal: " + e.getMessage());
             e.printStackTrace();
@@ -438,18 +376,137 @@ public class GerenciamentoMaterialController implements Initializable {
 
     @FXML
     private void voltar() {
-        // Opcional: Adicionar confirmação se desejar
-        Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION,
-                "Deseja realmente voltar? Alterações não salvas serão perdidas.",
-                ButtonType.YES, ButtonType.NO);
-        confirmacao.setHeaderText("Confirmar");
 
-        confirmacao.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.YES) {
-                if (mainController != null) {
-                    mainController.loadScreen("/ui/screens/pesquisa/pesquisa-material.fxml");
-                }
-            }
-        });
+        mainController.loadScreen("/ui/screens/pesquisa/pesquisa-material.fxml");
     }
+
+    /**
+     * Recebe o objeto Material e preenche todos os campos do formulário.
+     */
+    public void preencherFormularioParaEdicao(Material material) {
+        if (material == null) return;
+
+        this.materialEmEdicao = material;
+
+        if (material.getTipoAquisicao() == TipoAquisicao.COMPRA) {
+            tipoAquisicaoCombo.getSelectionModel().select("Compra");
+            numeroNotaFiscalField.setText(material.getCodigoNotaFiscal());
+        } else {
+            tipoAquisicaoCombo.getSelectionModel().select("Doação");
+            numeroNotaFiscalField.setText("");
+            numeroNotaFiscalField.setDisable(true);
+        }
+
+        ocultarTodosFormularios();
+
+        if (material instanceof Livro livro) {
+            rbLivro.setSelected(true);
+            preencherFormularioLivro(livro);
+        } else if (material instanceof Revista revista) {
+            rbRevista.setSelected(true);
+            preencherFormularioRevista(revista);
+        } else if (material instanceof TG tg) {
+            rbTG.setSelected(true);
+            preencherFormularioTG(tg);
+        } else if (material instanceof Equipamento equipamento) {
+            rbEquipamento.setSelected(true);
+            preencherFormularioEquipamento(equipamento);
+        }
+    }
+
+    // --- Métodos de Preenchimento Específico ---
+
+    private void preencherFormularioLivro(Livro livro) {
+        if (formLivro == null) return;
+        formLivro.setVisible(true);
+        formLivro.setManaged(true);
+
+        codigoField.setText(livro.getCodigo());
+        isbnField.setText(livro.getIsbn());
+        tituloLivroField.setText(livro.getTitulo());
+        autorLivroField.setText(livro.getAutor());
+        editoraLivroField.setText(livro.getEditora());
+        edicaoField.setText(livro.getEdicao());
+        generoLivroField.setText(livro.getGenero());
+        assuntoLivroField.setText(livro.getAssunto());
+        localPublicacaoLivroField.setText(livro.getLocalPublicacao());
+        anoPublicacaoLivroField.setText(livro.getAnoPublicacao());
+        palavrasChaveLivroArea.setText(livro.getPalavrasChave());
+
+        qntExemplares.setText(String.valueOf((livro.getTotalExemplares() )));
+        tarjaVermelha.setText(livro.isTarjaVermelha() ? "SIM" : "NÃO");
+        disponibilidade.setText(livro.getStatusMaterial().toString());
+
+        if(!livro.isTarjaVermelha()) {
+            btnCadastrarCopia.setVisible(false);
+            btnCadastrarCopia.setDisable(true);
+            boxQntExemplares.setVisible(false);
+        }
+
+    }
+
+    private void preencherFormularioRevista(Revista revista) {
+        if (formRevista == null) return;
+        formRevista.setVisible(true);
+        formRevista.setManaged(true);
+
+        codigoRevistaField.setText(revista.getCodigo());
+        tituloRevistaField.setText(revista.getTitulo());
+        volumeRevistaField.setText(revista.getVolume());
+        numeroRevistaField.setText(revista.getNumero());
+        editoraRevistaField.setText(revista.getEditora());
+        assuntoRevistaField.setText(revista.getAssunto());
+        anoPublicacaoRevistaField.setText(revista.getAnoPublicacao());
+        localPublicacaoRevistaField.setText(revista.getLocalPublicacao());
+        generoRevistaField.setText(revista.getGenero());
+        palavrasChaveRevistaArea.setText(revista.getPalavrasChave());
+        qntExemplares.setText(String.valueOf((revista.getTotalExemplares() )));
+
+        tarjaVermelha.setText(revista.isTarjaVermelha() ? "SIM" : "NÃO");
+        disponibilidade.setText(revista.getStatusMaterial().toString());
+    }
+
+    /**
+     * Preenche os campos específicos do Trabalho de Graduação (TG).
+     */
+    private void preencherFormularioTG(TG tg) {
+        if (formTG == null) return;
+        formTG.setVisible(true);
+        formTG.setManaged(true);
+
+        codigoTGField.setText(tg.getCodigo());
+        tituloTGField.setText(tg.getTitulo());
+        subtituloTGField.setText(tg.getSubtitulo());
+        assuntoTGField.setText(tg.getAssunto());
+        autor1TGField.setText(tg.getAutor1());
+        ra1TGField.setText(tg.getRa1());
+        autor2TGField.setText(tg.getAutor2());
+        ra2TGField.setText(tg.getRa2());
+        anoPublicacaoTGField.setText(tg.getAnoPublicacao());
+        localPublicacaoTGField.setText(tg.getLocalPublicacao());
+        palavrasChaveTGArea.setText(tg.getPalavrasChave());
+
+        boxTarjaVermelha.setVisible(false);
+        boxQntExemplares.setVisible(false);
+        disponibilidade.setText(tg.getStatusMaterial().toString());
+
+    }
+
+    /**
+     * Preenche os campos específicos do Equipamento.
+     */
+    private void preencherFormularioEquipamento(Equipamento equipamento) {
+        if (formEquipamento == null) return;
+        formEquipamento.setVisible(true);
+        formEquipamento.setManaged(true);
+
+        codigoEquipamentoField.setText(equipamento.getCodigo());
+        nomeEquipamentoField.setText(equipamento.getNome());
+        descricaoEquipamentoArea.setText(equipamento.getDescricao());
+
+        boxTarjaVermelha.setVisible(false);
+        boxQntExemplares.setVisible(false);
+        disponibilidade.setText(equipamento.getStatusMaterial().name());
+    }
+
 }
