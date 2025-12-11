@@ -1,8 +1,10 @@
 package br.edu.fatecgru.util;
 
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.layout.VBox;
 import lombok.NoArgsConstructor;
 
 import java.util.function.UnaryOperator;
@@ -72,5 +74,20 @@ public final class InterfaceUtil {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    public static void habilitarCamposNF(boolean habilitar,
+                                         VBox vboxNotaFiscal,
+                                         TextField numeroNotaFiscalField) {
+
+        vboxNotaFiscal.setVisible(true);
+        vboxNotaFiscal.setManaged(true);
+
+        if (habilitar) {
+            numeroNotaFiscalField.setDisable(true);
+            numeroNotaFiscalField.clear();
+        } else {
+            numeroNotaFiscalField.setDisable(false);
+        }
     }
 }

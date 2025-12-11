@@ -1,5 +1,6 @@
 package br.edu.fatecgru.controller.gerenciamento;
 
+import br.edu.fatecgru.builder.MaterialBuilder;
 import br.edu.fatecgru.controller.MainController;
 import br.edu.fatecgru.controller.cadastro.CadastroMaterialController;
 import br.edu.fatecgru.controller.cadastro.CadastroNotaFiscalController;
@@ -27,43 +28,31 @@ import java.util.ResourceBundle;
 
 public class GerenciamentoMaterialController implements Initializable {
 
-    @FXML private Button btnCadastrarCopia;
-
-
-    // === Injeção de Dependências ===
-    @Setter
-    private MainController mainController;
-    private final MaterialService materialService = new MaterialService();
-    private Material materialEmEdicao;
-    private NotaFiscal notaFiscalAtual;
-
-    // === Componentes Comuns do Layout ===
-    @FXML private Button btnAtualizar;
-    @FXML private Button btnExcluir;
-    @FXML private ToggleGroup materialTypeGroup;
+    // --- Componentes Layout
     @FXML private RadioButton rbLivro;
     @FXML private RadioButton rbRevista;
     @FXML private RadioButton rbTG;
     @FXML private RadioButton rbEquipamento;
+    @FXML private Button btnCadastrarCopia;
 
-    // Campos Comuns de Entrada (GridPane de Aquisição)
+    // --- Campos Comuns
     @FXML private ComboBox<String> tipoAquisicaoCombo;
-    @FXML private TextField numeroNotaFiscalField;
+    @FXML private VBox vboxTipoAquisicao;
     @FXML private VBox vboxNotaFiscal;
-    @FXML private TextField tarjaVermelha;
     @FXML private HBox boxTarjaVermelha;
-    @FXML private TextField qntExemplares;
     @FXML private HBox boxQntExemplares;
+    @FXML private TextField numeroNotaFiscalField;
+    @FXML private TextField tarjaVermelha;
+    @FXML private TextField qntExemplares;
     @FXML private TextField disponibilidade;
 
-
-    // === Containers Específicos (StackPane) ===
+    // --- Contêineres de Formulários
     @FXML private GridPane formLivro;
     @FXML private GridPane formRevista;
     @FXML private GridPane formTG;
     @FXML private GridPane formEquipamento;
 
-    // === Campos de LIVRO ===
+    // LIVRO
     @FXML private TextField codigoField;
     @FXML private TextField isbnField;
     @FXML private TextField tituloLivroField;
@@ -76,7 +65,7 @@ public class GerenciamentoMaterialController implements Initializable {
     @FXML private TextField anoPublicacaoLivroField;
     @FXML private TextArea palavrasChaveLivroArea;
 
-    // === Campos de REVISTA ===
+    // REVISTA
     @FXML private TextField codigoRevistaField;
     @FXML private TextField tituloRevistaField;
     @FXML private TextField volumeRevistaField;
@@ -88,7 +77,7 @@ public class GerenciamentoMaterialController implements Initializable {
     @FXML private TextField generoRevistaField;
     @FXML private TextArea palavrasChaveRevistaArea;
 
-    // === Campos de TG (IMPLEMENTADOS) ===
+    // TG
     @FXML private TextField codigoTGField;
     @FXML private TextField tituloTGField;
     @FXML private TextField subtituloTGField;
@@ -101,17 +90,24 @@ public class GerenciamentoMaterialController implements Initializable {
     @FXML private TextField localPublicacaoTGField;
     @FXML private TextArea palavrasChaveTGArea;
 
-    // === Campos de EQUIPAMENTO (IMPLEMENTADOS) ===
+    // EQUIPAMENTO
     @FXML private TextField codigoEquipamentoField;
     @FXML private TextField nomeEquipamentoField;
     @FXML private TextArea descricaoEquipamentoArea;
 
-    // --- VARIÁVEL DE CONTROLE DA NOTA FISCAL ---
-    private NotaFiscal notaFiscalSelecionada = null;
+    // -- Dependências
+    @Setter
+    private MainController mainController;
+    private final MaterialService materialService = new MaterialService();
+    private Material materialEmEdicao;
+    private NotaFiscal notaFiscalAtual;
 
+    // -- Variável de controle para NF
+    private NotaFiscal notaFiscalSelecionada = null;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
         rbLivro.setDisable(true);
         rbRevista.setDisable(true);
         rbTG.setDisable(true);
@@ -122,7 +118,6 @@ public class GerenciamentoMaterialController implements Initializable {
         codigoRevistaField.setEditable(false);
         codigoTGField.setEditable(false);
         codigoEquipamentoField.setEditable(false);
-
         qntExemplares.setEditable(false);
         tarjaVermelha.setEditable(false);
         tipoAquisicaoCombo.setDisable(true);
@@ -132,30 +127,29 @@ public class GerenciamentoMaterialController implements Initializable {
 
         // Tipo de Aquisição
         if("Compra".equals(tipoAquisicaoCombo.getValue())) {
-            habilitarCamposNF(true);
+            InterfaceUtil.habilitarCamposNF(true, vboxNotaFiscal, numeroNotaFiscalField);
         } else {
-            habilitarCamposNF(false);
+            InterfaceUtil.habilitarCamposNF(false, vboxNotaFiscal, numeroNotaFiscalField);
             tipoAquisicaoCombo.setDisable(true);
         }
 
-        // Clique no campo de NF paraCReabrir o modal
+        // Abrir Modal NF a partir do campo
         numeroNotaFiscalField.setOnMouseClicked(e -> {
             if ("Compra".equals(tipoAquisicaoCombo.getValue())) {
                 abrirModalNotaFiscal();
             }
         });
 
+
         // MÁSCARAS
         InterfaceUtil.aplicarMascaraTamanhoFixo(anoPublicacaoLivroField, 4);
         InterfaceUtil.aplicarMascaraTamanhoFixo(anoPublicacaoRevistaField, 4);
         InterfaceUtil.aplicarMascaraTamanhoFixo(anoPublicacaoTGField, 4);
-
-        InterfaceUtil.aplicarRestricaoNumerica(anoPublicacaoLivroField);
         InterfaceUtil.aplicarMascaraISBN(isbnField);
-
 
         // CAMPOS NÚMÉRICOS
         InterfaceUtil.aplicarRestricaoNumerica(edicaoField);
+        InterfaceUtil.aplicarRestricaoNumerica(anoPublicacaoLivroField);
         InterfaceUtil.aplicarRestricaoNumerica(anoPublicacaoRevistaField);
         InterfaceUtil.aplicarRestricaoNumerica(volumeRevistaField);
         InterfaceUtil.aplicarRestricaoNumerica(numeroRevistaField);
@@ -163,25 +157,15 @@ public class GerenciamentoMaterialController implements Initializable {
 
     }
 
-
-    private void ocultarTodosFormularios() {
-        if (formLivro != null) { formLivro.setVisible(false); formLivro.setManaged(false); }
-        if (formRevista != null) { formRevista.setVisible(false); formRevista.setManaged(false); }
-        if (formTG != null) { formTG.setVisible(false); formTG.setManaged(false); }
-        if (formEquipamento != null) { formEquipamento.setVisible(false); formEquipamento.setManaged(false); }
-    }
-
-    // --- Métodos de Ação (Conectados aos botões Salvar/Excluir no FXML) ---
+    // MÉTODOS DE AÇÃO - BOTÕES
 
     @FXML
     private void onSalvarClick() {
 
         try {
-            // 1. Coletar e transferir dados atualizados para 'materialEmEdicao'
-            coletarDadosAtualizados(materialEmEdicao);
+            Material materialAtualizado = coletarDadosAtualizados(materialEmEdicao);
 
-            // 2. Chamar o serviço (Você precisará de um método 'atualizarMaterial' no Service)
-            boolean sucesso = materialService.atualizarMaterial(materialEmEdicao);
+            boolean sucesso = materialService.atualizarMaterial(materialAtualizado);
 
             if (sucesso) {
                 InterfaceUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "✅ Material atualizado com sucesso!");
@@ -196,19 +180,14 @@ public class GerenciamentoMaterialController implements Initializable {
 
     @FXML
     private void onExcluirClick() {
-        if (materialEmEdicao == null) {
-            new Alert(Alert.AlertType.ERROR, "Nenhum material selecionado para exclusão.", ButtonType.OK).showAndWait();
-            return;
-        }
 
-        // Mensagem de confirmação personalizada
-        String mensagemConfirmacao = "Tem certeza que deseja excluir o material?";
+        String mensagemConfirmacao = "";
 
         if (materialEmEdicao.getIdPai() != null) {
             mensagemConfirmacao = "Tem certeza que deseja excluir esta cópia?";
         } else {
             mensagemConfirmacao = "Tem certeza que deseja excluir?\n\n" +
-                    "⚠️ ATENÇÃO: Este é o material original (tarja vermelha).\n" +
+                    "⚠️ ATENÇÃO: Este é o material original (tarja vermelha). " +
                     "Se houver cópias vinculadas, a exclusão não será permitida.";
 
         }
@@ -216,12 +195,18 @@ public class GerenciamentoMaterialController implements Initializable {
         Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION,
                 mensagemConfirmacao,
                 ButtonType.YES, ButtonType.NO);
-        confirmacao.setHeaderText("Confirmação de Exclusão");
 
+        confirmacao.setHeaderText(null);
+        confirmacao.setTitle("Exclusão de Material");
+        confirmacao.getButtonTypes().setAll(
+                new ButtonType("Sim", ButtonBar.ButtonData.YES),
+                new ButtonType("Não", ButtonBar.ButtonData.NO)
+        );
+
+        // Listener para captar botão selecionado
         confirmacao.showAndWait().ifPresent(response -> {
             if (response == ButtonType.YES) {
                 try {
-                    // Chama o serviço de exclusão
                     boolean sucesso = materialService.excluirMaterial(materialEmEdicao);
 
                     if (sucesso) {
@@ -229,7 +214,6 @@ public class GerenciamentoMaterialController implements Initializable {
                                 "✅ Material excluído com sucesso!", ButtonType.OK);
                         sucesso_alert.showAndWait();
 
-                        // Volta para a tela de pesquisa
                         if (mainController != null) {
                             mainController.loadScreen("/ui/screens/pesquisa/pesquisa-material.fxml");
                         }
@@ -239,9 +223,9 @@ public class GerenciamentoMaterialController implements Initializable {
                     }
 
                 } catch (IllegalArgumentException e) {
-                    // Erro de validação (ex: livro PAI com cópias)
                     Alert erro = new Alert(Alert.AlertType.WARNING,
-                            "⚠️ " + e.getMessage(), ButtonType.OK);
+                            "⚠️ " + e.getMessage(),
+                            ButtonType.OK);
                     erro.setHeaderText("Não é possível excluir");
                     erro.showAndWait();
 
@@ -249,7 +233,8 @@ public class GerenciamentoMaterialController implements Initializable {
                     // Erro inesperado
                     e.printStackTrace();
                     Alert erro = new Alert(Alert.AlertType.ERROR,
-                            "❌ Erro inesperado ao excluir: " + e.getMessage(), ButtonType.OK);
+                            "❌ Erro inesperado ao excluir: " + e.getMessage(),
+                            ButtonType.OK);
                     erro.showAndWait();
                 }
             }
@@ -265,78 +250,23 @@ public class GerenciamentoMaterialController implements Initializable {
 
             mainController.loadScreenWithCallback(fxmlPath, (CadastroMaterialController controller) -> {
                 controller.preencherFormularioParaCopia(materialEmEdicao, materialEmEdicao.getIdMaterial());
-                System.out.println("ID MATERIAL PAI" + materialEmEdicao.getIdMaterial());
             });
 
         } catch (Exception e) {
             e.printStackTrace();
-            new Alert(Alert.AlertType.ERROR, "Erro ao abrir tela de cópia: " + e.getMessage(), ButtonType.OK).showAndWait();
+            Alert erro = new Alert(Alert.AlertType.ERROR,
+                    "Erro ao abrir tela de cópia: " + e.getMessage(),
+                    ButtonType.OK);
+            erro.showAndWait();
         }
     }
 
-    /**
-     * Coleta os dados dos campos de entrada e transfere para o objeto Material.
-     */
-    private void coletarDadosAtualizados(Material material) throws IllegalArgumentException {
-
-        String tipoAq = tipoAquisicaoCombo.getSelectionModel().getSelectedItem();
-
-        // Coleta de dados comuns
-        if(tipoAq.trim().equals("Compra")) {
-            material.setTipoAquisicao(TipoAquisicao.COMPRA);
-        } else {
-            material.setTipoAquisicao(TipoAquisicao.DOACAO);
-        }
-
-        material.setNotaFiscal(this.notaFiscalAtual);
-
-        // Coleta de dados específicos
-        if (material instanceof Livro livro) {
-            livro.setCodigo(codigoField.getText());
-            livro.setIsbn(isbnField.getText());
-            livro.setTitulo(tituloLivroField.getText());
-            livro.setAutor(autorLivroField.getText());
-            livro.setEditora(editoraLivroField.getText());
-            livro.setEdicao(edicaoField.getText());
-            livro.setGenero(generoLivroField.getText());
-            livro.setAssunto(assuntoLivroField.getText());
-            livro.setLocalPublicacao(localPublicacaoLivroField.getText());
-            livro.setAnoPublicacao(anoPublicacaoLivroField.getText());
-            livro.setPalavrasChave(palavrasChaveLivroArea.getText());
-            livro.setTarjaVermelha(tarjaVermelha.getText().equalsIgnoreCase("SIM"));
-
-        } else if (material instanceof Revista revista) {
-            revista.setCodigo(codigoRevistaField.getText());
-            revista.setTitulo(tituloRevistaField.getText());
-            revista.setVolume(volumeRevistaField.getText());
-            revista.setNumero(numeroRevistaField.getText());
-            revista.setEditora(editoraRevistaField.getText());
-            revista.setAssunto(assuntoRevistaField.getText());
-            revista.setAnoPublicacao(anoPublicacaoRevistaField.getText());
-            revista.setLocalPublicacao(localPublicacaoRevistaField.getText());
-            revista.setGenero(generoRevistaField.getText());
-            revista.setPalavrasChave(palavrasChaveRevistaArea.getText());
-            revista.setTarjaVermelha(tarjaVermelha.getText().equalsIgnoreCase("SIM"));
-
-        } else if (material instanceof TG tg) {
-            tg.setCodigo(codigoTGField.getText());
-            tg.setTitulo(tituloTGField.getText());
-            tg.setSubtitulo(subtituloTGField.getText());
-            tg.setAssunto(assuntoTGField.getText());
-            tg.setAutor1(autor1TGField.getText());
-            tg.setRa1(ra1TGField.getText());
-            tg.setAutor2(autor2TGField.getText());
-            tg.setRa2(ra2TGField.getText());
-            tg.setAnoPublicacao(anoPublicacaoTGField.getText());
-            tg.setLocalPublicacao(localPublicacaoTGField.getText());
-            tg.setPalavrasChave(palavrasChaveTGArea.getText());
-
-        } else if (material instanceof Equipamento equipamento) {
-            equipamento.setCodigo(codigoEquipamentoField.getText());
-            equipamento.setNome(nomeEquipamentoField.getText());
-            equipamento.setDescricao(descricaoEquipamentoArea.getText());
-        }
+    @FXML
+    private void voltar() {
+        mainController.loadScreen("/ui/screens/pesquisa/pesquisa-material.fxml");
     }
+
+    // ---------------------------------------------
 
     private void abrirModalNotaFiscal() {
         try {
@@ -368,31 +298,81 @@ public class GerenciamentoMaterialController implements Initializable {
         }
     }
 
-    public void habilitarCamposNF (boolean habilitar) {
+    private Material coletarDadosAtualizados(Material material) {
 
-        // Garante que o VBox de NF esteja visível (para o caso de Livro, Revista, Equipamento)
-        vboxNotaFiscal.setVisible(true);
-        vboxNotaFiscal.setManaged(true);
-
-        if (habilitar) {
-            // Se for Doação ou TG (quando chamado por camposTG), desabilita a interação
-            numeroNotaFiscalField.setDisable(true);
-            numeroNotaFiscalField.clear();
+        // Tipo de Aquisição
+        TipoAquisicao tipoAquisicao = null;
+        String tipoAqStr = tipoAquisicaoCombo.getSelectionModel().getSelectedItem();
+        if(tipoAqStr.trim().equals("Compra")) {
+            tipoAquisicao = TipoAquisicao.COMPRA;
         } else {
-            // Se for Compra, permite a interação
-            numeroNotaFiscalField.setDisable(false);
+            tipoAquisicao = TipoAquisicao.DOACAO;
         }
+
+        // Nota Fiscal
+        NotaFiscal nf = this.notaFiscalAtual;
+
+        // Coleta de dados específicos
+        if (material instanceof Livro livro) {
+
+            MaterialBuilder.toLivro(
+                    livro,
+                    codigoField, isbnField, tituloLivroField, autorLivroField,
+                    editoraLivroField, edicaoField, generoLivroField, assuntoLivroField,
+                    localPublicacaoLivroField, anoPublicacaoLivroField, palavrasChaveLivroArea,
+                    tipoAquisicao,
+                    nf,
+                    null,
+                    false
+            );
+
+            livro.setTarjaVermelha(tarjaVermelha.getText().equalsIgnoreCase("SIM"));
+
+            return livro;
+
+        } else if (material instanceof Revista revista) {
+
+            MaterialBuilder.toRevista(
+                    revista, codigoRevistaField, tituloRevistaField, volumeRevistaField, numeroRevistaField,
+                    editoraRevistaField, assuntoRevistaField, anoPublicacaoRevistaField,
+                    localPublicacaoRevistaField, generoRevistaField, palavrasChaveRevistaArea,
+                    tipoAquisicao,
+                    nf,
+                    null,
+                    false
+            );
+
+            revista.setTarjaVermelha(tarjaVermelha.getText().equalsIgnoreCase("SIM"));
+
+            return revista;
+
+        } else if (material instanceof TG tg) {
+
+            MaterialBuilder.toTG(
+                    tg,
+                    codigoTGField, tituloTGField, subtituloTGField, assuntoTGField,
+                    autor1TGField, ra1TGField, autor2TGField, ra2TGField,
+                    anoPublicacaoTGField, localPublicacaoTGField, palavrasChaveTGArea
+            );
+
+            return tg;
+
+        } else if (material instanceof Equipamento equipamento) {
+
+            MaterialBuilder.toEquipamento(
+                    equipamento,
+                    codigoEquipamentoField, nomeEquipamentoField, descricaoEquipamentoArea,
+                    tipoAquisicao,
+                    nf
+            );
+            return equipamento;
+        }
+
+        return null;
     }
 
-    @FXML
-    private void voltar() {
+    // MÉTODOS PARA PREENCHIMENTO DE FORMULÁRIO
 
-        mainController.loadScreen("/ui/screens/pesquisa/pesquisa-material.fxml");
-    }
-
-    /**
-     * Recebe o objeto Material e preenche todos os campos do formulário.
-     */
     public void preencherFormularioParaEdicao(Material material) {
         if (material == null) return;
 
@@ -411,119 +391,74 @@ public class GerenciamentoMaterialController implements Initializable {
         ocultarTodosFormularios();
 
         if (material instanceof Livro livro) {
-            rbLivro.setSelected(true);
-            preencherFormularioLivro(livro);
+
+            setCamposComuns(formLivro, true, true);
+
+            MaterialBuilder.fromLivro(livro, isbnField, tituloLivroField, autorLivroField,
+                    editoraLivroField, edicaoField, generoLivroField, assuntoLivroField,
+                    localPublicacaoLivroField, anoPublicacaoLivroField, palavrasChaveLivroArea);
+
+            codigoField.setText(livro.getCodigo());
+            qntExemplares.setText(String.valueOf((livro.getTotalExemplares() )));
+            tarjaVermelha.setText(livro.isTarjaVermelha() ? "SIM" : "NÃO");
+            disponibilidade.setText(livro.getStatusMaterial().toString());
+
         } else if (material instanceof Revista revista) {
-            rbRevista.setSelected(true);
-            preencherFormularioRevista(revista);
+
+            setCamposComuns(formRevista, true, true);
+
+            MaterialBuilder.fromRevista(revista, tituloRevistaField, volumeRevistaField, numeroRevistaField,
+                    editoraRevistaField, assuntoRevistaField, anoPublicacaoRevistaField,
+                    localPublicacaoRevistaField, generoRevistaField, palavrasChaveRevistaArea);
+
+            codigoRevistaField.setText(revista.getCodigo());
+            qntExemplares.setText(String.valueOf((revista.getTotalExemplares() )));
+            codigoRevistaField.setText(revista.getCodigo());
+            tarjaVermelha.setText(revista.isTarjaVermelha() ? "SIM" : "NÃO");
+            disponibilidade.setText(revista.getStatusMaterial().toString());
+
         } else if (material instanceof TG tg) {
-            rbTG.setSelected(true);
-            preencherFormularioTG(tg);
+
+
+            setCamposComuns(formTG, false, false);
+
+            MaterialBuilder.fromTG(tg, tituloTGField, subtituloTGField, assuntoTGField,
+                    autor1TGField, ra1TGField, autor2TGField, ra2TGField,
+                    localPublicacaoTGField, anoPublicacaoTGField, palavrasChaveTGArea);
+
+            codigoTGField.setText(tg.getCodigo());
+            boxQntExemplares.setVisible(false);
+            disponibilidade.setText(tg.getStatusMaterial().toString());
+
+
         } else if (material instanceof Equipamento equipamento) {
-            rbEquipamento.setSelected(true);
-            preencherFormularioEquipamento(equipamento);
-        }
-    }
 
-    // --- Métodos de Preenchimento Específico ---
+            setCamposComuns(formEquipamento, false, false);
 
-    private void preencherFormularioLivro(Livro livro) {
-        if (formLivro == null) return;
-        formLivro.setVisible(true);
-        formLivro.setManaged(true);
+            MaterialBuilder.fromEquipamento(equipamento, nomeEquipamentoField, descricaoEquipamentoArea);
 
-        codigoField.setText(livro.getCodigo());
-        isbnField.setText(livro.getIsbn());
-        tituloLivroField.setText(livro.getTitulo());
-        autorLivroField.setText(livro.getAutor());
-        editoraLivroField.setText(livro.getEditora());
-        edicaoField.setText(livro.getEdicao());
-        generoLivroField.setText(livro.getGenero());
-        assuntoLivroField.setText(livro.getAssunto());
-        localPublicacaoLivroField.setText(livro.getLocalPublicacao());
-        anoPublicacaoLivroField.setText(livro.getAnoPublicacao());
-        palavrasChaveLivroArea.setText(livro.getPalavrasChave());
-
-        qntExemplares.setText(String.valueOf((livro.getTotalExemplares() )));
-        tarjaVermelha.setText(livro.isTarjaVermelha() ? "SIM" : "NÃO");
-        disponibilidade.setText(livro.getStatusMaterial().toString());
-
-        if(!livro.isTarjaVermelha()) {
-            btnCadastrarCopia.setVisible(false);
-            btnCadastrarCopia.setDisable(true);
+            codigoEquipamentoField.setText(equipamento.getCodigo());
             boxQntExemplares.setVisible(false);
-        }
-
-    }
-
-    private void preencherFormularioRevista(Revista revista) {
-        if (formRevista == null) return;
-        formRevista.setVisible(true);
-        formRevista.setManaged(true);
-
-        codigoRevistaField.setText(revista.getCodigo());
-        tituloRevistaField.setText(revista.getTitulo());
-        volumeRevistaField.setText(revista.getVolume());
-        numeroRevistaField.setText(revista.getNumero());
-        editoraRevistaField.setText(revista.getEditora());
-        assuntoRevistaField.setText(revista.getAssunto());
-        anoPublicacaoRevistaField.setText(revista.getAnoPublicacao());
-        localPublicacaoRevistaField.setText(revista.getLocalPublicacao());
-        generoRevistaField.setText(revista.getGenero());
-        palavrasChaveRevistaArea.setText(revista.getPalavrasChave());
-        qntExemplares.setText(String.valueOf((revista.getTotalExemplares() )));
-
-        tarjaVermelha.setText(revista.isTarjaVermelha() ? "SIM" : "NÃO");
-        disponibilidade.setText(revista.getStatusMaterial().toString());
-
-        if(!revista.isTarjaVermelha()) {
-            btnCadastrarCopia.setVisible(false);
-            btnCadastrarCopia.setDisable(true);
-            boxQntExemplares.setVisible(false);
+            disponibilidade.setText(equipamento.getStatusMaterial().name());
         }
     }
 
-    /**
-     * Preenche os campos específicos do Trabalho de Graduação (TG).
-     */
-    private void preencherFormularioTG(TG tg) {
-        if (formTG == null) return;
-        formTG.setVisible(true);
-        formTG.setManaged(true);
+    public void setCamposComuns(GridPane form, boolean tarjaVermelha, boolean tipoAquisicao) {
+        form.setVisible(true);
+        form.setManaged(true);
 
-        codigoTGField.setText(tg.getCodigo());
-        tituloTGField.setText(tg.getTitulo());
-        subtituloTGField.setText(tg.getSubtitulo());
-        assuntoTGField.setText(tg.getAssunto());
-        autor1TGField.setText(tg.getAutor1());
-        ra1TGField.setText(tg.getRa1());
-        autor2TGField.setText(tg.getAutor2());
-        ra2TGField.setText(tg.getRa2());
-        anoPublicacaoTGField.setText(tg.getAnoPublicacao());
-        localPublicacaoTGField.setText(tg.getLocalPublicacao());
-        palavrasChaveTGArea.setText(tg.getPalavrasChave());
-
-        boxTarjaVermelha.setVisible(false);
-        boxQntExemplares.setVisible(false);
-        disponibilidade.setText(tg.getStatusMaterial().toString());
-
+        boxTarjaVermelha.setVisible(tarjaVermelha);
+        boxTarjaVermelha.setManaged(tarjaVermelha);
+        vboxTipoAquisicao.setVisible(tipoAquisicao);
+        vboxTipoAquisicao.setManaged(tipoAquisicao);
     }
 
-    /**
-     * Preenche os campos específicos do Equipamento.
-     */
-    private void preencherFormularioEquipamento(Equipamento equipamento) {
-        if (formEquipamento == null) return;
-        formEquipamento.setVisible(true);
-        formEquipamento.setManaged(true);
-
-        codigoEquipamentoField.setText(equipamento.getCodigo());
-        nomeEquipamentoField.setText(equipamento.getNome());
-        descricaoEquipamentoArea.setText(equipamento.getDescricao());
-
-        boxTarjaVermelha.setVisible(false);
-        boxQntExemplares.setVisible(false);
-        disponibilidade.setText(equipamento.getStatusMaterial().name());
+    private void ocultarTodosFormularios() {
+        if (formLivro != null) { formLivro.setVisible(false); formLivro.setManaged(false); }
+        if (formRevista != null) { formRevista.setVisible(false); formRevista.setManaged(false); }
+        if (formTG != null) { formTG.setVisible(false); formTG.setManaged(false); }
+        if (formEquipamento != null) { formEquipamento.setVisible(false); formEquipamento.setManaged(false); }
     }
+
 
 }

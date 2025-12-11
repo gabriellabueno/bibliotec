@@ -45,7 +45,6 @@
         @FXML private ComboBox<String> tipoAquisicaoCombo;
         @FXML private TextField numeroNotaFiscalField;
 
-
         // --- Contêineres de Formulários
         @FXML private GridPane formLivro;
         @FXML private GridPane formRevista;
@@ -95,13 +94,13 @@
         @FXML private TextField nomeEquipamentoField;
         @FXML private TextArea descricaoEquipamentoArea;
 
-        // Dependências
+        // -- Dependências
         private final MaterialService materialService = new MaterialService();
 
-        // Variável de controle para NF
+        // -- Variável de controle para NF
         private NotaFiscal notaFiscalSelecionada = null;
 
-        // Variáveis de controle para Cadastro de Cópia
+        // -- Variáveis de controle para Cadastro de Cópia
         private Long codigoPai;
         private boolean modoCopia;
 
@@ -133,14 +132,14 @@
 
                 if (newV != null) {
                     if (newV.equals("Compra")) {
-                        habilitarCamposNF(true);
+                        InterfaceUtil.habilitarCamposNF(true, vboxNotaFiscal, numeroNotaFiscalField);
 
                         // Garante que a NF seja solicitada ao selecionar Compra
                         if (this.notaFiscalSelecionada == null && !modoCopia) {
                             abrirModalNotaFiscal();
                             }
                     } else {
-                        habilitarCamposNF(false);
+                        InterfaceUtil.habilitarCamposNF(false, vboxNotaFiscal, numeroNotaFiscalField);
                         // Limpa a NF se mudar para Doação
                         this.notaFiscalSelecionada = null;
                         numeroNotaFiscalField.clear();
@@ -156,12 +155,12 @@
                 }
             });
 
+
             // MÁSCARAS
             InterfaceUtil.aplicarMascaraTamanhoFixo(anoPublicacaoLivroField, 4);
             InterfaceUtil.aplicarMascaraTamanhoFixo(anoPublicacaoRevistaField, 4);
             InterfaceUtil.aplicarMascaraTamanhoFixo(anoPublicacaoTGField, 4);
             InterfaceUtil.aplicarMascaraISBN(isbnField);
-
 
             // CAMPOS NÚMÉRICOS
             InterfaceUtil.aplicarRestricaoNumerica(edicaoField);
@@ -225,20 +224,6 @@
             vboxTipoAquisicao.setManaged(tipoAquisicao);
         }
 
-
-        public void habilitarCamposNF (boolean habilitar) {
-
-            vboxNotaFiscal.setVisible(true);
-            vboxNotaFiscal.setManaged(true);
-
-            if (!habilitar) {
-                numeroNotaFiscalField.setDisable(true);
-                numeroNotaFiscalField.clear();
-            } else {
-                numeroNotaFiscalField.setDisable(false);
-            }
-        }
-
         // ---------------------------------------------------------------------
 
         //  CADASTRO - CREATE
@@ -281,6 +266,7 @@
         private void cadastrarLivro(TipoAquisicao tipoAquisicao) {
 
             Livro novoLivro = MaterialBuilder.toLivro(
+                    null,
                     codigoField, isbnField, tituloLivroField, autorLivroField,
                     editoraLivroField, edicaoField, generoLivroField, assuntoLivroField,
                     localPublicacaoLivroField, anoPublicacaoLivroField, palavrasChaveLivroArea,
@@ -294,6 +280,7 @@
         private void cadastrarRevista(TipoAquisicao tipoAquisicao) {
 
             Revista novaRevista = MaterialBuilder.toRevista(
+                    null,
                     codigoRevistaField, tituloRevistaField, volumeRevistaField, numeroRevistaField,
                     editoraRevistaField, assuntoRevistaField, anoPublicacaoRevistaField,
                     localPublicacaoRevistaField, generoRevistaField, palavrasChaveRevistaArea,
@@ -306,6 +293,7 @@
         private void cadastrarTG() {
 
             TG novoTG = MaterialBuilder.toTG(
+                    null,
                     codigoTGField, tituloTGField, subtituloTGField, assuntoTGField,
                     autor1TGField, ra1TGField, autor2TGField, ra2TGField,
                     anoPublicacaoTGField, localPublicacaoTGField, palavrasChaveTGArea
@@ -317,6 +305,7 @@
         private void cadastrarEquipamento(TipoAquisicao tipoAquisicao)  {
 
             Equipamento novoEquipamento = MaterialBuilder.toEquipamento(
+                    null,
                     codigoEquipamentoField, nomeEquipamentoField, descricaoEquipamentoArea,
                     tipoAquisicao, this.notaFiscalSelecionada
             );

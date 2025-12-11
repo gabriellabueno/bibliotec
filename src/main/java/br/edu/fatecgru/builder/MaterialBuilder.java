@@ -13,13 +13,23 @@ public final class MaterialBuilder {
 
 
     // COLETA DADOS E ARMAZENA EM OBJETO
+
     public static Livro toLivro(
+            Livro livro,
             TextField codigoField, TextField isbnField, TextField tituloField, TextField autorField,
             TextField editoraField, TextField edicaoField, TextField generoField, TextField assuntoField,
             TextField localPublicacaoField, TextField anoPublicacaoField, TextArea palavrasChaveArea,
-            TipoAquisicao tipoAquisicao, NotaFiscal notaFiscal, Long idPai, boolean modoCopia)
+            TipoAquisicao tipoAquisicao,
+            NotaFiscal notaFiscal,
+            Long idPai,
+            boolean modoCopia)
     {
-        Livro livro = new Livro();
+
+        // Cria ou Reutiliza o Objeto em caso de cópia
+        boolean isNovo = (livro == null);
+        if (isNovo) {
+            livro = new Livro();
+        }
 
         dadosComuns(livro, TipoMaterial.LIVRO, tipoAquisicao, notaFiscal, idPai, modoCopia);
 
@@ -39,12 +49,21 @@ public final class MaterialBuilder {
     }
 
     public static Revista toRevista(
+            Revista revista,
             TextField codigoField, TextField tituloField, TextField volumeField, TextField numeroField,
             TextField editoraField, TextField assuntoField, TextField anoPublicacaoField,
             TextField localPublicacaoField, TextField generoField, TextArea palavrasChaveArea,
-            TipoAquisicao tipoAquisicao, NotaFiscal notaFiscal, Long idPai, boolean modoCopia)
+            TipoAquisicao tipoAquisicao,
+            NotaFiscal notaFiscal,
+            Long idPai,
+            boolean modoCopia)
     {
-        Revista revista = new Revista();
+
+        // Cria ou Reutiliza o Objeto em caso de cópia
+        boolean isNovo = (revista == null);
+        if (isNovo) {
+            revista = new Revista();
+        }
 
         dadosComuns(revista, TipoMaterial.REVISTA, tipoAquisicao, notaFiscal, idPai, modoCopia);
 
@@ -64,11 +83,16 @@ public final class MaterialBuilder {
 
 
     public static TG toTG(
+            TG tg,
             TextField codigoField, TextField tituloField, TextField subtituloField, TextField assuntoField,
             TextField autor1Field, TextField ra1Field, TextField autor2Field, TextField ra2Field,
             TextField anoPublicacaoField, TextField localPublicacaoField, TextArea palavrasChaveArea)
     {
-        TG tg = new TG();
+        boolean isNovo = (tg == null);
+        if (isNovo) {
+            tg = new TG();
+        }
+
 
         tg.setTipoMaterial(TipoMaterial.TG);
         tg.setTipoAquisicao(TipoAquisicao.DOACAO); // TG é sempre Doação
@@ -91,11 +115,14 @@ public final class MaterialBuilder {
     }
 
     public static Equipamento toEquipamento(
+            Equipamento equipamento,
             TextField codigoField, TextField nomeField, TextArea descricaoArea,
             TipoAquisicao tipoAquisicao, NotaFiscal notaFiscal)
     {
-        Equipamento equipamento = new Equipamento();
-
+        boolean isNovo = (equipamento == null);
+        if (isNovo) {
+            equipamento = new Equipamento();
+        }
         equipamento.setTipoMaterial(TipoMaterial.EQUIPAMENTO);
         equipamento.setTipoAquisicao(tipoAquisicao);
         equipamento.setStatusMaterial(StatusMaterial.DISPONIVEL);
@@ -201,7 +228,5 @@ public final class MaterialBuilder {
         nomeField.setText(equipamento.getNome());
         descricaoArea.setText(equipamento.getDescricao());
     }
-
-
 
 }
