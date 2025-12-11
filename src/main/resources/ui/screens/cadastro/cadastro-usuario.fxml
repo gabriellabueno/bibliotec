@@ -18,7 +18,7 @@
         </VBox.margin>
     </Label>
 
-    <VBox spacing="25.0" maxWidth="400.0" VBox.vgrow="ALWAYS">
+    <VBox spacing="25.0" maxWidth="400.0">
 
         <HBox spacing="30.0" alignment="CENTER">
             <RadioButton text="Aluno" selected="true" style="-fx-font-weight: bold;">
@@ -46,9 +46,15 @@
             <TextField fx:id="emailField" />
         </VBox>
 
+        <HBox alignment="CENTER_RIGHT" VBox.vgrow="ALWAYS">
+            <VBox.margin>
+                <Insets top="30.0" />
+            </VBox.margin>
+            <Button text="+ Cadastrar" onAction="#onCadastrarClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;">
+            </Button>
+        </HBox>
+
     </VBox>
-    <HBox alignment="BOTTOM_RIGHT" VBox.vgrow="ALWAYS">
-        <Button text="+ Cadastrar" onAction="#onCadastrarClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;">
-        </Button>
-    </HBox>
+
+
 </VBox>

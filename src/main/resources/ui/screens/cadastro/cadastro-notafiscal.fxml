@@ -1,51 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.text.Text?>
-<VBox alignment="TOP_CENTER" spacing="20.0" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="br.edu.fatecgru.controller.cadastro.CadastroNotaFiscalController">
+<?import javafx.scene.text.*?>
+
+<VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="1003.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.edu.fatecgru.controller.cadastro.CadastroNotaFiscalController">
 
     <padding>
         <Insets bottom="30.0" left="210.0" right="210.0" top="100.0" />
     </padding>
 
-    <Label text="Cadastro de Nota Fiscal" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;">
+    <Label style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;" text="Cadastro de Nota Fiscal">
         <VBox.margin>
             <Insets bottom="20.0" />
         </VBox.margin>
     </Label>
 
-    <VBox spacing="15.0" maxWidth="400.0" VBox.vgrow="ALWAYS">
+    <VBox maxWidth="400.0" spacing="15.0">
 
         <VBox spacing="5.0">
-            <Label text="Código" style="-fx-font-weight: bold;" />
+            <Label style="-fx-font-weight: bold;" text="Código" />
             <TextField fx:id="codigoField" />
         </VBox>
 
         <VBox spacing="5.0">
-            <Label text="Descrição" style="-fx-font-weight: bold;" />
-            <TextArea fx:id="descricaoArea" prefHeight="70.0" wrapText="true" promptText="Descreva os materiais e valores individuais." />
+            <Label style="-fx-font-weight: bold;" text="Descrição" />
+            <TextArea fx:id="descricaoArea" prefHeight="70.0" promptText="Descreva os materiais e valores individuais." wrapText="true" />
         </VBox>
 
         <VBox spacing="5.0">
-            <Label text="Data de Aquisição" style="-fx-font-weight: bold;" />
+            <Label style="-fx-font-weight: bold;" text="Data de Aquisição" />
             <DatePicker fx:id="dataAquisicaoField" promptText="Selecione a Data" />
         </VBox>
 
         <VBox spacing="5.0">
-            <Label text="Valor Total da Compra" style="-fx-font-weight: bold;" />
-            <HBox spacing="5.0" alignment="CENTER_LEFT">
-                <Text text="R$" style="-fx-font-weight: bold;" />
+            <Label style="-fx-font-weight: bold;" text="Valor Total da Compra" />
+            <HBox alignment="CENTER_LEFT" spacing="5.0">
+                <Text style="-fx-font-weight: bold;" text="R$" />
                 <TextField fx:id="valorField" HBox.hgrow="ALWAYS" />
             </HBox>
         </VBox>
 
+        <HBox alignment="CENTER_RIGHT" spacing="10" VBox.vgrow="ALWAYS">
+            <VBox.margin>
+                <Insets top="30.0" />
+            </VBox.margin>
+            <Button fx:id="cadastrarButton" onAction="#onCadastrarClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="+ Cadastrar">
+            </Button>
+            <Button fx:id="voltarButton" onAction="#fecharJanela" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Voltar" />
+        </HBox>
+
+
     </VBox>
-    <HBox alignment="BOTTOM_RIGHT" VBox.vgrow="ALWAYS" spacing="10">
-        <Button fx:id="cadastrarButton" text="+ Cadastrar" onAction="#onCadastrarClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;">
-        </Button>
-        <Button fx:id="voltarButton" text="Voltar" onAction="#fecharJanela" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;"/>
-    </HBox>
+
 </VBox>

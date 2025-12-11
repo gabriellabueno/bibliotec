@@ -286,7 +286,7 @@
     <HBox alignment="CENTER_LEFT" prefWidth="580.0" spacing="10.0">
 
         <VBox.margin>
-            <Insets top="10.0" />
+            <Insets top="30.0" />
         </VBox.margin>
 
         <HBox fx:id="boxTarjaVermelha" alignment="CENTER_LEFT" spacing="10.0">

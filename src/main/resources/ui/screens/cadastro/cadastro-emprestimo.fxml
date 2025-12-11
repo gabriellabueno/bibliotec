@@ -27,7 +27,9 @@
         <RadioButton fx:id="rbEquipamento" text="Equipamento" toggleGroup="$materialTypeGroup" />
     </HBox>
 
-    <VBox maxWidth="400.0" spacing="25.0" VBox.vgrow="ALWAYS">
+    <Separator />
+
+    <VBox maxWidth="400.0" spacing="25.0">
 
         <VBox spacing="5.0">
             <Label style="-fx-font-weight: bold;" text="Usuário" />
@@ -46,9 +48,14 @@
             <TextField fx:id="dataEmprestimoField" promptText="__/__/____" />
         </VBox>
 
+        <HBox alignment="CENTER_RIGHT" VBox.vgrow="ALWAYS">
+            <VBox.margin>
+                <Insets top="30.0" />
+            </VBox.margin>
+
+            <Button onAction="#onCadastrarClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="+ Cadastrar">
+            </Button>
+        </HBox>
     </VBox>
-    <HBox alignment="BOTTOM_RIGHT" VBox.vgrow="ALWAYS">
-        <Button onAction="#onCadastrarClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="+ Cadastrar">
-        </Button>
-    </HBox>
+
 </VBox>
