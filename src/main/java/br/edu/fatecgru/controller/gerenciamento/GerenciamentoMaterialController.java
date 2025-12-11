@@ -271,13 +271,12 @@ public class GerenciamentoMaterialController implements Initializable {
         String tipoAq = tipoAquisicaoCombo.getSelectionModel().getSelectedItem();
 
         // Coleta de dados comuns
-        if (tipoAquisicaoCombo != null) {
-            if(tipoAquisicaoCombo.equals("Compra")) {
-                material.setTipoAquisicao(TipoAquisicao.COMPRA);
-            } else {
+        if(tipoAq.trim().equals("Compra")) {
+            material.setTipoAquisicao(TipoAquisicao.COMPRA);
+        } else {
             material.setTipoAquisicao(TipoAquisicao.DOACAO);
-            }
         }
+
         material.setNotaFiscal(this.notaFiscalAtual);
 
         // Coleta de dados específicos
@@ -349,7 +348,7 @@ public class GerenciamentoMaterialController implements Initializable {
 
 
             if (nfRetorno != null) {
-                this.notaFiscalSelecionada = nfRetorno;
+                this.notaFiscalAtual = nfRetorno;
                 numeroNotaFiscalField.setText(nfRetorno.getCodigo()); // Mostra o código visualmente
             }
         } catch (IOException e) {
@@ -387,6 +386,7 @@ public class GerenciamentoMaterialController implements Initializable {
         if (material == null) return;
 
         this.materialEmEdicao = material;
+        this.notaFiscalAtual = material.getNotaFiscal();
 
         if (material.getTipoAquisicao() == TipoAquisicao.COMPRA) {
             tipoAquisicaoCombo.getSelectionModel().select("Compra");

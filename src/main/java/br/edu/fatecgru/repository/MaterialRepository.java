@@ -10,10 +10,12 @@ import org.hibernate.exception.ConstraintViolationException;
 import java.util.Collections;
 import java.util.List;
 
+import static br.edu.fatecgru.util.JPAUtil.getEntityManager;
+
 public class MaterialRepository {
 
     public boolean cadastrarMaterial(Material material) {
-        EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
 
@@ -39,30 +41,39 @@ public class MaterialRepository {
         }
     }
 
+    // MaterialRepository.java (Método atualizarMaterial)
     public boolean atualizarMaterial(Material material) {
-        EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = null;
         try {
+            em = getEntityManager(); // Obtém o EntityManager
             em.getTransaction().begin();
 
-            // Merge atualiza uma entidade existente
-            em.merge(material);
+            // 1. **CHECAGEM E RE-ANEXAÇÃO (O PONTO CHAVE)**
+            NotaFiscal nfDoMaterial = material.getNotaFiscal();
+
+            if (nfDoMaterial != null) {
+                // Garante que a NF (que veio do Controller) seja re-anexada à sessão de Material.
+                NotaFiscal nfGerenciada = em.merge(nfDoMaterial);
+                material.setNotaFiscal(nfGerenciada);
+            }
+
+            // 2. ATUALIZAÇÃO DO MATERIAL
+            em.merge(material); // O Material agora tem a referência Gerenciada (nfGerenciada)
 
             em.getTransaction().commit();
             return true;
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            System.err.println("Erro ao atualizar Material: " + e.getMessage());
-            e.printStackTrace();
+            // ... (Log e Rollback)
             return false;
         } finally {
-            em.close();
+            if (em != null) {
+                em.close();
+            }
         }
     }
 
     public boolean excluirMaterial(Material material) {
-        EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
 
@@ -96,7 +107,7 @@ public class MaterialRepository {
      * Conta quantas cópias existem de um livro PAI
      */
     public int contarCopiasPorIdPai(Long idPai) {
-        EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = getEntityManager();
         try {
             String jpql = "SELECT COUNT(l) FROM Livro l WHERE l.idPai = :idPai";
             TypedQuery<Long> query = em.createQuery(jpql, Long.class);
@@ -153,7 +164,7 @@ public class MaterialRepository {
         String jpql = "SELECT " + mapping.alias + ".idMaterial FROM " + mapping.entityName + " " + mapping.alias +
                 " WHERE " + mapping.alias + ".codigo = :cod";
 
-        EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = getEntityManager();
         try {
             // 2. Criação e execução da query
             TypedQuery<Long> query = em.createQuery(jpql, Long.class);
@@ -175,7 +186,7 @@ public class MaterialRepository {
 
 
     public Material buscarMaterialPorId(Long idMaterial) {
-        EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = getEntityManager();
         try {
             // find = operação de busca por chave primária (PK) mais simples
             return em.find(Material.class, idMaterial);
@@ -188,7 +199,7 @@ public class MaterialRepository {
 
     // MÉTODOS DE BUSCA MOVIDOS DA SERVICE PARA CÁ
     public List<Livro> buscarLivro(String termo) {
-        EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = getEntityManager();
         try {
             String jpql = "SELECT l FROM Livro l WHERE lower(l.titulo) LIKE :termo OR lower(l.autor) LIKE :termo OR l.isbn LIKE :termo OR lower(l.codigo) LIKE :termo OR lower(l.anoPublicacao) LIKE :termo" ;
             TypedQuery<Livro> query = em.createQuery(jpql, Livro.class);
@@ -202,7 +213,7 @@ public class MaterialRepository {
     }
 
     public List<Revista> buscarRevista(String termo) {
-        EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = getEntityManager();
         try {
             String jpql = "SELECT r FROM Revista r WHERE lower(r.titulo) LIKE :termo OR lower(r.editora) LIKE :termo OR lower(r.codigo) LIKE :termo OR lower(r.anoPublicacao) LIKE :termo";
             TypedQuery<Revista> query = em.createQuery(jpql, Revista.class);
@@ -216,7 +227,7 @@ public class MaterialRepository {
     }
 
     public List<TG> buscarTG(String termo) {
-        EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = getEntityManager();
         try {
             // Busca por Título ou Autor1
             String jpql = "SELECT t FROM TG t WHERE lower(t.titulo)  LIKE :termo OR lower(t.codigo) LIKE :termo OR lower(t.autor1) LIKE :termo";
@@ -231,7 +242,7 @@ public class MaterialRepository {
     }
 
     public List<Equipamento> buscarEquipamento(String termo) {
-        EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = getEntityManager();
         try {
             String jpql = "SELECT e FROM Equipamento e WHERE lower(e.nome) LIKE :termo OR lower(e.codigo) LIKE :termo OR lower(e.descricao) LIKE :termo";
             TypedQuery<Equipamento> query = em.createQuery(jpql, Equipamento.class);

@@ -116,6 +116,9 @@ public class MaterialService {
 
         // --- REGRAS ESPECÍFICAS DE LIVRO ---
         if (material instanceof Livro livro) {
+            if (livro.getTipoAquisicao() == null) {
+                throw new IllegalArgumentException("LIVRO: Tipo de Aquisição é obrigatório.");
+            }
             if (livro.getCodigo() == null || livro.getCodigo().trim().isEmpty()) {
                 throw new IllegalArgumentException("LIVRO: O Código é obrigatório.");
             }
@@ -143,6 +146,9 @@ public class MaterialService {
 
             // --- REGRAS ESPECÍFICAS DE REVISTA ---
         } else if (material instanceof Revista revista) {
+            if (revista.getTipoAquisicao() == null) {
+                throw new IllegalArgumentException("REVISTA: Tipo de Aquisição é obrigatório.");
+            }
             if (revista.getCodigo() == null || revista.getCodigo().trim().isEmpty()) {
                 throw new IllegalArgumentException("REVISTA: O Código é obrigatório.");
             }

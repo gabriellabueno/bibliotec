@@ -83,6 +83,8 @@ public class CadastroNotaFiscalController implements Initializable {
 
                 NotaFiscal nfResultado = notaFiscalService.atualizarNotaFiscal(this.notaFiscalSalva);
 
+                this.notaFiscalSalva = nfResultado;
+
                 mostrarAlerta(AlertType.INFORMATION, "Sucesso", "✅ Nota Fiscal " + this.notaFiscalSalva.getCodigo() + " atualizada e selecionada.");
 
                 if (nfResultado != null && isModal) { // Apenas fecha se for Modal
