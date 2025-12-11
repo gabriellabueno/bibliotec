@@ -47,7 +47,7 @@ public class UsuarioRepository {
      * @param idUsuario O ID do usuário.
      * @return O objeto Usuario ou null se não for encontrado.
      */
-    public Usuario buscarUsuarioPorId(Long idUsuario) {
+    public Usuario buscarUsuarioPorId(String idUsuario) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             return em.find(Usuario.class, idUsuario);

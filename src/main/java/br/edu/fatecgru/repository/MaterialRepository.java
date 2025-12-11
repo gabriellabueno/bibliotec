@@ -146,7 +146,7 @@ public class MaterialRepository {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             // Busca por Título ou Autor1
-            String jpql = "SELECT t FROM TG t WHERE lower(t.titulo) LIKE :termo OR lower(t.autor1) LIKE :termo";
+            String jpql = "SELECT t FROM TG t WHERE lower(t.titulo)  LIKE :termo OR lower(t.codigo) LIKE :termo OR lower(t.autor1) LIKE :termo";
             TypedQuery<TG> query = em.createQuery(jpql, TG.class);
             query.setParameter("termo", "%" + termo.toLowerCase() + "%");
             return query.getResultList();
@@ -160,7 +160,7 @@ public class MaterialRepository {
     public List<Equipamento> buscarEquipamento(String termo) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            String jpql = "SELECT e FROM Equipamento e WHERE lower(e.nome) LIKE :termo OR lower(e.descricao) LIKE :termo";
+            String jpql = "SELECT e FROM Equipamento e WHERE lower(e.nome) LIKE :termo OR lower(e.codigo) LIKE :termo OR lower(e.descricao) LIKE :termo";
             TypedQuery<Equipamento> query = em.createQuery(jpql, Equipamento.class);
             query.setParameter("termo", "%" + termo.toLowerCase() + "%");
             return query.getResultList();

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+
+<VBox alignment="TOP_CENTER" spacing="20.0" prefHeight="600.0" prefWidth="580.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="br.edu.fatecgru.controller.gerenciamento.GerenciamentoUsuarioController">
+
+    <padding>
+        <Insets bottom="30.0" left="300.0" right="300.0" top="100.0" />
+    </padding>
+
+    <Label text="Gerenciamento de Usuário" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;">
+        <VBox.margin>
+            <Insets bottom="20.0" />
+        </VBox.margin>
+    </Label>
+
+    <VBox spacing="25.0" maxWidth="400.0" VBox.vgrow="ALWAYS">
+
+        <VBox spacing="5.0">
+            <Label text="ID" style="-fx-font-weight: bold;" />
+            <TextField fx:id="idField" />
+        </VBox>
+
+        <VBox spacing="5.0">
+            <Label text="Nome" style="-fx-font-weight: bold;" />
+            <TextField fx:id="nomeField" />
+        </VBox>
+
+        <VBox spacing="5.0">
+            <Label text="E-mail" style="-fx-font-weight: bold;" />
+            <TextField fx:id="emailField" />
+        </VBox>
+
+        <VBox fx:id="statusContainer" spacing="10.0"
+              style="-fx-border-color: #D3D3D3; -fx-border-width: 1; -fx-padding: 10; -fx-background-color: #f7f7f7;">
+
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <Label text="Penalidade:" style="-fx-font-weight: bold;" />
+                <Label fx:id="penalidadeStatusLabel" text="NÃO"
+                       style="-fx-font-weight: bold; -fx-padding: 2 5; -fx-background-color: #5a1a1a; -fx-text-fill: white; -fx-border-radius: 3;" />
+            </HBox>
+
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <Label text="Empréstimos Ativos:" style="-fx-font-weight: bold;" />
+                <Label fx:id="emprestimosStatusLabel" text="0/2"
+                       style="-fx-font-weight: bold; -fx-padding: 2 5; -fx-background-color: #1a1a57; -fx-text-fill: white; -fx-border-radius: 3;" />
+            </HBox>
+
+        </VBox>
+
+    </VBox>
+    <HBox alignment="BOTTOM_RIGHT" VBox.vgrow="ALWAYS">
+        <Button text="Voltar"  style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;"/>
+
+        <Button  style="-fx-background-color: #b70c0c; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Excluir" />
+        <Button  style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Salvar Alterações" />
+    </HBox>
+</VBox>

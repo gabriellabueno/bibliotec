@@ -83,22 +83,20 @@ public class CadastroEmprestimoController implements Initializable {
         }
 
         try {
-            // Conversão segura
-            Long idUsuario = Long.parseLong(usuarioIdStr.trim());
 
-            // 2. Registrar o empréstimo através do Service. O service calcula a data de devolução.
-            Emprestimo emprestimoSalvo = emprestimoService.registrarEmprestimo(idUsuario, materialCodStr, tipoMaterial);
+            // Registrar o empréstimo através do Service. O service calcula a data de devolução.
+            Emprestimo emprestimoSalvo = emprestimoService.registrarEmprestimo(usuarioIdStr.trim(), materialCodStr, tipoMaterial);
 
             if (emprestimoSalvo != null) {
 
-                // 3. Exibir sucesso e a data calculada (que não está no formulário)
+                // Exibir sucesso e a data calculada (que não está no formulário)
                 mostrarAlerta(AlertType.INFORMATION, "Sucesso",
                         "✅ Empréstimo registrado com sucesso!\n" +
                                 "ID do Empréstimo: " + emprestimoSalvo.getIdEmprestimo() +
                                 "\nData Prevista de Devolução: " +
                                 emprestimoSalvo.getDataPrevistaDevolucao().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
-                // 4. Limpar campos de entrada após sucesso
+                // Limpar campos de entrada após sucesso
                 usuario.clear();
                 material.clear();
                 // A data de empréstimo é redefinida no initialize/ao carregar a tela

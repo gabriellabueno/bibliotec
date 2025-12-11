@@ -1,23 +1,24 @@
 package br.edu.fatecgru.controller.pesquisa;
 
+import br.edu.fatecgru.controller.MainController;
+import br.edu.fatecgru.controller.gerenciamento.GerenciamentoUsuarioController;
+import br.edu.fatecgru.model.Entity.Emprestimo;
 import br.edu.fatecgru.model.Entity.Usuario;
 import br.edu.fatecgru.model.TableView.UserResult;
 import br.edu.fatecgru.service.UsuarioService;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.TableView;
-import javafx.scene.control.RadioButton;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label; // Importação necessária para o Placeholder
 import javafx.event.ActionEvent;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.input.MouseEvent;
+import lombok.Setter;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,9 @@ public class PesquisaUsuarioController implements Initializable {
     // Para fins de clareza, mantivemos a referência indireta através do FXML.
 
     private ObservableList<UserResult> listaResultados = FXCollections.observableArrayList();
+
+    @Setter
+    private MainController mainController;
 
 
     // === Inicialização (Ajustado) ===
@@ -107,7 +111,14 @@ public class PesquisaUsuarioController implements Initializable {
 
             // 4. Mapear Entidade (Usuario) para DTO (UserResult)
             List<UserResult> resultados = usuariosEncontrados.stream()
-                    .map(this::mapToUserResult)
+                    .map(u -> {
+                        // 🎯 BUSCA DA CONTAGEM DE EMPRÉSTIMOS
+                        Long emprestimosAtivos = usuarioService.contarEmprestimosAtivos(u.getIdUsuario());
+                        // Assumindo que você criará este novo método no serviço
+
+                        // 🎯 NOVO MÉTODO FACTORY que aceita a contagem
+                        return UserResult.fromUsuario(u, emprestimosAtivos.intValue());
+                    })
                     .collect(Collectors.toList());
 
             // 5. Adicionar à lista observável para atualizar a tabela
@@ -128,22 +139,61 @@ public class PesquisaUsuarioController implements Initializable {
         }
     }
 
-    // ... (Seu método mapToUserResult existente) ...
-    private UserResult mapToUserResult(Usuario usuario) {
-        String status;
+//    // ... (Seu método mapToUserResult existente) ...
+//    private UserResult mapToUserResult(Usuario usuario) {
+//        String status;
+//
+//        // Lógica simplificada de status de Empréstimo
+//        if (usuario.isPenalidade()) {
+//            status = "COM PENALIDADE";
+//        } else {
+//            status = "ATIVO / OK";
+//        }
+//
+//        return new UserResult(
+//                usuario.getIdUsuario(),
+//                usuario.getNome(),
+//                usuario.getEmail(),
+//                status
+//        );
+//    }
 
-        // Lógica simplificada de status de Empréstimo
-        if (usuario.isPenalidade()) {
-            status = "COM PENALIDADE";
-        } else {
-            status = "ATIVO / OK";
+    @FXML
+    public void handleRowClick(MouseEvent event) {
+        // Verifica se houve clique duplo e se algum item está selecionado
+        if (event.getClickCount() == 2 && !resultsTable.getSelectionModel().isEmpty()) {
+
+            UserResult selectedResult = resultsTable.getSelectionModel().getSelectedItem();
+            Usuario usuarioParaEdicao = selectedResult.getUsuarioOriginal();
+
+            try {
+                if (usuarioParaEdicao != null) {
+
+                    List<Emprestimo> emprestimosDoUsuario = usuarioService.buscarTodosEmprestimosPorUsuario(usuarioParaEdicao.getIdUsuario());
+
+                    String fxmlPath = "/ui/screens/gerenciamento/gerenciamento-usuario.fxml";
+
+                    Usuario finalUsuarioParaEdicao = usuarioParaEdicao;
+
+                    mainController.loadScreenWithCallback(fxmlPath, (GerenciamentoUsuarioController controller) -> {
+                        controller.setUsuarioToEdit(finalUsuarioParaEdicao);
+                        controller.setEmprestimosDoUsuario(emprestimosDoUsuario);
+                        controller.setMainController(mainController);
+                    });
+
+                } else {
+                    Alert info = new Alert(Alert.AlertType.INFORMATION,
+                            "Usuário não encontrado ou erro na busca.", ButtonType.OK);
+                    info.showAndWait();
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Alert erro = new Alert(Alert.AlertType.ERROR,
+                        "Erro ao carregar usuário para edição: " + e.getMessage(), ButtonType.OK);
+                erro.showAndWait();
+            }
+
         }
-
-        return new UserResult(
-                usuario.getIdUsuario(),
-                usuario.getNome(),
-                usuario.getEmail(),
-                status
-        );
     }
 }

@@ -3,6 +3,7 @@ package br.edu.fatecgru.controller;
 import br.edu.fatecgru.controller.cadastro.CadastroNotaFiscalController;
 import br.edu.fatecgru.controller.gerenciamento.GerenciamentoMaterialController;
 import br.edu.fatecgru.controller.pesquisa.PesquisaMaterialController;
+import br.edu.fatecgru.controller.pesquisa.PesquisaUsuarioController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -35,12 +36,16 @@ public class MainController {
 
             Object controller = loader.getController();
 
-            // Verifica se o controlador carregado é a PesquisaMaterialController
-            if (controller instanceof PesquisaMaterialController pesquisaController) {
-                // Se sim, injeta a referência do MainController
-                pesquisaController.setMainController(this);
+            // 1. Injeção para PesquisaMaterialController (Já existente)
+            if (controller instanceof PesquisaMaterialController pesquisaMaterialController) {
+                pesquisaMaterialController.setMainController(this);
             }
-            // --- FIM DA CORREÇÃO DE INJEÇÃO ---
+
+            // 🎯 2. CORREÇÃO: ADICIONAR INJEÇÃO PARA PesquisaUsuarioController
+            if (controller instanceof PesquisaUsuarioController pesquisaUsuarioController) {
+                pesquisaUsuarioController.setMainController(this);
+            }
+            // -----------------------------------------------------------
 
             mainBorderPane.setCenter(newScreen);
         } catch (IOException e) {

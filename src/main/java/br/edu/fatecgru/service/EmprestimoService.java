@@ -42,7 +42,7 @@ public class EmprestimoService {
     /**
      * Registra um novo empréstimo no banco de dados (Lógica de Negócios Central)
      */
-    public Emprestimo registrarEmprestimo(Long idUsuario, String codMaterial, TipoMaterial tipoMaterial) throws IllegalArgumentException, IllegalStateException, Exception {
+    public Emprestimo registrarEmprestimo(String idUsuario, String codMaterial, TipoMaterial tipoMaterial) throws IllegalArgumentException, IllegalStateException, Exception {
 
         // --- VALIDAÇÃO DE OBRIGATÓRIOS (IDs de Entrada) ---
         if (idUsuario == null) {
@@ -78,8 +78,10 @@ public class EmprestimoService {
         // 2. Verificar Limite de Empréstimos (Máximo 3)
         Long qtdEmprestimosAtivos = emprestimoRepository.contarEmprestimosAtivosPorUsuario(idUsuario);
 
-        if (qtdEmprestimosAtivos >= 3) {
-            throw new IllegalStateException("Limite de empréstimos atingido. O usuário possui " + qtdEmprestimosAtivos + " empréstimos ativos.");
+        final int limiteMaximo = usuario.isDocente() ? 3 : 2;
+
+        if (qtdEmprestimosAtivos >= limiteMaximo) {
+            throw new IllegalStateException("Limite de empréstimos atingido. O usuário possui " + qtdEmprestimosAtivos + "/" + limiteMaximo + " empréstimos ativos.");
         }
 
         if (material.getStatusMaterial() != StatusMaterial.DISPONIVEL) {

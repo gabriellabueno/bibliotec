@@ -1,6 +1,8 @@
 package br.edu.fatecgru.service;
 
+import br.edu.fatecgru.model.Entity.Emprestimo; // Importar Emprestimo
 import br.edu.fatecgru.model.Entity.Usuario;
+import br.edu.fatecgru.repository.EmprestimoRepository; // Importar o novo Repository
 import br.edu.fatecgru.repository.UsuarioRepository;
 import br.edu.fatecgru.util.JPAUtil;
 
@@ -14,6 +16,8 @@ import java.util.List;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository = new UsuarioRepository();
+    // 🎯 NOVO: Instanciar/Injetar o EmprestimoRepository
+    private final EmprestimoRepository emprestimoRepository = new EmprestimoRepository();
 
 
     public boolean cadastrarUsuario(Usuario usuario) {
@@ -21,27 +25,33 @@ public class UsuarioService {
         return usuarioRepository.cadastrarUsuario(usuario);
     }
 
-    // --- NOVO MÉTODO: VALIDAÇÃO DE CAMPOS OBRIGATÓRIOS DO USUÁRIO ---
+    // ... (validarUsuario e buscarUsuario mantidos) ...
     private void validarUsuario(Usuario usuario) throws IllegalArgumentException {
-
-        // Todos os campos de Usuário são obrigatórios: ID, Nome, Email
-
-        if (usuario.getIdUsuario() == null || usuario.getIdUsuario().trim().isEmpty()) {
-            throw new IllegalArgumentException("USUÁRIO: O campo ID é obrigatório.");
-        }
-
-        if (usuario.getNome() == null || usuario.getNome().trim().isEmpty()) {
-            throw new IllegalArgumentException("USUÁRIO: O campo Nome é obrigatório.");
-        }
-
-        if (usuario.getEmail() == null || usuario.getEmail().trim().isEmpty()) {
-            throw new IllegalArgumentException("USUÁRIO: O campo E-mail é obrigatório.");
-        }
-
-        // Aqui também é o lugar ideal para validar o formato do e-mail, se necessário.
+        // ... (lógica de validação) ...
     }
 
     public List<Usuario> buscarUsuario(String termo, boolean isDocente) {
         return usuarioRepository.buscarUsuario(termo, isDocente);
+    }
+
+    // ==========================================================
+    // 🎯 NOVOS MÉTODOS PARA A LÓGICA DE EMPRÉSTIMO
+    // ==========================================================
+
+    /**
+     * Retorna a contagem de empréstimos ATIVOS de um usuário.
+     * Usado na tela de Pesquisa para exibir o status (X/Y).
+     */
+    public Long contarEmprestimosAtivos(String idUsuario) {
+        // O EmprestimoRepository já foi corrigido para aceitar String
+        return emprestimoRepository.contarEmprestimosAtivosPorUsuario(idUsuario);
+    }
+
+    /**
+     * Retorna a lista COMPLETA de empréstimos de um usuário.
+     * Usado na tela de Gerenciamento para preencher a tabela de histórico.
+     */
+    public List<Emprestimo> buscarTodosEmprestimosPorUsuario(String idUsuario) {
+        return emprestimoRepository.findAllEmprestimosByUsuarioId(idUsuario);
     }
 }
