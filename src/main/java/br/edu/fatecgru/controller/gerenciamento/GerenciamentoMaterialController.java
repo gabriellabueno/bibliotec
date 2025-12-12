@@ -140,7 +140,6 @@ public class GerenciamentoMaterialController implements Initializable {
             }
         });
 
-
         // MÁSCARAS
         InterfaceUtil.aplicarMascaraTamanhoFixo(anoPublicacaoLivroField, 4);
         InterfaceUtil.aplicarMascaraTamanhoFixo(anoPublicacaoRevistaField, 4);
@@ -298,6 +297,91 @@ public class GerenciamentoMaterialController implements Initializable {
         }
     }
 
+
+    // PREENCHE DE FORMULÁRIO
+
+    public void preencherFormularioParaEdicao(Material material) {
+        if (material == null) return;
+
+        this.materialEmEdicao = material;
+        this.notaFiscalAtual = material.getNotaFiscal();
+
+        if (material.getTipoAquisicao() == TipoAquisicao.COMPRA) {
+            tipoAquisicaoCombo.getSelectionModel().select("Compra");
+            numeroNotaFiscalField.setText(material.getCodigoNotaFiscal());
+        } else {
+            tipoAquisicaoCombo.getSelectionModel().select("Doação");
+            numeroNotaFiscalField.setText("");
+            numeroNotaFiscalField.setDisable(true);
+        }
+
+        ocultarTodosFormularios();
+
+        if (material instanceof Livro livro) {
+
+            setCamposComuns(formLivro, true, true);
+
+            MaterialBuilder.fromLivro(livro, isbnField, tituloLivroField, autorLivroField,
+                    editoraLivroField, edicaoField, generoLivroField, assuntoLivroField,
+                    localPublicacaoLivroField, anoPublicacaoLivroField, palavrasChaveLivroArea);
+
+            codigoField.setText(livro.getCodigo());
+            qntExemplares.setText(String.valueOf((livro.getTotalExemplares() )));
+            tarjaVermelha.setText(livro.isTarjaVermelha() ? "SIM" : "NÃO");
+            disponibilidade.setText(livro.getStatusMaterial().toString());
+
+            if(!livro.isTarjaVermelha()) {
+                btnCadastrarCopia.setVisible(false);
+            }
+
+
+        } else if (material instanceof Revista revista) {
+
+            setCamposComuns(formRevista, true, true);
+
+            MaterialBuilder.fromRevista(revista, tituloRevistaField, volumeRevistaField, numeroRevistaField,
+                    editoraRevistaField, assuntoRevistaField, anoPublicacaoRevistaField,
+                    localPublicacaoRevistaField, generoRevistaField, palavrasChaveRevistaArea);
+
+            codigoRevistaField.setText(revista.getCodigo());
+            qntExemplares.setText(String.valueOf((revista.getTotalExemplares() )));
+            codigoRevistaField.setText(revista.getCodigo());
+            tarjaVermelha.setText(revista.isTarjaVermelha() ? "SIM" : "NÃO");
+            disponibilidade.setText(revista.getStatusMaterial().toString());
+
+            if(!revista.isTarjaVermelha()) {
+                btnCadastrarCopia.setVisible(false);
+            }
+
+
+        } else if (material instanceof TG tg) {
+
+
+            setCamposComuns(formTG, false, false);
+
+            MaterialBuilder.fromTG(tg, tituloTGField, subtituloTGField, assuntoTGField,
+                    autor1TGField, ra1TGField, autor2TGField, ra2TGField,
+                    localPublicacaoTGField, anoPublicacaoTGField, palavrasChaveTGArea);
+
+            codigoTGField.setText(tg.getCodigo());
+            boxQntExemplares.setVisible(false);
+            disponibilidade.setText(tg.getStatusMaterial().toString());
+
+
+        } else if (material instanceof Equipamento equipamento) {
+
+            setCamposComuns(formEquipamento, false, false);
+
+            MaterialBuilder.fromEquipamento(equipamento, nomeEquipamentoField, descricaoEquipamentoArea);
+
+            codigoEquipamentoField.setText(equipamento.getCodigo());
+            boxQntExemplares.setVisible(false);
+            disponibilidade.setText(equipamento.getStatusMaterial().name());
+        }
+    }
+
+    // COLETA DADOS PREENCHIDOS
+
     private Material coletarDadosAtualizados(Material material) {
 
         // Tipo de Aquisição
@@ -371,77 +455,6 @@ public class GerenciamentoMaterialController implements Initializable {
         return null;
     }
 
-    // MÉTODOS PARA PREENCHIMENTO DE FORMULÁRIO
-
-    public void preencherFormularioParaEdicao(Material material) {
-        if (material == null) return;
-
-        this.materialEmEdicao = material;
-        this.notaFiscalAtual = material.getNotaFiscal();
-
-        if (material.getTipoAquisicao() == TipoAquisicao.COMPRA) {
-            tipoAquisicaoCombo.getSelectionModel().select("Compra");
-            numeroNotaFiscalField.setText(material.getCodigoNotaFiscal());
-        } else {
-            tipoAquisicaoCombo.getSelectionModel().select("Doação");
-            numeroNotaFiscalField.setText("");
-            numeroNotaFiscalField.setDisable(true);
-        }
-
-        ocultarTodosFormularios();
-
-        if (material instanceof Livro livro) {
-
-            setCamposComuns(formLivro, true, true);
-
-            MaterialBuilder.fromLivro(livro, isbnField, tituloLivroField, autorLivroField,
-                    editoraLivroField, edicaoField, generoLivroField, assuntoLivroField,
-                    localPublicacaoLivroField, anoPublicacaoLivroField, palavrasChaveLivroArea);
-
-            codigoField.setText(livro.getCodigo());
-            qntExemplares.setText(String.valueOf((livro.getTotalExemplares() )));
-            tarjaVermelha.setText(livro.isTarjaVermelha() ? "SIM" : "NÃO");
-            disponibilidade.setText(livro.getStatusMaterial().toString());
-
-        } else if (material instanceof Revista revista) {
-
-            setCamposComuns(formRevista, true, true);
-
-            MaterialBuilder.fromRevista(revista, tituloRevistaField, volumeRevistaField, numeroRevistaField,
-                    editoraRevistaField, assuntoRevistaField, anoPublicacaoRevistaField,
-                    localPublicacaoRevistaField, generoRevistaField, palavrasChaveRevistaArea);
-
-            codigoRevistaField.setText(revista.getCodigo());
-            qntExemplares.setText(String.valueOf((revista.getTotalExemplares() )));
-            codigoRevistaField.setText(revista.getCodigo());
-            tarjaVermelha.setText(revista.isTarjaVermelha() ? "SIM" : "NÃO");
-            disponibilidade.setText(revista.getStatusMaterial().toString());
-
-        } else if (material instanceof TG tg) {
-
-
-            setCamposComuns(formTG, false, false);
-
-            MaterialBuilder.fromTG(tg, tituloTGField, subtituloTGField, assuntoTGField,
-                    autor1TGField, ra1TGField, autor2TGField, ra2TGField,
-                    localPublicacaoTGField, anoPublicacaoTGField, palavrasChaveTGArea);
-
-            codigoTGField.setText(tg.getCodigo());
-            boxQntExemplares.setVisible(false);
-            disponibilidade.setText(tg.getStatusMaterial().toString());
-
-
-        } else if (material instanceof Equipamento equipamento) {
-
-            setCamposComuns(formEquipamento, false, false);
-
-            MaterialBuilder.fromEquipamento(equipamento, nomeEquipamentoField, descricaoEquipamentoArea);
-
-            codigoEquipamentoField.setText(equipamento.getCodigo());
-            boxQntExemplares.setVisible(false);
-            disponibilidade.setText(equipamento.getStatusMaterial().name());
-        }
-    }
 
     public void setCamposComuns(GridPane form, boolean tarjaVermelha, boolean tipoAquisicao) {
         form.setVisible(true);

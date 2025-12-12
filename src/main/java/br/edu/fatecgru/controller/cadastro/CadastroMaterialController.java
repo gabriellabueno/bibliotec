@@ -109,9 +109,10 @@
 
 
             // ESTADO INICIAL
-            rbLivro.setSelected(true); // tipo de material - Livro
             tarjaVermelha.setEditable(false);
+
             if(!modoCopia) {
+                rbLivro.setSelected(true);
                 tarjaVermelha.setText("SIM");
                 tipoAquisicaoCombo.setValue("Doação");
             }
@@ -203,8 +204,8 @@
 
                     vboxNotaFiscal.setVisible(false);
                     vboxNotaFiscal.setManaged(false);
-                    vboxTipoAquisicao.setVisible(false);
-                    vboxTipoAquisicao.setManaged(false);
+//                    vboxTipoAquisicao.setVisible(false);
+//                    vboxTipoAquisicao.setManaged(false);
                     //this.notaFiscalSelecionada = null;
                     break;
                 case "rbEquipamento":
@@ -232,9 +233,11 @@
         @FXML
         private void onCadastrarClick(ActionEvent event) {
 
+            // TIPO DE AQUISIÇÃO
             RadioButton selectedRb = (RadioButton) materialTypeGroup.getSelectedToggle();
             String aquisicaoStr = tipoAquisicaoCombo.getValue() != null ? tipoAquisicaoCombo.getValue() : "Doação"; // Proteção null
             TipoAquisicao tipoAquisicao = aquisicaoStr.equals("Compra") ? TipoAquisicao.COMPRA : TipoAquisicao.DOACAO;
+
             try {
 
                 switch (selectedRb.getId()) {
