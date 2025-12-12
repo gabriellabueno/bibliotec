@@ -13,7 +13,7 @@
     </padding>
 
     <HBox alignment="CENTER_LEFT" prefWidth="580.0" spacing="10.0">
-        <Button style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Voltar" />
+        <Button style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Voltar" onAction="#onVoltarClick" />
     </HBox>
 
     <Label style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;" text="Gerenciamento de Usuário">
@@ -77,8 +77,8 @@
         </VBox>
 
     <HBox alignment="BOTTOM_RIGHT" VBox.vgrow="ALWAYS" spacing="10.0">
-        <Button style="-fx-background-color: #b70c0c; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Excluir" />
-        <Button style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Salvar Alterações" />
+        <Button style="-fx-background-color: #b70c0c; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Excluir" onAction="#onExcluirClick"  />
+        <Button style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Salvar Alterações" onAction="#onSalvarClick" />
     </HBox>
 
 </VBox>

@@ -7,6 +7,7 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.VBox;
 import lombok.NoArgsConstructor;
 
+import java.util.Optional;
 import java.util.function.UnaryOperator;
 
 @NoArgsConstructor
@@ -89,5 +90,13 @@ public final class InterfaceUtil {
         } else {
             numeroNotaFiscalField.setDisable(false);
         }
+    }
+
+    public static Optional<ButtonType> mostrarAlertaComConfirmacao(String titulo, String cabecalho, String conteudo) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(cabecalho);
+        alert.setContentText(conteudo);
+        return alert.showAndWait();
     }
 }

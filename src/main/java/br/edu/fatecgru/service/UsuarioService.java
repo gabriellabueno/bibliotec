@@ -16,7 +16,6 @@ import java.util.List;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository = new UsuarioRepository();
-    // 🎯 NOVO: Instanciar/Injetar o EmprestimoRepository
     private final EmprestimoRepository emprestimoRepository = new EmprestimoRepository();
 
 
@@ -33,25 +32,28 @@ public class UsuarioService {
     public List<Usuario> buscarUsuario(String termo, boolean isDocente) {
         return usuarioRepository.buscarUsuario(termo, isDocente);
     }
-
-    // ==========================================================
-    // 🎯 NOVOS MÉTODOS PARA A LÓGICA DE EMPRÉSTIMO
-    // ==========================================================
-
-    /**
-     * Retorna a contagem de empréstimos ATIVOS de um usuário.
-     * Usado na tela de Pesquisa para exibir o status (X/Y).
-     */
     public Long contarEmprestimosAtivos(String idUsuario) {
         // O EmprestimoRepository já foi corrigido para aceitar String
         return emprestimoRepository.contarEmprestimosAtivosPorUsuario(idUsuario);
     }
-
-    /**
-     * Retorna a lista COMPLETA de empréstimos de um usuário.
-     * Usado na tela de Gerenciamento para preencher a tabela de histórico.
-     */
     public List<Emprestimo> buscarTodosEmprestimosPorUsuario(String idUsuario) {
         return emprestimoRepository.findAllEmprestimosByUsuarioId(idUsuario);
     }
+
+    public void atualizarUsuario(Usuario usuario) {
+        // Você pode adicionar validações de regra de negócio aqui, se necessário.
+        if (!usuarioRepository.atualizarUsuario(usuario)) {
+            // Se o repository retornar false, lançamos uma exceção para o Controller tratar.
+            throw new RuntimeException("Falha na atualização do usuário.");
+        }
+    }
+
+    public void excluirUsuario(String idUsuario) {
+        if (!usuarioRepository.excluirUsuario(idUsuario)) {
+            // Se o repository retornar false, pode ser que o usuário não exista
+            // ou houve um erro no banco.
+            throw new RuntimeException("Falha na exclusão do usuário. Verifique se ele ainda existe.");
+        }
+    }
+
 }

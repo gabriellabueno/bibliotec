@@ -4,6 +4,7 @@ import br.edu.fatecgru.controller.MainController;
 import br.edu.fatecgru.model.Entity.Emprestimo;
 import br.edu.fatecgru.model.Entity.Usuario;
 import br.edu.fatecgru.model.TableView.EmprestimoResult;
+import br.edu.fatecgru.service.UsuarioService;
 import br.edu.fatecgru.util.InterfaceUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,12 +17,15 @@ import lombok.Setter;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 public class GerenciamentoUsuarioController implements Initializable {
 
     private List<Emprestimo> emprestimosDoUsuario;
+
+    private final UsuarioService usuarioService = new UsuarioService();
 
     @Setter
     private MainController mainController;
@@ -167,8 +171,83 @@ public class GerenciamentoUsuarioController implements Initializable {
     }
 
     @FXML
-    private void onCadastrarClick() {
-        // Lógica de cadastro ou atualização de usuário
-        System.out.println("Salvando/Atualizando usuário...");
+    private void onSalvarClick() {
+        if (usuarioEmEdicao == null) {
+            InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro", "Usuário para edição não carregado.");
+            return;
+        }
+
+        try {
+            // 1. Coleta os dados (Apenas Nome e Email podem ser editados na sua tela)
+            usuarioEmEdicao.setNome(nomeField.getText().trim());
+            usuarioEmEdicao.setEmail(emailField.getText().trim());
+
+            // Nota: Os RadioButtons (tipo de usuário) também devem ser verificados se forem editáveis.
+            // Para simplicidade, assumimos que apenas Nome e Email estão sendo atualizados.
+
+            // 2. Chama o serviço para atualizar
+            usuarioService.atualizarUsuario(usuarioEmEdicao);
+
+            InterfaceUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Usuário atualizado com sucesso!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro ao Salvar", "Não foi possível atualizar o usuário: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void onExcluirClick() {
+        if (usuarioEmEdicao == null) {
+            InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro", "Nenhum usuário selecionado para exclusão.");
+            return;
+        }
+
+        // 1. Confirmação do Usuário (Usando o novo método do InterfaceUtil)
+        Optional<ButtonType> result = InterfaceUtil.mostrarAlertaComConfirmacao(
+                "Confirmação de Exclusão",
+                "Você tem certeza que deseja EXCLUIR o usuário " + usuarioEmEdicao.getNome() + "?",
+                "Esta ação é irreversível e excluirá todos os dados do usuário, exceto empréstimos já finalizados."
+        );
+
+        // Verifica se o usuário confirmou a exclusão
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            try {
+                // 2. Verifica se o usuário tem empréstimos ativos (Regra de Negócio)
+                // Chamando o método do Service que usa o Repository para contar
+                Long ativos = usuarioService.contarEmprestimosAtivos(usuarioEmEdicao.getIdUsuario());
+
+                if (ativos > 0) {
+                    // Bloqueia a exclusão se houver empréstimos ativos/pendentes
+                    InterfaceUtil.mostrarAlerta(Alert.AlertType.WARNING, "Bloqueio de Exclusão",
+                            "Não é possível excluir o usuário. Ele possui " + ativos + " empréstimo(s) ativo(s) ou pendente(s)."
+                    );
+                    return;
+                }
+
+                // 3. Chama o serviço para exclusão
+                usuarioService.excluirUsuario(usuarioEmEdicao.getIdUsuario());
+
+                InterfaceUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Usuário excluído com sucesso!");
+
+                // 4. Retorna à tela de pesquisa após a exclusão bem-sucedida
+                mainController.loadScreen("/ui/screens/pesquisa/pesquisa-usuario.fxml");
+
+            } catch (RuntimeException e) {
+                // Captura falhas de transação ou erros do Service/Repository
+                e.printStackTrace();
+                InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro ao Excluir", "Falha na exclusão do usuário: " + e.getMessage());
+            } catch (Exception e) {
+                // Captura outras exceções inesperadas
+                e.printStackTrace();
+                InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro Inesperado", "Ocorreu um erro ao processar a exclusão.");
+            }
+        }
+    }
+
+    @FXML
+    private void onVoltarClick() {
+        // 1. O botão Voltar simplesmente navega de volta para a tela de Pesquisa de Usuário.
+        mainController.loadScreen("/ui/screens/pesquisa/pesquisa-usuario.fxml");
     }
 }

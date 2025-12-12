@@ -58,12 +58,6 @@ public class UsuarioRepository {
         }
     }
 
-    /**
-     * Busca usuários por termo (ID, Nome, Email) e, opcionalmente, por tipo (Docente).
-     * @param termo Termo de busca digitado pelo usuário.
-     * @param isDocente Se for true, filtra apenas docentes; se for false, filtra apenas alunos.
-     * @return Lista de usuários que correspondem aos critérios.
-     */
     public List<Usuario> buscarUsuario(String termo, boolean isDocente) {
         EntityManager em = JPAUtil.getEntityManager();
 
@@ -85,6 +79,67 @@ public class UsuarioRepository {
         } catch (Exception e) {
             System.err.println("Erro ao buscar Usuários: " + e.getMessage());
             return Collections.emptyList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public boolean atualizarUsuario(Usuario usuario) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            // O merge() é usado para anexar uma entidade destacada (detached) e
+            // propagar suas mudanças para o banco de dados.
+            em.merge(usuario);
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            System.err.println("Erro ao atualizar Usuário: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+
+    /**
+     * Exclui um Usuário pelo seu ID.
+     * @param idUsuario O ID do usuário a ser excluído.
+     * @return true se a exclusão for bem-sucedida, false caso contrário.
+     */
+    public boolean excluirUsuario(String idUsuario) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+
+            // 1. Localiza a entidade (necessário para o remove())
+            Usuario usuario = em.find(Usuario.class, idUsuario);
+
+            if (usuario != null) {
+                // 2. Remove a entidade
+                em.remove(usuario);
+                em.getTransaction().commit();
+                return true;
+            } else {
+                // Se não encontrou, a exclusão tecnicamente "ocorreu" (não existe mais)
+                // ou você pode tratar como um erro específico, dependendo da necessidade.
+                if (em.getTransaction().isActive()) {
+                    em.getTransaction().rollback();
+                }
+                return false;
+            }
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            // OBS: Se houver restrições de chave estrangeira (FK), o BD lançará uma exceção
+            // (ex: não pode excluir usuário que tem empréstimos). O Service deve tratar isso antes.
+            System.err.println("Erro ao excluir Usuário: " + e.getMessage());
+            e.printStackTrace();
+            return false;
         } finally {
             em.close();
         }
