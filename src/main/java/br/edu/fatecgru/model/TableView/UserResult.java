@@ -27,11 +27,14 @@ public class UserResult {
         // 2. 🎯 REVERSÃO: Lógica de Status Simples (sem X/Y e sem quebra de linha)
         String status;
         if (u.isPenalidade()) {
-            status = "COM PENALIDADE";
+            status = "EMPRÉSTIMO(S) ATRASADO(S)!";
         } else if (emprestimosAtivos > 0) {
-            status = "ATIVO (" + emprestimosAtivos + "x)"; // Exibir a contagem simples, se houver
+            // Se houver empréstimos ativos, exibe a contagem
+            status = emprestimosAtivos + " - EMPRÉSTIMO(S) ATIVO(S)";
         } else {
-            status = "ATIVO / OK";
+            // Se não houver penalidade E emprestimosAtivos = 0
+            // Mudança para indicar claramente que não há empréstimos pendentes.
+            status = "SEM EMPRÉSTIMOS ATIVOS"; // OU "OK", OU "LIVRE", etc.
         }
 
         ur.emprestimosStatus.set(status); // Define o status simplificado
