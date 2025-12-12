@@ -276,8 +276,8 @@ public class GerenciamentoMaterialController implements Initializable {
             Parent root = loader.load();
             CadastroNotaFiscalController controllerNF = loader.getController();
 
-            if (this.notaFiscalSelecionada != null) {
-                controllerNF.setNotaFiscalParaEdicao(this.notaFiscalSelecionada);
+            if (this.notaFiscalAtual != null) {
+                controllerNF.setNotaFiscalParaEdicao(this.notaFiscalAtual);
             }
 
             Stage stage = new Stage();

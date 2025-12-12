@@ -262,9 +262,6 @@ public class CadastroNotaFiscalController implements Initializable {
             // Preenche os campos (apenas a data será travada, Valor e Descrição editáveis)
             preencherCampos(notaFiscal);
 
-            // Trava o campo de código para evitar que o usuário mude
-            codigoField.setEditable(false);
-
             // Trava os campos secundários (no seu código, isso só afeta o DatePicker)
             travarCamposNFSecundarios();
 

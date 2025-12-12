@@ -342,6 +342,7 @@
                     this.notaFiscalSelecionada = nfRetorno;
                     numeroNotaFiscalField.setText(nfRetorno.getCodigo()); // Mostra o código visualmente
                     numeroNotaFiscalField.setDisable(false);
+                    numeroNotaFiscalField.setManaged(false);
                 } else {
                     // Se o usuário fechou sem salvar
                     tipoAquisicaoCombo.setValue("Doação");
