@@ -5,6 +5,7 @@
     import br.edu.fatecgru.model.Enum.TipoMaterial;
     import br.edu.fatecgru.util.JPAUtil;
     import jakarta.persistence.EntityManager;
+    import jakarta.persistence.NoResultException;
     import jakarta.persistence.TypedQuery;
     import org.hibernate.exception.ConstraintViolationException;
 
@@ -116,9 +117,7 @@
             }
         }
 
-        /**
-         * Conta quantas cópias existem de um livro PAI
-         */
+
         public int contarCopiasPorIdPai(Long idPai, TipoMaterial tipoMaterial) {
             EntityManager em = getEntityManager();
             int totalCopias = 0;
@@ -278,5 +277,54 @@
             } finally {
                 em.close();
             }
+        }
+
+        // ----------------------------------------------------------------------------------
+        // NOVOS MÉTODOS PARA BUSCA EXATA POR CÓDIGO/ISBN
+        // ----------------------------------------------------------------------------------
+
+
+        private <T extends Material> T buscarPorCampoExato(String valor, String campo, Class<T> entityClass) {
+            EntityManager em = getEntityManager();
+            try {
+                // Define o alias baseado no nome da classe
+                String alias = entityClass.getSimpleName().toLowerCase().substring(0, 1);
+
+                String jpql = "SELECT " + alias + " FROM " + entityClass.getSimpleName() + " " + alias +
+                        " WHERE " + alias + "." + campo + " = :valor";
+
+                TypedQuery<T> query = em.createQuery(jpql, entityClass);
+                query.setParameter("valor", valor);
+                query.setMaxResults(1); // Otimiza para retornar apenas um resultado
+
+                return query.getSingleResult();
+            } catch (NoResultException e) {
+                return null;
+            } catch (Exception e) {
+                System.err.println("Erro ao buscar material por campo " + campo + ": " + e.getMessage());
+                return null;
+            } finally {
+                em.close();
+            }
+        }
+
+        // ----------------------------------------------------------------------------------
+        // MÉTODOS PÚBLICOS DE BUSCA EXATA
+        // ----------------------------------------------------------------------------------
+
+        public Livro buscarLivroPorCodigo(String codigo) {
+            return buscarPorCampoExato(codigo, "codigo", Livro.class);
+        }
+
+        public Revista buscarRevistaPorCodigo(String codigo) {
+            return buscarPorCampoExato(codigo, "codigo", Revista.class);
+        }
+
+        public TG buscarTGPorCodigo(String codigo) {
+            return buscarPorCampoExato(codigo, "codigo", TG.class);
+        }
+
+        public Equipamento buscarEquipamentoPorCodigo(String codigo) {
+            return buscarPorCampoExato(codigo, "codigo", Equipamento.class);
         }
     }

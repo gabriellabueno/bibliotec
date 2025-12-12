@@ -126,8 +126,12 @@ public class MaterialService {
         }
     }
 
-    // --- NOVO: MÉTODO PRIVADO DE VALIDAÇÃO DE REGRAS DE NEGÓCIO ---
+
     private void validarMaterial(Material material) {
+
+        boolean isNovoCadastro = material.getIdMaterial() == null;
+
+        Long idMaterialAtual = material.getIdMaterial();
 
         // --- REGRAS ESPECÍFICAS DE LIVRO ---
         if (material instanceof Livro livro) {
@@ -137,6 +141,7 @@ public class MaterialService {
             if (livro.getCodigo() == null || livro.getCodigo().trim().isEmpty()) {
                 throw new IllegalArgumentException("LIVRO: O Código é obrigatório.");
             }
+
             if (livro.getIsbn() == null || livro.getIsbn().trim().isEmpty()) {
                 throw new IllegalArgumentException("LIVRO: O ISBN é obrigatório.");
             }
@@ -157,6 +162,12 @@ public class MaterialService {
             }
             if (livro.getPalavrasChave() == null || livro.getPalavrasChave().trim().isEmpty()) {
                 throw new IllegalArgumentException("LIVRO: As Palavras-chave são obrigatórias.");
+            }
+
+            Livro livroExistente = repository.buscarLivroPorCodigo(livro.getCodigo());
+
+            if (isNovoCadastro && livroExistente != null) {
+                throw new IllegalArgumentException("LIVRO: O Código '" + livro.getCodigo() + "' já está sendo usado por outro Livro.");
             }
 
             // --- REGRAS ESPECÍFICAS DE REVISTA ---
@@ -184,6 +195,12 @@ public class MaterialService {
             }
             if (revista.getPalavrasChave() == null || revista.getPalavrasChave().trim().isEmpty()) {
                 throw new IllegalArgumentException("REVISTA: As Palavras-chave são obrigatórias.");
+            }
+
+            Revista revistaExistente = repository.buscarRevistaPorCodigo(revista.getCodigo());
+
+            if (isNovoCadastro && revistaExistente != null) {
+                throw new IllegalArgumentException("REVISTA: O Código '" + revista.getCodigo() + "' já está sendo usado por outra Revista.");
             }
 
             // --- REGRAS ESPECÍFICAS DE TG ---
@@ -216,6 +233,12 @@ public class MaterialService {
                 throw new IllegalArgumentException("TG: As Palavras-chave são obrigatórias.");
             }
 
+            TG tgExistente = repository.buscarTGPorCodigo(tg.getCodigo());
+
+            if (isNovoCadastro && tgExistente != null) {
+                throw new IllegalArgumentException("TG: O Código '" + tg.getCodigo() + "' já está sendo usado por outro Trabalho de Graduação.");
+            }
+
             // --- REGRAS ESPECÍFICAS DE EQUIPAMENTO ---
         } else if (material instanceof Equipamento equipamento) {
             if (equipamento.getCodigo() == null || equipamento.getCodigo().trim().isEmpty()) {
@@ -226,6 +249,12 @@ public class MaterialService {
             }
             if (equipamento.getDescricao() == null || equipamento.getDescricao().trim().isEmpty()) {
                 throw new IllegalArgumentException("EQUIPAMENTO: A Descrição é obrigatória.");
+            }
+
+            Equipamento equipamentoExistente = repository.buscarEquipamentoPorCodigo(equipamento.getCodigo());
+
+            if (isNovoCadastro && equipamentoExistente != null) {
+                throw new IllegalArgumentException("EQUIPAMENTO: O Código '" + equipamento.getCodigo() + "' já está sendo usado por outro Equipamento.");
             }
         }
 
