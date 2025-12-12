@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -28,4 +30,7 @@ public class Usuario {
 
     @Column(name = "penalidade", nullable = false)
     private boolean penalidade;
+
+    @Column(name = "dataFimPenalidade")
+    private LocalDate dataFimPenalidade;
 }

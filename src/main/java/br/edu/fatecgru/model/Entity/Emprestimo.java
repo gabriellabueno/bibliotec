@@ -43,4 +43,6 @@ public class Emprestimo {
     @Column(name = "status_emprestimo", nullable = false)
     private StatusEmprestimo statusEmprestimo;
 
+    @Column(name = "renovado", nullable = false)
+    private boolean renovado = false;
 }

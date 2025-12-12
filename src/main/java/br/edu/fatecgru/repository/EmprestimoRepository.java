@@ -73,14 +73,50 @@ public class EmprestimoRepository {
         try {
             String jpql = "SELECT e FROM Emprestimo e " +
                     "JOIN FETCH e.usuario u " +
-                    "JOIN FETCH e.material m " +
+                    "JOIN FETCH e.material m " + // <-- ESSA LINHA É CRUCIAL
                     "WHERE u.idUsuario = :idUsuario " +
                     "ORDER BY e.dataEmprestimo DESC";
 
             TypedQuery<Emprestimo> query = em.createQuery(jpql, Emprestimo.class);
             query.setParameter("idUsuario", idUsuario);
 
-            return query.getResultList();
+            return query.getResultList(); // Aqui o Material é carregado junto
+        } finally {
+            em.close();
+        }
+    }
+
+    public void excluirEmprestimo(Long idEmprestimo) throws Exception {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+
+            // 1. Encontra a entidade pelo ID
+            Emprestimo emprestimo = em.find(Emprestimo.class, idEmprestimo);
+
+            if (emprestimo == null) {
+                throw new IllegalArgumentException("Empréstimo não encontrado para exclusão (ID: " + idEmprestimo + ")");
+            }
+
+            // 2. Remove a entidade
+            em.remove(emprestimo);
+
+            em.getTransaction().commit();
+
+        } catch (IllegalArgumentException e) {
+            // Captura erro se o objeto não foi encontrado
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new Exception("Erro de Exclusão: " + e.getMessage());
+
+        } catch (Exception e) {
+            // Captura erros genéricos (ex: falha de conexão ou transação)
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new Exception("Erro inesperado ao excluir o empréstimo: " + e.getMessage());
+
         } finally {
             em.close();
         }

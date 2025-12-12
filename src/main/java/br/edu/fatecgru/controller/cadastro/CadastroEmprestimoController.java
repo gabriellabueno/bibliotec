@@ -1,6 +1,6 @@
 package br.edu.fatecgru.controller.cadastro;
 
-import br.edu.fatecgru.model.Entity.Emprestimo;
+import br.edu.fatecgru.model.Entity.*;
 import br.edu.fatecgru.model.Enum.TipoMaterial;
 import br.edu.fatecgru.service.EmprestimoService;
 
@@ -22,6 +22,7 @@ public class CadastroEmprestimoController implements Initializable {
 
     // === Dependências ===
     private final EmprestimoService emprestimoService = new EmprestimoService();
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     // CAMPOS PARA VERIFICAR TIPO DO MATERIAL
     @FXML private ToggleGroup materialTypeGroup;
@@ -89,13 +90,14 @@ public class CadastroEmprestimoController implements Initializable {
 
             if (emprestimoSalvo != null) {
 
-                // Exibir sucesso e a data calculada (que não está no formulário)
-                mostrarAlerta(AlertType.INFORMATION, "Sucesso",
-                        "✅ Empréstimo registrado com sucesso!\n" +
-                                "ID do Empréstimo: " + emprestimoSalvo.getIdEmprestimo() +
-                                "\nData Prevista de Devolução: " +
-                                emprestimoSalvo.getDataPrevistaDevolucao().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+//                // Exibir sucesso e a data calculada (que não está no formulário)
+//                mostrarAlerta(AlertType.INFORMATION, "Sucesso",
+//                        "✅ Empréstimo registrado com sucesso!\n" +
+//                                "ID do Empréstimo: " + emprestimoSalvo.getIdEmprestimo() +
+//                                "\nData Prevista de Devolução: " +
+//                                emprestimoSalvo.getDataPrevistaDevolucao().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
+                mostrarPopUpSucesso(emprestimoSalvo);
                 // Limpar campos de entrada após sucesso
                 usuario.clear();
                 material.clear();
@@ -123,5 +125,66 @@ public class CadastroEmprestimoController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    private void mostrarPopUpSucesso(Emprestimo emprestimo) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("✅ Sucesso: Empréstimo Registrado");
+        alert.setHeaderText("Detalhes do Empréstimo #" + emprestimo.getIdEmprestimo());
+
+        // Formata as datas
+        String dataEmprestimo = emprestimo.getDataEmprestimo().format(formatter);
+        String dataPrevista = emprestimo.getDataPrevistaDevolucao().format(formatter);
+
+        // Obtém o nome/título do material
+        String nomeMaterial = getNomeOuTitulo(emprestimo.getMaterial());
+
+        // Constrói o conteúdo detalhado
+        String content = String.format(
+                "----------------------------------------------\n" +
+                        "USUÁRIO:\n" +
+                        "  ID: %s\n" +
+                        "  Nome: %s\n" +
+                        "----------------------------------------------\n" +
+                        "MATERIAL EMPRESTADO:\n" +
+                        "  Tipo: %s\n" +
+                        "  Código: %s\n" +
+                        "  Título/Nome: %s\n" +
+                        "----------------------------------------------\n" +
+                        "DATAS:\n" +
+                        "  Data do Empréstimo: %s\n" +
+                        "  Previsão de Devolução: %s\n" +
+                        "----------------------------------------------\n" +
+                        "STATUS INICIAL: ATIVO",
+                emprestimo.getUsuario().getIdUsuario(),
+                emprestimo.getUsuario().getNome(),
+                emprestimo.getMaterial().getTipoMaterial(), // Assumindo que TipoMaterial está na Entity Material
+                nomeMaterial,
+                dataEmprestimo,
+                dataPrevista
+        );
+
+        alert.setContentText(content);
+        alert.setResizable(true); // Permite redimensionar se o conteúdo for longo
+        alert.showAndWait();
+    }
+
+    /**
+     * Auxiliar para extrair o nome ou título específico da subclasse do Material.
+     */
+    private String getNomeOuTitulo(Material material) {
+        if (material == null) return "Material Não Encontrado";
+
+        // Uso de instanceof e cast para obter o título/nome da subclasse
+        if (material instanceof Livro livro) {
+            return livro.getTitulo();
+        } else if (material instanceof Revista revista) {
+            return revista.getTitulo();
+        } else if (material instanceof TG tg) {
+            return tg.getTitulo();
+        } else if (material instanceof Equipamento equipamento) {
+            return equipamento.getNome();
+        }
+        return "Material Genérico/Desconhecido";
     }
 }

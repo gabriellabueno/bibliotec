@@ -12,7 +12,7 @@
     </padding>
 
     <HBox alignment="CENTER_LEFT" prefWidth="580.0" spacing="10.0">
-        <Button style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Voltar" />
+        <Button onAction="#voltar" style="-fx-background-color: #5a1a1a; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Voltar" />
     </HBox>
 
     <Label style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;" text="Gerenciamento de Empréstimo">
@@ -73,10 +73,22 @@
         </VBox>
     </HBox>
 
-    <HBox alignment="BOTTOM_RIGHT" VBox.vgrow="ALWAYS" spacing="10.0">
-        <Button style="-fx-background-color: #b70c0c; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Excluir" />
-        <Button style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Salvar Alterações" />
-        <Button style="-fx-background-color: #b70c0c; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Renovar" />
+    <HBox alignment="CENTER" prefWidth="580.0" spacing="10.0" style="-fx-padding: 50 0 0 0">
+
+        <VBox.margin>
+            <Insets top="10.0" />
+        </VBox.margin>
+
+        <Region HBox.hgrow="ALWAYS" />
+    <HBox alignment="CENTER_LEFT" prefWidth="580.0" spacing="10.0">
+        <Button fx:id="btnRenovar" onAction="#onRenovar" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Renovar" />
+
+    </HBox>
+    <HBox alignment="CENTER_RIGHT" prefWidth="580.0" spacing="10.0">
+        <Button onAction="#onExcluir" style="-fx-background-color: #b70c0c; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Excluir" />
+        <Button fx:id="btnSalvar" onAction="#onSalvar" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Salvar Alterações" />
+    </HBox>
+
     </HBox>
 
 </VBox>

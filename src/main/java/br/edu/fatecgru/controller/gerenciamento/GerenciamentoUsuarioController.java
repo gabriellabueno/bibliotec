@@ -3,7 +3,9 @@ package br.edu.fatecgru.controller.gerenciamento;
 import br.edu.fatecgru.controller.MainController;
 import br.edu.fatecgru.model.Entity.Emprestimo;
 import br.edu.fatecgru.model.Entity.Usuario;
+import br.edu.fatecgru.model.Enum.StatusEmprestimo;
 import br.edu.fatecgru.model.TableView.EmprestimoResult;
+import br.edu.fatecgru.service.EmprestimoService;
 import br.edu.fatecgru.service.UsuarioService;
 import br.edu.fatecgru.util.InterfaceUtil;
 import javafx.collections.FXCollections;
@@ -26,6 +28,7 @@ public class GerenciamentoUsuarioController implements Initializable {
     private List<Emprestimo> emprestimosDoUsuario;
 
     private final UsuarioService usuarioService = new UsuarioService();
+    private final EmprestimoService emprestimoService = new EmprestimoService();
 
     @Setter
     private MainController mainController;
@@ -132,9 +135,38 @@ public class GerenciamentoUsuarioController implements Initializable {
         emprestimosStatusLabel.setText(ativos + "/" + limite);
     }
 
+    private void verificarAtrasosEmprestimos() {
+        if (this.emprestimosDoUsuario == null) return;
+
+        boolean usuarioPenalizado = this.usuarioEmEdicao.isPenalidade();
+
+        try {
+            // Percorre a lista para verificar e persistir o atraso e a penalidade no banco
+            for (Emprestimo emprestimo : this.emprestimosDoUsuario) {
+                // Chama o serviço de lógica de negócio que faz o MERGE no Emprestimo e no Usuario
+                emprestimoService.verificarEaplicarAtraso(emprestimo);
+
+                // Se o serviço aplicou uma penalidade, precisamos refletir isso no objeto local
+                if (emprestimo.getStatusEmprestimo() == StatusEmprestimo.ATRASADO && !usuarioPenalizado) {
+                    usuarioPenalizado = true;
+                }
+            }
+
+            // Garante que o objeto local do usuário reflita a penalidade mais recente.
+            // Nota: Se a penalidade foi aplicada, o objeto usuarioEmEdicao no banco foi atualizado.
+            // Para ter 100% de certeza, você deveria recarregar o usuarioEmEdicao do banco aqui,
+            // mas vamos assumir que a variável local será atualizada:
+            this.usuarioEmEdicao.setPenalidade(usuarioPenalizado);
+
+        } catch (Exception e) {
+            System.err.println("Erro ao verificar atrasos para o usuário " + this.usuarioEmEdicao.getIdUsuario() + ": " + e.getMessage());
+            // InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro de Atraso", "Falha ao verificar penalidades.");
+        }
+    }
+
     public void setEmprestimosDoUsuario(List<Emprestimo> emprestimos) {
         this.emprestimosDoUsuario = emprestimos;
-
+        verificarAtrasosEmprestimos();
         if (this.usuarioEmEdicao != null) {
             atualizarStatusView();
             popularTabelaEmprestimos();
@@ -155,7 +187,11 @@ public class GerenciamentoUsuarioController implements Initializable {
 
                     // Carrega a tela de Gerenciamento de Empréstimo
                     mainController.loadScreenWithCallback(fxmlPath, (GerenciamentoEmprestimoController controller) -> {
-                        controller.setEmprestimoToEdit(emprestimoParaEdicao);
+                        try {
+                            controller.setEmprestimoToEdit(emprestimoParaEdicao);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
                         controller.setMainController(mainController);
                     });
 
