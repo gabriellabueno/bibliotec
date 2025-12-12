@@ -108,16 +108,18 @@ public class GerenciamentoMaterialController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
+        // Campos náo editáveis
+
         rbLivro.setDisable(true);
         rbRevista.setDisable(true);
         rbTG.setDisable(true);
         rbEquipamento.setDisable(true);
 
-        // Campos náo editáveis
         codigoField.setEditable(false);
         codigoRevistaField.setEditable(false);
         codigoTGField.setEditable(false);
         codigoEquipamentoField.setEditable(false);
+
         qntExemplares.setEditable(false);
         tarjaVermelha.setEditable(false);
         tipoAquisicaoCombo.setDisable(true);
@@ -319,6 +321,7 @@ public class GerenciamentoMaterialController implements Initializable {
 
         if (material instanceof Livro livro) {
 
+            rbLivro.setSelected(true);
             setCamposComuns(formLivro, true, true);
 
             MaterialBuilder.fromLivro(livro, isbnField, tituloLivroField, autorLivroField,
@@ -337,6 +340,7 @@ public class GerenciamentoMaterialController implements Initializable {
 
         } else if (material instanceof Revista revista) {
 
+            rbRevista.setSelected(true);
             setCamposComuns(formRevista, true, true);
 
             MaterialBuilder.fromRevista(revista, tituloRevistaField, volumeRevistaField, numeroRevistaField,
@@ -356,21 +360,22 @@ public class GerenciamentoMaterialController implements Initializable {
 
         } else if (material instanceof TG tg) {
 
-
+            rbTG.setSelected(true);
             setCamposComuns(formTG, false, false);
 
             MaterialBuilder.fromTG(tg, tituloTGField, subtituloTGField, assuntoTGField,
                     autor1TGField, ra1TGField, autor2TGField, ra2TGField,
                     localPublicacaoTGField, anoPublicacaoTGField, palavrasChaveTGArea);
 
+            vboxNotaFiscal.setVisible(false);
             codigoTGField.setText(tg.getCodigo());
             boxQntExemplares.setVisible(false);
             disponibilidade.setText(tg.getStatusMaterial().toString());
 
-
         } else if (material instanceof Equipamento equipamento) {
 
-            setCamposComuns(formEquipamento, false, false);
+            rbEquipamento.setSelected(true);
+            setCamposComuns(formEquipamento, false, true);
 
             MaterialBuilder.fromEquipamento(equipamento, nomeEquipamentoField, descricaoEquipamentoArea);
 
@@ -417,7 +422,8 @@ public class GerenciamentoMaterialController implements Initializable {
         } else if (material instanceof Revista revista) {
 
             MaterialBuilder.toRevista(
-                    revista, codigoRevistaField, tituloRevistaField, volumeRevistaField, numeroRevistaField,
+                    revista,
+                    codigoRevistaField, tituloRevistaField, volumeRevistaField, numeroRevistaField,
                     editoraRevistaField, assuntoRevistaField, anoPublicacaoRevistaField,
                     localPublicacaoRevistaField, generoRevistaField, palavrasChaveRevistaArea,
                     tipoAquisicao,
@@ -462,6 +468,7 @@ public class GerenciamentoMaterialController implements Initializable {
 
         boxTarjaVermelha.setVisible(tarjaVermelha);
         boxTarjaVermelha.setManaged(tarjaVermelha);
+
         vboxTipoAquisicao.setVisible(tipoAquisicao);
         vboxTipoAquisicao.setManaged(tipoAquisicao);
     }

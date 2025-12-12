@@ -112,7 +112,6 @@
             tarjaVermelha.setEditable(false);
 
             if(!modoCopia) {
-                rbLivro.setSelected(true);
                 tarjaVermelha.setText("SIM");
                 tipoAquisicaoCombo.setValue("Doação");
             }
@@ -136,14 +135,15 @@
                         InterfaceUtil.habilitarCamposNF(true, vboxNotaFiscal, numeroNotaFiscalField);
 
                         // Garante que a NF seja solicitada ao selecionar Compra
-                        if (this.notaFiscalSelecionada == null && !modoCopia) {
+                        if (this.notaFiscalSelecionada == null) {
                             abrirModalNotaFiscal();
-                            }
+                        }
                     } else {
                         InterfaceUtil.habilitarCamposNF(false, vboxNotaFiscal, numeroNotaFiscalField);
                         // Limpa a NF se mudar para Doação
                         this.notaFiscalSelecionada = null;
                         numeroNotaFiscalField.clear();
+                        numeroNotaFiscalField.setDisable(true);
                     }
                 }
 
@@ -201,15 +201,9 @@
                     break;
                 case "rbTG":
                     setCamposComuns(formTG, false, false);
-
-                    vboxNotaFiscal.setVisible(false);
-                    vboxNotaFiscal.setManaged(false);
-//                    vboxTipoAquisicao.setVisible(false);
-//                    vboxTipoAquisicao.setManaged(false);
-                    //this.notaFiscalSelecionada = null;
                     break;
                 case "rbEquipamento":
-                    setCamposComuns(formRevista, true, true);
+                    setCamposComuns(formEquipamento, true, true);
                     break;
             }
 
@@ -221,8 +215,12 @@
 
             boxTarjaVermelha.setVisible(tarjaVermelha);
             boxTarjaVermelha.setManaged(tarjaVermelha);
+
             vboxTipoAquisicao.setVisible(tipoAquisicao);
             vboxTipoAquisicao.setManaged(tipoAquisicao);
+
+            vboxNotaFiscal.setVisible(tipoAquisicao);
+            vboxNotaFiscal.setManaged(tipoAquisicao);
         }
 
         // ---------------------------------------------------------------------
@@ -343,6 +341,7 @@
                 if (nfRetorno != null) {
                     this.notaFiscalSelecionada = nfRetorno;
                     numeroNotaFiscalField.setText(nfRetorno.getCodigo()); // Mostra o código visualmente
+                    numeroNotaFiscalField.setDisable(false);
                 } else {
                     // Se o usuário fechou sem salvar
                     tipoAquisicaoCombo.setValue("Doação");
