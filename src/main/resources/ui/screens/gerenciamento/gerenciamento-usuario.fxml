@@ -4,7 +4,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="TOP_CENTER" prefHeight="752.0" prefWidth="1124.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.edu.fatecgru.controller.gerenciamento.GerenciamentoUsuarioController">
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<VBox alignment="TOP_CENTER" prefHeight="752.0" prefWidth="1124.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="br.edu.fatecgru.controller.gerenciamento.GerenciamentoUsuarioController">
 
     <padding>
         <Insets bottom="30.0" left="300.0" right="300.0" top="100.0" />
@@ -36,8 +38,9 @@
             <Label style="-fx-font-weight: bold;" text="E-mail" />
             <TextField fx:id="emailField" />
         </VBox>
+    </VBox>
 
-        <VBox fx:id="statusContainer" spacing="10.0" style="-fx-border-color: #D3D3D3; -fx-border-width: 1; -fx-padding: 10; -fx-background-color: #f7f7f7;">
+        <VBox fx:id="statusContainer" maxWidth="400" spacing="10.0" style="-fx-border-color: #D3D3D3; -fx-border-width: 1; -fx-padding: 10; -fx-background-color: #f7f7f7;">
 
             <HBox alignment="CENTER_LEFT" spacing="10.0">
                 <Label style="-fx-font-weight: bold;" text="Penalidade:" />
@@ -48,12 +51,34 @@
                 <Label style="-fx-font-weight: bold;" text="Empréstimos Ativos:" />
                 <Label fx:id="emprestimosStatusLabel" style="-fx-font-weight: bold; -fx-padding: 2 5; -fx-background-color: #1a1a57; -fx-text-fill: white; -fx-border-radius: 3;" text="0/2" />
             </HBox>
-
         </VBox>
 
-    </VBox>
+        <VBox prefWidth="900">
+            <Label text="Empréstimos do Usuário" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+            <TableView fx:id="emprestimosTableView" onMouseClicked="#handleEmprestimoClick" VBox.vgrow="ALWAYS" prefHeight="200.0">
+                <columns>
+                    <TableColumn fx:id="colEmprestimoID" text="ID Empréstimo" prefWidth="90.0">
+                        <cellValueFactory><PropertyValueFactory property="idEmprestimo"></PropertyValueFactory></cellValueFactory>
+                    </TableColumn>
+                    <TableColumn fx:id="colMaterialIDEmprestimo" text="ID Material" prefWidth="80.0">
+                        <cellValueFactory><PropertyValueFactory property="idMaterial"></PropertyValueFactory></cellValueFactory>
+                    </TableColumn>
+                    <TableColumn fx:id="colDataEmprestimo" text="Data Empréstimo" prefWidth="150.0">
+                        <cellValueFactory><PropertyValueFactory property="dataEmprestimo"></PropertyValueFactory></cellValueFactory>
+                    </TableColumn>
+                    <TableColumn fx:id="colDataPrevista" text="Devolução Prevista" prefWidth="150.0">
+                        <cellValueFactory><PropertyValueFactory property="dataPrevistaDevolucao"></PropertyValueFactory></cellValueFactory>
+                    </TableColumn>
+                    <TableColumn fx:id="colStatusEmprestimo" text="Status" prefWidth="120.0">
+                        <cellValueFactory><PropertyValueFactory property="statusEmprestimo"></PropertyValueFactory></cellValueFactory>
+                    </TableColumn>
+                </columns>
+            </TableView>
+        </VBox>
+
     <HBox alignment="BOTTOM_RIGHT" VBox.vgrow="ALWAYS" spacing="10.0">
         <Button style="-fx-background-color: #b70c0c; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Excluir" />
         <Button style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Salvar Alterações" />
     </HBox>
+
 </VBox>

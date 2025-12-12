@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="TOP_CENTER" prefHeight="653.0" prefWidth="1260.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="br.edu.fatecgru.controller.gerenciamento.GerenciamentoEmprestimoController">
+
+    <padding>
+        <Insets bottom="30.0" left="300.0" right="300.0" top="50.0" />
+    </padding>
+
+    <HBox alignment="CENTER_LEFT" prefWidth="580.0" spacing="10.0">
+        <Button style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Voltar" />
+    </HBox>
+
+    <Label style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;" text="Gerenciamento de Empréstimo">
+        <VBox.margin>
+            <Insets bottom="20.0" />
+        </VBox.margin>
+    </Label>
+
+    <Separator />
+
+    <HBox alignment="TOP_CENTER" spacing="50.0">
+
+        <VBox spacing="20.0" prefWidth="400.0">
+
+            <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1a1a57;" text="Informações do Usuário" />
+            <VBox spacing="5.0">
+                <Label style="-fx-font-weight: bold;" text="ID do Usuário" />
+                <TextField fx:id="idUsuarioField" editable="false" style="-fx-background-color: #f0f0f0;" />
+            </VBox>
+            <VBox spacing="5.0">
+                <Label style="-fx-font-weight: bold;" text="Usuário" />
+                <TextField fx:id="nomeUsuarioField" editable="false" style="-fx-background-color: #f0f0f0;" />
+            </VBox>
+
+            <Separator />
+
+            <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1a1a57;" text="Informações do Material" />
+            <VBox spacing="5.0">
+                <Label style="-fx-font-weight: bold;" text="Código do Material" />
+                <TextField fx:id="codigoMaterialField" editable="false" style="-fx-background-color: #f0f0f0;" />
+            </VBox>
+            <VBox spacing="5.0">
+                <Label style="-fx-font-weight: bold;" text="Material" />
+                <TextField fx:id="nomeMaterialField" editable="false" style="-fx-background-color: #f0f0f0;" />
+            </VBox>
+
+        </VBox>
+
+        <VBox spacing="20.0" prefWidth="400.0">
+
+            <VBox spacing="5.0">
+                <Label style="-fx-font-weight: bold;" text="Data do Empréstimo" />
+                <TextField fx:id="dataEmprestimoField" editable="false" style="-fx-background-color: #f0f0f0;" />
+            </VBox>
+            <VBox spacing="5.0">
+                <Label style="-fx-font-weight: bold;" text="Data Prevista da Devolução" />
+                <TextField fx:id="dataPrevistaDevolucaoField" editable="false" style="-fx-background-color: #f0f0f0;" />
+            </VBox>
+            <VBox spacing="5.0">
+                <Label style="-fx-font-weight: bold;" text="Data da Devolução" />
+                <TextField fx:id="dataDevolucaoField" promptText="DD/MM/AAAA (Ajustar em caso de devolução)" />
+            </VBox>
+            <VBox spacing="5.0">
+                <Label style="-fx-font-weight: bold;" text="Status do Empréstimo" />
+                <TextField fx:id="statusEmprestimoField" editable="false" style="-fx-background-color: #f0f0f0; -fx-font-weight: bold;" />
+            </VBox>
+
+        </VBox>
+    </HBox>
+
+    <HBox alignment="BOTTOM_RIGHT" VBox.vgrow="ALWAYS" spacing="10.0">
+        <Button style="-fx-background-color: #b70c0c; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Excluir" />
+        <Button style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Salvar Alterações" />
+        <Button style="-fx-background-color: #b70c0c; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Renovar" />
+    </HBox>
+
+</VBox>
