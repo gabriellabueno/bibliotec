@@ -55,7 +55,7 @@ public class EmprestimoService {
             Usuario usuario = emprestimo.getUsuario();
             usuario.setPenalidade(true);
             usuario.setDataFimPenalidade(hoje.plusDays(DIAS_PENALIDADE)); // Nova regra assumida
-            usuarioRepository.cadastrarUsuario(usuario); // Reutilizando para update
+            usuarioRepository.atualizarUsuario(usuario); // Reutilizando para update
         }
     }
 
@@ -72,12 +72,12 @@ public class EmprestimoService {
         // 1. Atualiza Empréstimo
         emprestimo.setDataDevolucao(dataDevolucao);
         emprestimo.setStatusEmprestimo(StatusEmprestimo.DEVOLVIDO);
-        emprestimoRepository.cadastrarEmprestimo(emprestimo);
 
-        // 2. Atualiza Material
+        // 2. Atualiza Material (Define o status no objeto Material)
         Material material = emprestimo.getMaterial();
         material.setStatusMaterial(StatusMaterial.DISPONIVEL);
-        materialRepository.cadastrarMaterial(material); // Reutilizando para update
+
+        emprestimoRepository.cadastrarEmprestimo(emprestimo);
     }
 
     /**
@@ -150,8 +150,23 @@ public class EmprestimoService {
         // 2. Validação de Disponibilidade
 
         // Verificar Penalidade
-        if (usuario.isPenalidade()) { // Assumindo o método isPenalidade()
-            throw new IllegalStateException("Usuário está penalizado e não pode realizar novos empréstimos.");
+        if (usuario.isPenalidade()) {
+
+            LocalDate hoje = LocalDate.now();
+            LocalDate fim = usuario.getDataFimPenalidade();
+
+            // Penalidade expirada → limpar e permitir novo empréstimo
+            if (fim != null && fim.isBefore(hoje)) {
+                usuario.setPenalidade(false);
+                usuario.setDataFimPenalidade(null);
+                usuarioRepository.atualizarUsuario(usuario);
+            } else if (fim == null || fim.isAfter(hoje) || fim.isEqual(hoje)) {
+                // Penalidade ainda ativa → bloquear
+                String fimStr = (fim != null) ? fim.toString() : "sem data registrada";
+                throw new IllegalStateException(
+                        "Usuário está sob penalidade até " + fimStr + " e não pode realizar novos empréstimos."
+                );
+            }
         }
 
         // 2. Verificar Limite de Empréstimos (Máximo 3)

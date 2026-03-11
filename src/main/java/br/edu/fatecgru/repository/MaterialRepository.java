@@ -208,18 +208,32 @@
             }
         }
 
-
         public Material buscarMaterialPorId(Long idMaterial) {
             EntityManager em = getEntityManager();
             try {
-                // find = operação de busca por chave primária (PK) mais simples
-                return em.find(Material.class, idMaterial);
+                TypedQuery<Material> query = em.createQuery(
+                        "SELECT m FROM Material m WHERE m.idMaterial = :id",
+                        Material.class
+                );
+                query.setParameter("id", idMaterial);
+
+                Material material = query.getSingleResult();
+
+                // Força a inicialização (INDISPENSÁVEL para herança SINGLE_TABLE)
+                material.getTipoMaterial();
+                if (material.getNotaFiscal() != null) {
+                    material.getNotaFiscal().getCodigo();
+                }
+
+                return material;
+
             } catch (Exception e) {
                 return null;
             } finally {
                 em.close();
             }
         }
+
 
         // MÉTODOS DE BUSCA MOVIDOS DA SERVICE PARA CÁ
         public List<Livro> buscarLivro(String termo) {

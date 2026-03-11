@@ -21,12 +21,12 @@ public class Emprestimo {
     private Long idEmprestimo;
 
     // Relacionamento ManyToOne com Usuario (fk_usuario)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_usuario", nullable = false)
     private Usuario usuario;
 
     // Relacionamento ManyToOne com Material (fk_material)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_material", nullable = false)
     private Material material;
 

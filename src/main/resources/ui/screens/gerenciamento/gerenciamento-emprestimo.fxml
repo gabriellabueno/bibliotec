@@ -48,6 +48,10 @@
                 <Label style="-fx-font-weight: bold;" text="Material" />
                 <TextField fx:id="nomeMaterialField" editable="false" style="-fx-background-color: #f0f0f0;" />
             </VBox>
+            <VBox spacing="5.0">
+                <Label style="-fx-font-weight: bold;" text="Tipo" />
+                <TextField fx:id="tipoMaterialField" editable="false" style="-fx-background-color: #f0f0f0;" />
+            </VBox>
 
         </VBox>
 
@@ -63,7 +67,7 @@
             </VBox>
             <VBox spacing="5.0">
                 <Label style="-fx-font-weight: bold;" text="Data da Devolução" />
-                <TextField fx:id="dataDevolucaoField" promptText="DD/MM/AAAA (Ajustar em caso de devolução)" />
+                <DatePicker fx:id="dataDevolucaoField" promptText="Selecione a Data" />
             </VBox>
             <VBox spacing="5.0">
                 <Label style="-fx-font-weight: bold;" text="Status do Empréstimo" />

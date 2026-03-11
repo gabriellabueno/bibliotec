@@ -6,6 +6,7 @@ import br.edu.fatecgru.controller.cadastro.CadastroMaterialController;
 import br.edu.fatecgru.controller.cadastro.CadastroNotaFiscalController;
 import br.edu.fatecgru.model.Entity.*;
 import br.edu.fatecgru.model.Enum.TipoAquisicao;
+import br.edu.fatecgru.model.Enum.TipoMaterial;
 import br.edu.fatecgru.service.MaterialService;
 
 import br.edu.fatecgru.util.InterfaceUtil;
@@ -184,13 +185,18 @@ public class GerenciamentoMaterialController implements Initializable {
 
         String mensagemConfirmacao = "";
 
-        if (materialEmEdicao.getIdPai() != null) {
-            mensagemConfirmacao = "Tem certeza que deseja excluir esta cópia?";
-        } else {
-            mensagemConfirmacao = "Tem certeza que deseja excluir?\n\n" +
-                    "⚠️ ATENÇÃO: Este é o material original (tarja vermelha). " +
-                    "Se houver cópias vinculadas, a exclusão não será permitida.";
+        if ( materialEmEdicao.getTipoMaterial() == TipoMaterial.LIVRO ||
+                materialEmEdicao.getTipoMaterial() == TipoMaterial.REVISTA) {
+            if (materialEmEdicao.getIdPai() != null) {
+                mensagemConfirmacao = "Tem certeza que deseja excluir esta cópia?";
+            } else {
+                mensagemConfirmacao = "Tem certeza que deseja excluir?\n\n" +
+                        "⚠️ ATENÇÃO: Este é o material original (tarja vermelha). " +
+                        "Se houver cópias vinculadas, a exclusão não será permitida.";
 
+            }
+        } else {
+            mensagemConfirmacao = "Tem certeza que deseja excluir este material?";
         }
 
         Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION,

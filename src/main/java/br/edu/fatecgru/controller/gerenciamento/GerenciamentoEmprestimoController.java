@@ -7,10 +7,7 @@ import br.edu.fatecgru.service.EmprestimoService;
 import br.edu.fatecgru.util.InterfaceUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import lombok.Setter;
 
 import java.net.URL;
@@ -33,11 +30,12 @@ public class GerenciamentoEmprestimoController implements Initializable {
     // === CAMPOS DO MATERIAL ===
     @FXML private TextField codigoMaterialField;
     @FXML private TextField nomeMaterialField;
+    @FXML private TextField tipoMaterialField;
 
     // === CAMPOS DE DATA E STATUS ===
     @FXML private TextField dataEmprestimoField;
     @FXML private TextField dataPrevistaDevolucaoField;
-    @FXML private TextField dataDevolucaoField; // Campo que pode ser editado/preenchido para devolver
+    @FXML private DatePicker dataDevolucaoField; // Campo que pode ser editado/preenchido para devolver
     @FXML private TextField statusEmprestimoField;
 
     // === BOTÕES DE AÇÃO ===
@@ -74,6 +72,7 @@ public class GerenciamentoEmprestimoController implements Initializable {
 
             String codigo = "Erro de Mapeamento";
             String nomeOuTitulo = "Erro de Mapeamento";
+            String tipo = material.getTipoMaterial().toString();
 
             if (material instanceof Livro livro) {
 
@@ -97,7 +96,7 @@ public class GerenciamentoEmprestimoController implements Initializable {
 
             }
 
-
+            tipoMaterialField.setText(tipo);
             codigoMaterialField.setText(codigo);
             nomeMaterialField.setText(nomeOuTitulo);
         }
@@ -107,17 +106,16 @@ public class GerenciamentoEmprestimoController implements Initializable {
         dataPrevistaDevolucaoField.setText(emprestimo.getDataPrevistaDevolucao().toString());
 
         // Data de Devolução (Campo opcional, só preenche se já foi devolvido)
-        String dataDevolucaoStr = Optional.ofNullable(emprestimo.getDataDevolucao())
-                .map(Object::toString)
-                .orElse(""); // Deixa vazio se ainda não devolvido
-        dataDevolucaoField.setText(dataDevolucaoStr);
+        dataDevolucaoField.setValue(emprestimo.getDataDevolucao() != null
+                ? emprestimo.getDataDevolucao()
+                : null);
 
         // Status
         statusEmprestimoField.setText(emprestimo.getStatusEmprestimo().toString());
 
 
         // (#) Verifica se Data Prevista já passou (aplica penalidade se necessário)
-        emprestimoService.verificarEaplicarAtraso(emprestimo);
+       // emprestimoService.verificarEaplicarAtraso(emprestimo);
 
         // Atualiza a UI com o status real (ativo, atrasado ou devolvido)
         statusEmprestimoField.setText(emprestimo.getStatusEmprestimo().toString());
@@ -154,7 +152,7 @@ public class GerenciamentoEmprestimoController implements Initializable {
 
             // 2. Atualiza a UI e objeto local (recarregando dados)
             setEmprestimoToEdit(emprestimoEmEdicao);
-            dataDevolucaoField.setText(dataDevolucao.toString());
+            dataDevolucaoField.setValue(dataDevolucao);
 
             InterfaceUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Material devolvido e status atualizado.");
 

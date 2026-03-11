@@ -50,7 +50,20 @@ public class UsuarioRepository {
     public Usuario buscarUsuarioPorId(String idUsuario) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.find(Usuario.class, idUsuario);
+            TypedQuery<Usuario> query = em.createQuery(
+                    "SELECT u FROM Usuario u WHERE u.idUsuario = :id",
+                    Usuario.class
+            );
+            query.setParameter("id", idUsuario);
+
+            Usuario usuario = query.getSingleResult();
+
+            // Força inicialização de campos lazy (se houver)
+            usuario.getNome();
+            usuario.getEmail();
+
+            return usuario;
+
         } catch (Exception e) {
             return null;
         } finally {

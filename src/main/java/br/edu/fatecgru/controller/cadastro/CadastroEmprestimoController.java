@@ -89,14 +89,6 @@ public class CadastroEmprestimoController implements Initializable {
             Emprestimo emprestimoSalvo = emprestimoService.registrarEmprestimo(usuarioIdStr.trim(), materialCodStr, tipoMaterial);
 
             if (emprestimoSalvo != null) {
-
-//                // Exibir sucesso e a data calculada (que não está no formulário)
-//                mostrarAlerta(AlertType.INFORMATION, "Sucesso",
-//                        "✅ Empréstimo registrado com sucesso!\n" +
-//                                "ID do Empréstimo: " + emprestimoSalvo.getIdEmprestimo() +
-//                                "\nData Prevista de Devolução: " +
-//                                emprestimoSalvo.getDataPrevistaDevolucao().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-
                 mostrarPopUpSucesso(emprestimoSalvo);
                 // Limpar campos de entrada após sucesso
                 usuario.clear();
@@ -129,8 +121,8 @@ public class CadastroEmprestimoController implements Initializable {
 
     private void mostrarPopUpSucesso(Emprestimo emprestimo) {
         Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("✅ Sucesso: Empréstimo Registrado");
-        alert.setHeaderText("Detalhes do Empréstimo #" + emprestimo.getIdEmprestimo());
+        alert.setTitle("✅ Empréstimo Registrado");
+        alert.setHeaderText("Detalhes do Empréstimo");
 
         // Formata as datas
         String dataEmprestimo = emprestimo.getDataEmprestimo().format(formatter);
@@ -158,7 +150,8 @@ public class CadastroEmprestimoController implements Initializable {
                         "STATUS INICIAL: ATIVO",
                 emprestimo.getUsuario().getIdUsuario(),
                 emprestimo.getUsuario().getNome(),
-                emprestimo.getMaterial().getTipoMaterial(), // Assumindo que TipoMaterial está na Entity Material
+                emprestimo.getMaterial().getTipoMaterial(),
+                emprestimo.getMaterial().getIdMaterial(),
                 nomeMaterial,
                 dataEmprestimo,
                 dataPrevista
