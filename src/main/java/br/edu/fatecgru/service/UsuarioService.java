@@ -24,16 +24,16 @@ public class UsuarioService {
         return usuarioRepository.cadastrarUsuario(usuario);
     }
 
-    // ... (validarUsuario e buscarUsuario mantidos) ...
+
     private void validarUsuario(Usuario usuario) throws IllegalArgumentException {
-        // ... (lógica de validação) ...
+
     }
 
     public List<Usuario> buscarUsuario(String termo, boolean isDocente) {
         return usuarioRepository.buscarUsuario(termo, isDocente);
     }
     public Long contarEmprestimosAtivos(String idUsuario) {
-        // O EmprestimoRepository já foi corrigido para aceitar String
+
         return emprestimoRepository.contarEmprestimosAtivosPorUsuario(idUsuario);
     }
     public List<Emprestimo> buscarTodosEmprestimosPorUsuario(String idUsuario) {
@@ -41,17 +41,16 @@ public class UsuarioService {
     }
 
     public void atualizarUsuario(Usuario usuario) {
-        // Você pode adicionar validações de regra de negócio aqui, se necessário.
+
         if (!usuarioRepository.atualizarUsuario(usuario)) {
-            // Se o repository retornar false, lançamos uma exceção para o Controller tratar.
+
             throw new RuntimeException("Falha na atualização do usuário.");
         }
     }
 
     public void excluirUsuario(String idUsuario) {
         if (!usuarioRepository.excluirUsuario(idUsuario)) {
-            // Se o repository retornar false, pode ser que o usuário não exista
-            // ou houve um erro no banco.
+
             throw new RuntimeException("Falha na exclusão do usuário. Verifique se ele ainda existe.");
         }
     }

@@ -6,28 +6,27 @@ import br.edu.fatecgru.repository.MaterialRepository;;
 
 import java.util.List;
 
-// Implementar aqui a Lógica de Negócios: Garantir que o ISBN/código não seja duplicado, setar data de cadastro, etc.
-// A lógica de transação e persistência foi delegada ao Repository.
+
 public class MaterialService {
 
-    // Injeção de Dependência
+
     private final MaterialRepository repository = new MaterialRepository();
 
-    // Unifica o cadastro de qualquer tipo de Material
+
     public boolean cadastrarMaterial(Material material) {
 
         validarMaterial(material);
 
 
-        // Inicializar quantidadeExemplares para Livro e Revista
+
         if (material instanceof Livro livro) {
 
             if(livro.isTarjaVermelha()) {
-                // Livro PAI (Tarja Vermelha) começa com 1 exemplar
+
                 livro.setTotalExemplares(1);
 
             } else {
-                // Livro CÓPIA (sem Tarja Vermelha) tem totalExemplares = 0
+
                 livro.setTotalExemplares(0);
 
                 if (livro.getIdPai() != null) {
@@ -56,9 +55,9 @@ public class MaterialService {
             throw new IllegalArgumentException("Material não pode ser nulo.");
         }
 
-        // Verifica se é um livro PAI com cópias
+
         if (material instanceof Livro livro && livro.isTarjaVermelha()) {
-            // Busca se existem cópias deste livro
+
             int totalCopias = repository.contarCopiasPorIdPai(material.getIdMaterial(), material.getTipoMaterial());
 
             if (totalCopias > 0) {
@@ -70,7 +69,7 @@ public class MaterialService {
         }
 
         if (material instanceof Revista revista && revista.isTarjaVermelha()) {
-            // Busca se existem cópias deste livro
+
             int totalCopias = repository.contarCopiasPorIdPai(material.getIdMaterial(), material.getTipoMaterial());
 
             if (totalCopias > 0) {
@@ -81,12 +80,12 @@ public class MaterialService {
             }
         }
 
-        // Se for uma cópia (tem idPai), decrementa o contador do PAI
+
         if (material.getIdPai() != null) {
             decrementarTotalExemplaresDoPai(material.getIdPai());
         }
 
-        // Exclui o material
+
         return repository.excluirMaterial(material);
     }
 
@@ -133,7 +132,7 @@ public class MaterialService {
 
         Long idMaterialAtual = material.getIdMaterial();
 
-        // --- REGRAS ESPECÍFICAS DE LIVRO ---
+
         if (material instanceof Livro livro) {
             if (livro.getTipoAquisicao() == null) {
                 throw new IllegalArgumentException("LIVRO: Tipo de Aquisição é obrigatório.");
@@ -170,7 +169,7 @@ public class MaterialService {
                 throw new IllegalArgumentException("LIVRO: O Código '" + livro.getCodigo() + "' já está sendo usado por outro Livro.");
             }
 
-            // --- REGRAS ESPECÍFICAS DE REVISTA ---
+
         } else if (material instanceof Revista revista) {
             if (revista.getTipoAquisicao() == null) {
                 throw new IllegalArgumentException("REVISTA: Tipo de Aquisição é obrigatório.");
@@ -203,7 +202,7 @@ public class MaterialService {
                 throw new IllegalArgumentException("REVISTA: O Código '" + revista.getCodigo() + "' já está sendo usado por outra Revista.");
             }
 
-            // --- REGRAS ESPECÍFICAS DE TG ---
+
         } else if (material instanceof TG tg) {
             if (tg.getCodigo() == null || tg.getCodigo().trim().isEmpty()) {
                 throw new IllegalArgumentException("TG: O Código é obrigatório.");
@@ -239,7 +238,7 @@ public class MaterialService {
                 throw new IllegalArgumentException("TG: O Código '" + tg.getCodigo() + "' já está sendo usado por outro Trabalho de Graduação.");
             }
 
-            // --- REGRAS ESPECÍFICAS DE EQUIPAMENTO ---
+
         } else if (material instanceof Equipamento equipamento) {
             if (equipamento.getCodigo() == null || equipamento.getCodigo().trim().isEmpty()) {
                 throw new IllegalArgumentException("EQUIPAMENTO: O Código é obrigatório.");
@@ -258,13 +257,13 @@ public class MaterialService {
             }
         }
 
-        // --- REGRA DE NEGÓCIO: Compra exige Nota Fiscal ---
+
         if (material.getTipoAquisicao() == TipoAquisicao.COMPRA && material.getNotaFiscal() == null) {
             throw new IllegalArgumentException("Materiais comprados exigem vínculo com Nota Fiscal.");
         }
     }
 
-    // Os métodos de busca ficam no Service, mas chamando o Repository.
+
     public List<Livro> buscarLivros(String termo) {
         return repository.buscarLivro(termo);
     }

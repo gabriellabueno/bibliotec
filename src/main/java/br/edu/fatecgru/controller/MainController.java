@@ -20,7 +20,7 @@ public class MainController {
     @FXML
     private BorderPane mainBorderPane;
 
-    // PARA A TELA DE CADASTRO DE NOTA FISCAL NÃO FECHAR APÓS CADASTRAR
+
     public void loadNotaFiscalScreen(String fxmlPath) {
         loadScreenWithCallback( fxmlPath,
                 (CadastroNotaFiscalController controller) -> {
@@ -36,16 +36,16 @@ public class MainController {
 
             Object controller = loader.getController();
 
-            // 1. Injeção para PesquisaMaterialController (Já existente)
+
             if (controller instanceof PesquisaMaterialController pesquisaMaterialController) {
                 pesquisaMaterialController.setMainController(this);
             }
 
-            // 🎯 2. CORREÇÃO: ADICIONAR INJEÇÃO PARA PesquisaUsuarioController
+
             if (controller instanceof PesquisaUsuarioController pesquisaUsuarioController) {
                 pesquisaUsuarioController.setMainController(this);
             }
-            // -----------------------------------------------------------
+
 
             mainBorderPane.setCenter(newScreen);
         } catch (IOException e) {
@@ -83,9 +83,9 @@ public class MainController {
             }
 
         } catch (Exception e) {
-            // 4. TRATAMENTO DE ERROS VISÍVEL
+
             System.err.println("Erro ao carregar tela com callback: " + fxmlPath);
-            e.printStackTrace(); // Crucial para ver NullPointerExceptions ou IOExceptions.
+            e.printStackTrace();
         }
     }
 
@@ -97,9 +97,9 @@ public class MainController {
             Pane sidebar = sidebarLoader.load();
 
             SideBarController sidebarController = sidebarLoader.getController(); // Pega o controller
-            sidebarController.setMainController(this); // Injeta referência
+            sidebarController.setMainController(this);
 
-            mainBorderPane.setLeft(sidebar); // Coloca a barra lateral na tela
+            mainBorderPane.setLeft(sidebar);
         } catch (IOException e) {
             System.err.println("Erro ao carregar a barra lateral.");
             e.printStackTrace();

@@ -26,7 +26,7 @@ public class PesquisaUsuarioController implements Initializable {
 
     private final UsuarioService usuarioService = new UsuarioService();
 
-    // === Campos FXML ===
+
     @FXML private ToggleGroup userTypeGroup;
     @FXML private TextField searchField;
     @FXML private TableView<UserResult> resultsTable;
@@ -132,7 +132,7 @@ public class PesquisaUsuarioController implements Initializable {
             try {
                 emprestimosDoUsuario = usuarioService.buscarTodosEmprestimosPorUsuario(usuarioParaEdicao.getIdUsuario());
             } catch (Exception e) {
-                System.err.println("⚠️ Erro ao buscar empréstimos do usuário: " + e.getMessage());
+                System.err.println("Erro ao buscar empréstimos do usuário: " + e.getMessage());
                 e.printStackTrace();
             }
 

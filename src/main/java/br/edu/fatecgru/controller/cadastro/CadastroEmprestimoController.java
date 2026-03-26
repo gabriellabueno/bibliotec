@@ -20,38 +20,38 @@ import java.time.format.DateTimeFormatter;
 
 public class CadastroEmprestimoController implements Initializable {
 
-    // === Dependências ===
+
     private final EmprestimoService emprestimoService = new EmprestimoService();
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    // CAMPOS PARA VERIFICAR TIPO DO MATERIAL
+
     @FXML private ToggleGroup materialTypeGroup;
     @FXML private RadioButton rbLivro;
     @FXML private RadioButton rbRevista;
     @FXML private RadioButton rbTG;
     @FXML private RadioButton rbEquipamento;
 
-    // === Campos FXML (Nomes ajustados para coincidir com o FXML: 'usuario' e 'material') ===
-    @FXML private TextField usuario; // Campo de entrada para o ID do usuário
-    @FXML private TextField material; // Campo de entrada para o ID do material
-    @FXML private TextField dataEmprestimoField; // Apenas informativo, preenchido automaticamente
+
+    @FXML private TextField usuario;
+    @FXML private TextField material;
+    @FXML private TextField dataEmprestimoField;
 
 
-    // === Inicialização ===
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Preenche a data de empréstimo como a data atual ao iniciar.
+
+        // Preenche a data de empréstimo como a data atual
+
         dataEmprestimoField.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        dataEmprestimoField.setDisable(true); // Desabilita edição
+        dataEmprestimoField.setDisable(true);
     }
 
 
-    // === Método de Ação ===
 
     @FXML
     private void onCadastrarClick(ActionEvent event) {
-        // 1. Coletar os dados dos campos (IDs)
+
         String usuarioIdStr = usuario.getText();
         String materialCodStr = material.getText();
         TipoMaterial tipoMaterial;
@@ -85,32 +85,33 @@ public class CadastroEmprestimoController implements Initializable {
 
         try {
 
-            // Registrar o empréstimo através do Service. O service calcula a data de devolução.
             Emprestimo emprestimoSalvo = emprestimoService.registrarEmprestimo(usuarioIdStr.trim(), materialCodStr, tipoMaterial);
 
             if (emprestimoSalvo != null) {
                 mostrarPopUpSucesso(emprestimoSalvo);
-                // Limpar campos de entrada após sucesso
+
                 usuario.clear();
                 material.clear();
-                // A data de empréstimo é redefinida no initialize/ao carregar a tela
+
             } else {
-                mostrarAlerta(AlertType.ERROR, "Falha", "Não foi possível registrar o empréstimo (Retorno nulo).");
+                mostrarAlerta(AlertType.ERROR, "Falha", "Não foi possível registrar o empréstimo.");
             }
 
         } catch (NumberFormatException e) {
-            mostrarAlerta(AlertType.ERROR, "Erro de Entrada", "Os IDs devem ser números válidos.");
+            mostrarAlerta(AlertType.ERROR, "Erro", "Os IDs devem ser válidos.");
+
         } catch (IllegalArgumentException | IllegalStateException e) {
             // Erros de entidade não encontrada ou indisponibilidade
-            mostrarAlerta(AlertType.ERROR, "Regra de Negócio", e.getMessage());
+            mostrarAlerta(AlertType.ERROR, "Erro", e.getMessage());
+
         } catch (Exception e) {
             // Erros de persistência
-            mostrarAlerta(AlertType.ERROR, "Erro no Sistema", "Ocorreu um erro de persistência: " + e.getMessage());
+            mostrarAlerta(AlertType.ERROR, "Erro", e.getMessage());
             e.printStackTrace();
         }
     }
 
-    // Método auxiliar para exibir Alertas
+
     private void mostrarAlerta(AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -162,13 +163,11 @@ public class CadastroEmprestimoController implements Initializable {
         alert.showAndWait();
     }
 
-    /**
-     * Auxiliar para extrair o nome ou título específico da subclasse do Material.
-     */
+    // Auxiliar para extrair o nome ou título específico da subclasse do Material.
+
     private String getNomeOuTitulo(Material material) {
         if (material == null) return "Material Não Encontrado";
 
-        // Uso de instanceof e cast para obter o título/nome da subclasse
         if (material instanceof Livro livro) {
             return livro.getTitulo();
         } else if (material instanceof Revista revista) {

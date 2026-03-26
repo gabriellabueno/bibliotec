@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public final class MaterialBuilder {
 
 
-    // COLETA DADOS E ARMAZENA EM OBJETO
+    // Coleta os dados e armazena no objeto
 
     public static Livro toLivro(
             Livro livro,
@@ -26,6 +26,7 @@ public final class MaterialBuilder {
     {
 
         // Cria ou Reutiliza o Objeto em caso de cópia
+
         boolean isNovo = (livro == null);
         if (isNovo) {
             livro = new Livro();
@@ -59,7 +60,7 @@ public final class MaterialBuilder {
             boolean modoCopia)
     {
 
-        // Cria ou Reutiliza o Objeto em caso de cópia
+
         boolean isNovo = (revista == null);
         if (isNovo) {
             revista = new Revista();
@@ -148,7 +149,8 @@ public final class MaterialBuilder {
         material.setTipoAquisicao(aquisicao);
         material.setStatusMaterial(StatusMaterial.DISPONIVEL);
 
-        // Somente Livro e Revista usam modo cópia / tarja vermelha
+        //  Livro e Revista usam cópia (tarja vermelha)
+
         if (material instanceof Livro livro) {
             livro.setTarjaVermelha(!modoCopia);
             if (idPai != null) {
@@ -168,9 +170,7 @@ public final class MaterialBuilder {
         }
     }
 
-    // ===========================================================
-
-    // PREENCHE CAMPOS A PARTIR DE OBJETO
+    // Preenche os campos a partir do objeto
 
     public static void fromLivro(
             Livro livro, TextField isbnField, TextField tituloField, TextField autorField,

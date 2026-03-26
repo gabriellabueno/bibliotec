@@ -235,7 +235,7 @@
         }
 
 
-        // MÉTODOS DE BUSCA MOVIDOS DA SERVICE PARA CÁ
+
         public List<Livro> buscarLivro(String termo) {
             EntityManager em = getEntityManager();
             try {
@@ -293,9 +293,7 @@
             }
         }
 
-        // ----------------------------------------------------------------------------------
-        // NOVOS MÉTODOS PARA BUSCA EXATA POR CÓDIGO/ISBN
-        // ----------------------------------------------------------------------------------
+
 
 
         private <T extends Material> T buscarPorCampoExato(String valor, String campo, Class<T> entityClass) {
@@ -322,9 +320,6 @@
             }
         }
 
-        // ----------------------------------------------------------------------------------
-        // MÉTODOS PÚBLICOS DE BUSCA EXATA
-        // ----------------------------------------------------------------------------------
 
         public Livro buscarLivroPorCodigo(String codigo) {
             return buscarPorCampoExato(codigo, "codigo", Livro.class);

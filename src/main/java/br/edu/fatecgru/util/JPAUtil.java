@@ -24,10 +24,7 @@ public class JPAUtil {
         }
     }
 
-    /**
-     * Retorna uma nova instância do EntityManager para cada transação.
-     * @return EntityManager
-     */
+    // Retorna uma nova instância do EntityManager para cada transação.
     public static EntityManager getEntityManager() {
         if (factory == null) {
             throw new IllegalStateException("EntityManagerFactory não inicializado. Verifique o persistence.xml.");
@@ -35,9 +32,7 @@ public class JPAUtil {
         return factory.createEntityManager();
     }
 
-    /**
-     * Fecha o EntityManagerFactory. Deve ser chamado ao encerrar a aplicação.
-     */
+    // Fecha o EntityManagerFactory (Chamado ao encerrar a aplicação).
     public static void close() {
         if (factory != null && factory.isOpen()) {
             factory.close();

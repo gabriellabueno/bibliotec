@@ -10,25 +10,25 @@ public class NotaFiscalService {
 
     private final NotaFiscalRepository repository = new NotaFiscalRepository();
 
-    // --- NOVO MÉTODO DE VALIDAÇÃO GERAL ---
-    private void validarNotaFiscal(NotaFiscal nf) throws IllegalArgumentException {
-        // Assume que o Código já foi validado separadamente ou será validado no fluxo principal
 
-        // Data de Aquisição
+    private void validarNotaFiscal(NotaFiscal nf) throws IllegalArgumentException {
+
+
+
         if (nf.getDataAquisicao() == null) {
             throw new IllegalArgumentException("NOTA FISCAL: A Data de Aquisição é obrigatória.");
         }
 
-        // Valor
+
         if (nf.getValor() == null || nf.getValor().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("NOTA FISCAL: O Valor é obrigatório e deve ser positivo.");
         }
 
-        // Descrição é opcional
+
     }
 
     public boolean cadastrarNotaFiscal(NotaFiscal notaFiscal) {
-        // Validação adicional para o cadastro direto (se for usado)
+
         validarNotaFiscal(notaFiscal);
         return repository.cadastrarNotaFiscal(notaFiscal);
     }
@@ -40,35 +40,34 @@ public class NotaFiscalService {
         return repository.buscarPorCodigo(codigo);
     }
 
-    // Centraliza a regra de negócio: busca primeiro e só cadastra se não existir.
+
     public NotaFiscal buscarOuCadastrar(NotaFiscal nfCandidata) throws IllegalArgumentException {
 
-        // 1. Validar se o código está presente
+
         if (nfCandidata == null || nfCandidata.getCodigo() == null || nfCandidata.getCodigo().trim().isEmpty()) {
             throw new IllegalArgumentException("O Código é obrigatório.");
         }
 
-        // 2. Tenta buscar no banco
+
         NotaFiscal nfExistente = buscarNotaFiscalPorCodigo(nfCandidata.getCodigo());
 
         if (nfExistente != null) {
-            // 2a. Existe: Retorna a existente.
-            System.out.println("⚠️ Nota Fiscal encontrada e reutilizada.");
+
+            System.out.println("Nota Fiscal encontrada e reutilizada.");
             return nfExistente;
         }
 
-        // 2: Valida os campos obrigatórios para CADASTRO
+
         validarNotaFiscal(nfCandidata);
 
-        // 3. Cadastra e retorna o objeto persistido
+
         if (this.cadastrarNotaFiscal(nfCandidata)) { // Já chama validarNotaFiscal() internamente
-            System.out.println("✅ Nova Nota Fiscal cadastrada com sucesso.");
+            System.out.println("Nova Nota Fiscal cadastrada com sucesso.");
             return nfCandidata;
         }
 
-        // 4. Falha no cadastro (ex: erro de banco)
-        // Lançamos uma exceção genérica aqui
-        throw new RuntimeException("❌ Falha ao cadastrar a Nota Fiscal.");
+
+        throw new RuntimeException("Falha ao cadastrar a Nota Fiscal.");
     }
 
     public List<NotaFiscal> buscarNotaFiscal(String termo) {
@@ -76,8 +75,7 @@ public class NotaFiscalService {
     }
 
     public NotaFiscal atualizarNotaFiscal(NotaFiscal nf) {
-        // Aqui você pode adicionar validações de negócio antes de chamar o repositório
-        // Ex: if (nf.getCodigo() == null) throw new IllegalArgumentException("Código não pode ser nulo.");
+        // Adicionar validações de negócio se necessário
 
         return repository.atualizarNotaFiscal(nf);
     }

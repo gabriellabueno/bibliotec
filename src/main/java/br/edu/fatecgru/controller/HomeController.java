@@ -23,7 +23,7 @@ public class HomeController {
         }
     }
 
-    // Métodos chamados pelos botões das opções
+
 
     @FXML
     private void onHomeClick() {
@@ -72,7 +72,7 @@ public class HomeController {
 
     @FXML
     public void initialize() {
-        // Carrega a tela inicial (Home)
+
         loadScreen("/ui/screens/home.fxml");
     }
 

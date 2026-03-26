@@ -147,10 +147,9 @@ public class GerenciamentoEmprestimoController implements Initializable {
         try {
             LocalDate dataDevolucao = LocalDate.now();
 
-            // 1. Registra a devolução via Service (atualiza Empréstimo, Material e potencialmente a Penalidade do Usuário)
             emprestimoService.registrarDevolucao(emprestimoEmEdicao, dataDevolucao);
 
-            // 2. Atualiza a UI e objeto local (recarregando dados)
+
             setEmprestimoToEdit(emprestimoEmEdicao);
             dataDevolucaoField.setValue(dataDevolucao);
 
@@ -175,10 +174,10 @@ public class GerenciamentoEmprestimoController implements Initializable {
         }
 
         try {
-            // 1. Atualiza no Service (marca como renovado e atualiza a data)
+
             emprestimoService.renovarEmprestimo(emprestimoEmEdicao);
 
-            // 2. Atualiza a UI e objeto local
+
             setEmprestimoToEdit(emprestimoEmEdicao);
 
             InterfaceUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Empréstimo renovado com sucesso! Nova data: " + emprestimoEmEdicao.getDataPrevistaDevolucao());
@@ -205,7 +204,7 @@ public class GerenciamentoEmprestimoController implements Initializable {
 
             InterfaceUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Registro de empréstimo excluído.");
 
-            // Retorna para a tela anterior (Pesquisa)
+
             if (mainController != null) {
                 mainController.loadScreen("/ui/screens/pesquisa/pesquisa-emprestimo.fxml");
             }

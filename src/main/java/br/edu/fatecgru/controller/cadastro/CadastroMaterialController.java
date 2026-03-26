@@ -30,7 +30,7 @@
 
         @FXML private Label titulo;
 
-        // --- Controles de Seleção de Material
+
         @FXML private ToggleGroup materialTypeGroup;
         @FXML private RadioButton rbLivro;
         @FXML private RadioButton rbRevista;
@@ -39,19 +39,19 @@
         @FXML private TextField tarjaVermelha;
         @FXML private HBox boxTarjaVermelha;
 
-        // --- Tipo de Aquisição e NotaFiscal
+
         @FXML private VBox vboxTipoAquisicao;
         @FXML private VBox vboxNotaFiscal;
         @FXML private ComboBox<String> tipoAquisicaoCombo;
         @FXML private TextField numeroNotaFiscalField;
 
-        // --- Contêineres de Formulários
+
         @FXML private GridPane formLivro;
         @FXML private GridPane formRevista;
         @FXML private GridPane formTG;
         @FXML private GridPane formEquipamento;
 
-        // LIVRO
+
         @FXML private TextField codigoField;
         @FXML private TextField isbnField;
         @FXML private TextField tituloLivroField;
@@ -64,7 +64,7 @@
         @FXML private TextField editoraLivroField;
         @FXML private TextField generoLivroField;
 
-        // REVISTA
+
         @FXML private TextField tituloRevistaField;
         @FXML private TextField codigoRevistaField;
         @FXML private TextField volumeRevistaField;
@@ -76,7 +76,7 @@
         @FXML private TextField generoRevistaField;
         @FXML private TextArea palavrasChaveRevistaArea;
 
-        // TG
+
         @FXML public TextField codigoTGField;
         @FXML private TextField tituloTGField;
         @FXML private TextField subtituloTGField;
@@ -89,18 +89,18 @@
         @FXML private TextField localPublicacaoTGField;
         @FXML private TextArea palavrasChaveTGArea;
 
-        // EQUIPAMENTO
+
         @FXML public TextField codigoEquipamentoField;
         @FXML private TextField nomeEquipamentoField;
         @FXML private TextArea descricaoEquipamentoArea;
 
-        // -- Dependências
+
         private final MaterialService materialService = new MaterialService();
 
-        // -- Variável de controle para NF
+
         private NotaFiscal notaFiscalSelecionada = null;
 
-        // -- Variáveis de controle para Cadastro de Cópia
+
         private Long codigoPai;
         private boolean modoCopia;
 
@@ -108,7 +108,6 @@
         public void initialize(URL url, ResourceBundle rb) {
 
 
-            // ESTADO INICIAL
             tarjaVermelha.setEditable(false);
 
             if(!modoCopia) {
@@ -116,31 +115,30 @@
                 tipoAquisicaoCombo.setValue("Doação");
             }
 
-            // Bloqueia edição manual da NF, pois virá do Modal
+
             numeroNotaFiscalField.setEditable(false);
             numeroNotaFiscalField.setDisable(true);
 
-            // LISTENERS
 
-            // Tipo de Material
+
             materialTypeGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
                 apresentarForms(null);
             });
 
-            // Tipo de Aquisição
+
             tipoAquisicaoCombo.valueProperty().addListener((obs, oldV, newV) -> {
 
                 if (newV != null) {
                     if (newV.equals("Compra")) {
                         InterfaceUtil.habilitarCamposNF(true, vboxNotaFiscal, numeroNotaFiscalField);
 
-                        // Garante que a NF seja solicitada ao selecionar Compra
+
                         if (this.notaFiscalSelecionada == null) {
                             abrirModalNotaFiscal();
                         }
                     } else {
                         InterfaceUtil.habilitarCamposNF(false, vboxNotaFiscal, numeroNotaFiscalField);
-                        // Limpa a NF se mudar para Doação
+
                         this.notaFiscalSelecionada = null;
                         numeroNotaFiscalField.clear();
                         numeroNotaFiscalField.setDisable(true);
@@ -150,6 +148,7 @@
             });
 
             // Abrir Modal NF a partir do campo
+
             numeroNotaFiscalField.setOnMouseClicked(e -> {
                 if ("Compra".equals(tipoAquisicaoCombo.getValue())) {
                     abrirModalNotaFiscal();
@@ -181,6 +180,7 @@
             boxTarjaVermelha.setVisible(false);
 
             // Oculta todos os Forms
+
             List<GridPane> forms = Arrays.asList(formLivro, formRevista, formTG, formEquipamento);
             forms.forEach(form -> {
                 if (form != null) {
@@ -190,6 +190,7 @@
             });
 
             // Apresentar Forms de cada Tipo de Material
+
             RadioButton selected = (RadioButton) materialTypeGroup.getSelectedToggle();
 
             switch (selected.getId()) {
@@ -223,17 +224,12 @@
             vboxNotaFiscal.setManaged(tipoAquisicao);
         }
 
-        // ---------------------------------------------------------------------
-
-        //  CADASTRO - CREATE
-
 
         @FXML
         private void onCadastrarClick(ActionEvent event) {
 
-            // TIPO DE AQUISIÇÃO
             RadioButton selectedRb = (RadioButton) materialTypeGroup.getSelectedToggle();
-            String aquisicaoStr = tipoAquisicaoCombo.getValue() != null ? tipoAquisicaoCombo.getValue() : "Doação"; // Proteção null
+            String aquisicaoStr = tipoAquisicaoCombo.getValue() != null ? tipoAquisicaoCombo.getValue() : "Doação";
             TipoAquisicao tipoAquisicao = aquisicaoStr.equals("Compra") ? TipoAquisicao.COMPRA : TipoAquisicao.DOACAO;
 
             try {
@@ -313,8 +309,6 @@
 
             materialService.cadastrarMaterial(novoEquipamento);
         }
-
-    // ---------------------------------------------------------------------
 
 
         private void abrirModalNotaFiscal() {

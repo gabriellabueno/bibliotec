@@ -16,45 +16,38 @@ import javafx.fxml.Initializable;
 
 public class CadastroUsuarioController implements Initializable {
 
-    // === Campos FXML (Ligar com fx:id no FXML) ===
-
-    @FXML private ToggleGroup userTypeGroup; // Para agrupar Aluno e Docente
+    @FXML private ToggleGroup userTypeGroup;
     @FXML private TextField idField;
     @FXML private TextField nomeField;
     @FXML private TextField emailField;
 
 
-    // --- Dependências ---
     private final UsuarioService usuarioService = new UsuarioService();
 
-    // === Inicialização (Opcional) ===
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Nada a inicializar por padrão, mas pode ser útil para definir listeners, etc.
     }
 
 
-    // === Método de Ação (Ligar com onAction="#onCadastrarClick" no FXML) ===
     @FXML
     private void onCadastrarClick(ActionEvent event) {
-        // 1. Coletar o tipo de usuário selecionado
+
         String tipoUsuario = "";
         RadioButton selectedRadioButton = (RadioButton) userTypeGroup.getSelectedToggle();
         if (selectedRadioButton != null) {
             tipoUsuario = selectedRadioButton.getText();
+
         } else {
-            // Validação de Apresentação (UI): Garante que o RadioButton foi marcado
+
             mostrarAlerta(AlertType.ERROR,"Erro", "Selecione o tipo de usuário.");
             return;
         }
 
-        // 2. Coletar os dados dos campos
         String idUsuario = idField.getText();
         String nome = nomeField.getText();
         String email = emailField.getText();
 
-        // 3. Realizar validações
         if (idUsuario == null || nome == null || email == null) {
             mostrarAlerta(AlertType.ERROR,"Erro", "Dados de entrada inválidos.");
             return;
@@ -62,44 +55,39 @@ public class CadastroUsuarioController implements Initializable {
 
         try {
 
-            // 4. Mapear para Entidade Usuario
             Usuario novoUsuario = new Usuario();
             novoUsuario.setIdUsuario(idUsuario);
             novoUsuario.setNome(nome);
             novoUsuario.setEmail(email);
 
-            // Mapeamento Docente (boolean)
             boolean isDocente = "Docente".equalsIgnoreCase(tipoUsuario);
             novoUsuario.setDocente(isDocente);
 
-            // Novos usuários sempre começam sem penalidade
             novoUsuario.setPenalidade(false);
 
-            // 5. CHAMADA REAL AO SERVICE
-            // A validação de campos obrigatórios ocorre dentro do Service.
-            // Se o Service for bem-sucedido, ele retorna true.
+
             if (usuarioService.cadastrarUsuario(novoUsuario)) {
 
-                // Se o Service retornar true, o cadastro foi bem-sucedido.
-                mostrarAlerta(AlertType.INFORMATION, "Sucesso", "✅ Usuário (" + tipoUsuario + ") cadastrado com sucesso!");
-                limparCampos(); // Limpa os campos após o sucesso
+                mostrarAlerta(AlertType.INFORMATION, "Sucesso", "Usuário (" + tipoUsuario + ") cadastrado com sucesso!");
+                limparCampos();
 
             } else {
-                // Se o Service retornar 'false' (erro de persistência genérico)
-                mostrarAlerta(AlertType.ERROR, "Falha no Cadastro", "Não foi possível cadastrar o usuário. Retorno inesperado do serviço.");
+
+                mostrarAlerta(AlertType.ERROR, "Falha no Cadastro", "Não foi possível cadastrar o usuário.");
             }
 
         } catch (IllegalArgumentException e) {
-            // Captura erros de validação (lançados pelo Service)
-            mostrarAlerta(AlertType.ERROR, "Erro de Validação", "❌ " + e.getMessage());
+
+            mostrarAlerta(AlertType.ERROR, "Erro",  e.getMessage());
+
         } catch (Exception e) {
-            // Captura outros erros (ex: falha de conexão com o banco)
-            mostrarAlerta(AlertType.ERROR, "Erro Inesperado", "❌ Erro durante o cadastro: " + e.getMessage());
+
+            mostrarAlerta(AlertType.ERROR, "Erro",  e.getMessage());
             e.printStackTrace();
         }
     }
 
-    //Limpa os campos após o cadastro.
+
     private void limparCampos() {
         idField.clear();
         nomeField.clear();
@@ -109,7 +97,7 @@ public class CadastroUsuarioController implements Initializable {
         }
     }
 
-    //Método auxiliar para exibir Alertas padronizados.
+
     private void mostrarAlerta(AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);

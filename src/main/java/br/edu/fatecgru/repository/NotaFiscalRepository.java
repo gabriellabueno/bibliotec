@@ -50,7 +50,7 @@ public class NotaFiscalRepository {
             return query.getSingleResult();
 
         } catch (NoResultException e) {
-            // Se não encontrar resultados, retorna null
+
             return null;
         } catch (Exception e) {
             System.err.println("Erro ao buscar Nota Fiscal por código: " + codigo);
@@ -82,8 +82,7 @@ public class NotaFiscalRepository {
 
         try {
             em.getTransaction().begin();
-            // O merge() retorna a instância gerenciada (anexada) da entidade,
-            // que reflete os dados salvos no banco.
+
             nfAtualizada = em.merge(notaFiscal);
             em.getTransaction().commit();
             return nfAtualizada;

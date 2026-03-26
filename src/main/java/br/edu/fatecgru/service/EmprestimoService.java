@@ -21,7 +21,7 @@ public class EmprestimoService {
 
     private static final int DIAS_PENALIDADE = 7;
 
-    // --- MÉTODOS AUXILIARES PARA NOVA REGRA ---
+
 
     private int definirPrazoEmprestimo(Usuario usuario) {
         return usuario.isDocente() ? 14 : 7;
@@ -38,20 +38,18 @@ public class EmprestimoService {
         emprestimoRepository.cadastrarEmprestimo(emprestimo); // Reutilizando para update
     }
 
-    /**
-     * Aplica penalidade ao usuário se o empréstimo estiver atrasado.
-     */
+
     public void verificarEaplicarAtraso(Emprestimo emprestimo) throws Exception {
         if (emprestimo.getStatusEmprestimo() != StatusEmprestimo.ATIVO) return;
 
         LocalDate hoje = LocalDate.now();
         if (emprestimo.getDataPrevistaDevolucao().isBefore(hoje)) {
 
-            // 1. Atualiza Status do Empréstimo
+
             emprestimo.setStatusEmprestimo(StatusEmprestimo.ATRASADO);
             emprestimoRepository.cadastrarEmprestimo(emprestimo);
 
-            // 2. Aplica Penalidade ao Usuário
+
             Usuario usuario = emprestimo.getUsuario();
             usuario.setPenalidade(true);
             usuario.setDataFimPenalidade(hoje.plusDays(DIAS_PENALIDADE)); // Nova regra assumida
@@ -59,30 +57,24 @@ public class EmprestimoService {
         }
     }
 
-    /**
-     * Registra a devolução do material, atualizando status do empréstimo e material.
-     * @param emprestimo O empréstimo a ser finalizado.
-     * @param dataDevolucao A data real de devolução.
-     */
+
     public void registrarDevolucao(Emprestimo emprestimo, LocalDate dataDevolucao) throws IllegalStateException, Exception {
         if (emprestimo.getDataDevolucao() != null) {
             throw new IllegalStateException("O empréstimo já foi devolvido.");
         }
 
-        // 1. Atualiza Empréstimo
+
         emprestimo.setDataDevolucao(dataDevolucao);
         emprestimo.setStatusEmprestimo(StatusEmprestimo.DEVOLVIDO);
 
-        // 2. Atualiza Material (Define o status no objeto Material)
+
         Material material = emprestimo.getMaterial();
         material.setStatusMaterial(StatusMaterial.DISPONIVEL);
 
         emprestimoRepository.cadastrarEmprestimo(emprestimo);
     }
 
-    /**
-     * Renova o empréstimo, estendendo a data prevista de devolução.
-     */
+
     public void renovarEmprestimo(Emprestimo emprestimo) throws IllegalStateException, Exception {
         if (emprestimo.isRenovado()) { // Assumindo isRenovado existe no Emprestimo
             throw new IllegalStateException("O empréstimo só pode ser renovado uma vez.");
@@ -94,20 +86,18 @@ public class EmprestimoService {
             throw new IllegalStateException("Não é possível renovar um empréstimo atrasado. É necessária a devolução.");
         }
 
-        // 1. Determina o novo prazo (usa a regra do usuário novamente)
+
         Usuario usuario = emprestimo.getUsuario();
         int prazoDias = definirPrazoEmprestimo(usuario);
         LocalDate novaDataPrevista = emprestimo.getDataPrevistaDevolucao().plusDays(prazoDias);
 
-        // 2. Atualiza Empréstimo
+
         emprestimo.setDataPrevistaDevolucao(novaDataPrevista);
         emprestimo.setRenovado(true); // Assume que este setter existe
         emprestimoRepository.cadastrarEmprestimo(emprestimo);
     }
 
-    /**
-     * Exclui o registro de empréstimo e reverte o status do material.
-     */
+
     public void excluirEmprestimo(Emprestimo emprestimo) throws IllegalStateException, Exception {
         if (emprestimo.getDataDevolucao() == null) {
             // Se o empréstimo estava ativo, o material deve voltar a ser DISPONÍVEL
@@ -123,7 +113,7 @@ public class EmprestimoService {
 
     public Emprestimo registrarEmprestimo(String idUsuario, String codMaterial, TipoMaterial tipoMaterial) throws IllegalArgumentException, IllegalStateException, Exception {
 
-        // --- VALIDAÇÃO DE OBRIGATÓRIOS (IDs de Entrada) ---
+
         if (idUsuario == null) {
             throw new IllegalArgumentException("EMPRÉSTIMO: O ID do Usuário é obrigatório.");
         }
@@ -134,7 +124,7 @@ public class EmprestimoService {
             throw new IllegalArgumentException("EMPRÉSTIMO: É necessário selecionar o Tipo do Material.");
         }
 
-        // 1. Buscar entidades e validar existência
+
         Long idMaterial = materialRepository.buscarIdPorCodigoETipo(codMaterial, tipoMaterial);
 
         Usuario usuario = usuarioRepository.buscarUsuarioPorId(idUsuario);
@@ -147,21 +137,21 @@ public class EmprestimoService {
             throw new IllegalArgumentException("Material não encontrado.");
         }
 
-        // 2. Validação de Disponibilidade
 
-        // Verificar Penalidade
+
+
         if (usuario.isPenalidade()) {
 
             LocalDate hoje = LocalDate.now();
             LocalDate fim = usuario.getDataFimPenalidade();
 
-            // Penalidade expirada → limpar e permitir novo empréstimo
+
             if (fim != null && fim.isBefore(hoje)) {
                 usuario.setPenalidade(false);
                 usuario.setDataFimPenalidade(null);
                 usuarioRepository.atualizarUsuario(usuario);
             } else if (fim == null || fim.isAfter(hoje) || fim.isEqual(hoje)) {
-                // Penalidade ainda ativa → bloquear
+
                 String fimStr = (fim != null) ? fim.toString() : "sem data registrada";
                 throw new IllegalStateException(
                         "Usuário está sob penalidade até " + fimStr + " e não pode realizar novos empréstimos."
@@ -169,7 +159,7 @@ public class EmprestimoService {
             }
         }
 
-        // 2. Verificar Limite de Empréstimos (Máximo 3)
+
         Long qtdEmprestimosAtivos = emprestimoRepository.contarEmprestimosAtivosPorUsuario(idUsuario);
 
         final int limiteMaximo = usuario.isDocente() ? 3 : 2;
@@ -182,11 +172,11 @@ public class EmprestimoService {
             throw new IllegalStateException("Material indisponível. Status: " + material.getStatusMaterial());
         }
 
-        // 3. Preparar Empréstimo e Atualizar Status (O material é atualizado antes de ser enviado ao Repository)
+
         material.setStatusMaterial(StatusMaterial.EMPRESTADO);
 
 
-        // Determina o prazo com base no usuário
+
         LocalDate hoje = LocalDate.now();
         int prazoDias = definirPrazoEmprestimo(usuario);
         LocalDate dataPrevistaDevolucao = calcularDataPrevistaDevolucao(hoje, prazoDias);
@@ -198,12 +188,6 @@ public class EmprestimoService {
         novoEmprestimo.setDataPrevistaDevolucao(dataPrevistaDevolucao);
         novoEmprestimo.setStatusEmprestimo(StatusEmprestimo.ATIVO);
 
-        // 4. Persistir Empréstimo (Delegado ao Repository)
-
-
-//        // 5. Atualizar Status do Material (Delegado ao Repository)
-//        material.setStatusMaterial(StatusMaterial.EMPRESTADO);
-//        materialRepository.cadastrarMaterial(material); // Reutiliza o método de salvar do MaterialRepository para o merge
 
         return emprestimoRepository.cadastrarEmprestimo(novoEmprestimo);
     }

@@ -29,14 +29,14 @@ import java.util.ResourceBundle;
 
 public class GerenciamentoMaterialController implements Initializable {
 
-    // --- Componentes Layout
+
     @FXML private RadioButton rbLivro;
     @FXML private RadioButton rbRevista;
     @FXML private RadioButton rbTG;
     @FXML private RadioButton rbEquipamento;
     @FXML private Button btnCadastrarCopia;
 
-    // --- Campos Comuns
+
     @FXML private ComboBox<String> tipoAquisicaoCombo;
     @FXML private VBox vboxTipoAquisicao;
     @FXML private VBox vboxNotaFiscal;
@@ -47,7 +47,7 @@ public class GerenciamentoMaterialController implements Initializable {
     @FXML private TextField qntExemplares;
     @FXML private TextField disponibilidade;
 
-    // --- Contêineres de Formulários
+
     @FXML private GridPane formLivro;
     @FXML private GridPane formRevista;
     @FXML private GridPane formTG;
@@ -96,20 +96,18 @@ public class GerenciamentoMaterialController implements Initializable {
     @FXML private TextField nomeEquipamentoField;
     @FXML private TextArea descricaoEquipamentoArea;
 
-    // -- Dependências
+
     @Setter
     private MainController mainController;
     private final MaterialService materialService = new MaterialService();
     private Material materialEmEdicao;
     private NotaFiscal notaFiscalAtual;
 
-    // -- Variável de controle para NF
+
     private NotaFiscal notaFiscalSelecionada = null;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
-        // Campos náo editáveis
 
         rbLivro.setDisable(true);
         rbRevista.setDisable(true);
@@ -128,7 +126,7 @@ public class GerenciamentoMaterialController implements Initializable {
 
         ocultarTodosFormularios();
 
-        // Tipo de Aquisição
+
         if("Compra".equals(tipoAquisicaoCombo.getValue())) {
             InterfaceUtil.habilitarCamposNF(true, vboxNotaFiscal, numeroNotaFiscalField);
         } else {
@@ -136,7 +134,7 @@ public class GerenciamentoMaterialController implements Initializable {
             tipoAquisicaoCombo.setDisable(true);
         }
 
-        // Abrir Modal NF a partir do campo
+
         numeroNotaFiscalField.setOnMouseClicked(e -> {
             if ("Compra".equals(tipoAquisicaoCombo.getValue())) {
                 abrirModalNotaFiscal();
@@ -273,7 +271,7 @@ public class GerenciamentoMaterialController implements Initializable {
         mainController.loadScreen("/ui/screens/pesquisa/pesquisa-material.fxml");
     }
 
-    // ---------------------------------------------
+
 
     private void abrirModalNotaFiscal() {
         try {
@@ -306,7 +304,7 @@ public class GerenciamentoMaterialController implements Initializable {
     }
 
 
-    // PREENCHE DE FORMULÁRIO
+
 
     public void preencherFormularioParaEdicao(Material material) {
         if (material == null) return;
@@ -391,11 +389,11 @@ public class GerenciamentoMaterialController implements Initializable {
         }
     }
 
-    // COLETA DADOS PREENCHIDOS
+
 
     private Material coletarDadosAtualizados(Material material) {
 
-        // Tipo de Aquisição
+
         TipoAquisicao tipoAquisicao = null;
         String tipoAqStr = tipoAquisicaoCombo.getSelectionModel().getSelectedItem();
         if(tipoAqStr.trim().equals("Compra")) {
@@ -404,10 +402,10 @@ public class GerenciamentoMaterialController implements Initializable {
             tipoAquisicao = TipoAquisicao.DOACAO;
         }
 
-        // Nota Fiscal
+
         NotaFiscal nf = this.notaFiscalAtual;
 
-        // Coleta de dados específicos
+
         if (material instanceof Livro livro) {
 
             MaterialBuilder.toLivro(

@@ -23,21 +23,21 @@ import java.util.stream.Collectors;
 
 public class PesquisaMaterialController implements Initializable {
 
-    // === Service ===
+
     private final MaterialService materialService = new MaterialService();
 
-    // === Radio Buttons ===
+
     @FXML private ToggleGroup materialTypeGroup;
     @FXML private RadioButton rbLivro;
     @FXML private RadioButton rbRevista;
     @FXML private RadioButton rbTG;
     @FXML private RadioButton rbEquipamento;
 
-    // === Componentes de Busca e Tabela ===
+
     @FXML private TextField searchField;
     @FXML private TableView<MaterialResult> resultsTable;
 
-    // === Colunas da Tabela ===
+
     @FXML private TableColumn<MaterialResult, String> colCodigo;
     @FXML private TableColumn<MaterialResult, String> colTitulo;
     @FXML private TableColumn<MaterialResult, String> colAnoPublicacao;
@@ -59,21 +59,18 @@ public class PesquisaMaterialController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // 1. Configurar de onde cada coluna pega os dados (Bind com MaterialResult)
+
         configurarFactoriesColunas();
 
-        // 2. Vincular a lista observável à tabela
+
         resultsTable.setItems(listaResultados);
 
-        // 3. Selecionar Livro por padrão e configurar colunas iniciais
+
         rbLivro.setSelected(true);
         updateTableColumns();
     }
 
-    /**
-     * Ensina as colunas a lerem os campos da classe MaterialResult.
-     * Importante: O nome na PropertyValueFactory deve ser igual ao nome do atributo na classe MaterialResult.
-     */
+    // Importante: O nome na PropertyValueFactory deve ser igual ao nome do atributo na classe MaterialResult.
     private void configurarFactoriesColunas() {
         colCodigo.setCellValueFactory(new PropertyValueFactory<>("codigo"));
         colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
@@ -89,30 +86,27 @@ public class PesquisaMaterialController implements Initializable {
         colDisponibilidade.setCellValueFactory(new PropertyValueFactory<>("disponibilidade"));
     }
 
-    /**
-     * Define as colunas visíveis da tabela com base no Radio Button selecionado.
-     */
+
     private void updateTableColumns() {
-        // 1. Limpa visualmente as colunas (não apaga os dados, só a estrutura visual)
+
         resultsTable.getColumns().clear();
 
-        // 2. Identifica o tipo selecionado
+
         RadioButton selected = (RadioButton) materialTypeGroup.getSelectedToggle();
         if (selected == null) return;
 
-        // 3. Define as colunas comuns
-        // Nota: colTitulo é comum a Livro, Revista e TG. Equipamento usa Nome.
+
         boolean usarTitulo = !selected.equals(rbEquipamento);
 
-        // Adiciona Código (Sempre)
+
         resultsTable.getColumns().add(colCodigo);
 
-        // Adiciona Título se não for Equipamento
+
         if (usarTitulo) {
             resultsTable.getColumns().add(colTitulo);
         }
 
-        // 4. Adiciona colunas específicas
+
         if (selected.equals(rbLivro)) {
             resultsTable.getColumns().addAll(colDisponibilidade, colTarjaVermelha, colISBN, colAutor, colAnoPublicacao);
         } else if (selected.equals(rbRevista)) {
@@ -120,21 +114,21 @@ public class PesquisaMaterialController implements Initializable {
         } else if (selected.equals(rbTG)) {
             resultsTable.getColumns().addAll(colDisponibilidade, colSubtitulo, colAutor, colAutor2, colAnoPublicacao);
         } else if (selected.equals(rbEquipamento)) {
-            // Equipamento tem colNomeEquipamento em vez de Título
+
             resultsTable.getColumns().addAll(colNomeEquipamento, colDisponibilidade);
         }
 
-        // Garante redimensionamento
+
         resultsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
     @FXML
     private void handleRadioChange(ActionEvent event) {
-        // Limpa os resultados antigos para não misturar tipos
+
         listaResultados.clear();
         searchField.clear();
 
-        // Atualiza as colunas
+
         updateTableColumns();
     }
 
@@ -144,13 +138,13 @@ public class PesquisaMaterialController implements Initializable {
         if (selected == null) return;
 
         String termoBusca = searchField.getText().trim();
-        listaResultados.clear(); // Limpa tabela anterior
+        listaResultados.clear();
 
         try {
-            // Lógica de busca e conversão baseada no tipo selecionado
+
             if (selected.equals(rbLivro)) {
                 List<Livro> livros = materialService.buscarLivros(termoBusca);
-                // Converte List<Livro> para List<MaterialResult>
+
                 List<MaterialResult> resultados = livros.stream()
                         .map(MaterialResult::fromLivro)
                         .collect(Collectors.toList());
@@ -178,7 +172,7 @@ public class PesquisaMaterialController implements Initializable {
                 listaResultados.addAll(resultados);
             }
 
-            // Feedback visual se não achar nada
+
             if (listaResultados.isEmpty()) {
                 resultsTable.setPlaceholder(new Label("Nenhum registro encontrado para: " + termoBusca));
             }
