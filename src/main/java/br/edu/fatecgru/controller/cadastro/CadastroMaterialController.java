@@ -5,6 +5,7 @@
     import br.edu.fatecgru.service.MaterialService;
     import br.edu.fatecgru.model.Enum.TipoAquisicao;
 
+    import br.edu.fatecgru.service.NotaFiscalService;
     import br.edu.fatecgru.util.InterfaceUtil;
     import javafx.fxml.FXML;
     import javafx.fxml.Initializable;
@@ -134,7 +135,8 @@
 
 
                         if (this.notaFiscalSelecionada == null) {
-                            abrirModalNotaFiscal();
+                            numeroNotaFiscalField.setEditable(true);
+                            numeroNotaFiscalField.setDisable(false);
                         }
                     } else {
                         InterfaceUtil.habilitarCamposNF(false, vboxNotaFiscal, numeroNotaFiscalField);
@@ -146,15 +148,6 @@
                 }
 
             });
-
-            // Abrir Modal NF a partir do campo
-
-            numeroNotaFiscalField.setOnMouseClicked(e -> {
-                if ("Compra".equals(tipoAquisicaoCombo.getValue())) {
-                    abrirModalNotaFiscal();
-                }
-            });
-
 
             // MÁSCARAS
             InterfaceUtil.aplicarMascaraTamanhoFixo(anoPublicacaoLivroField, 4);
@@ -229,8 +222,20 @@
         private void onCadastrarClick(ActionEvent event) {
 
             RadioButton selectedRb = (RadioButton) materialTypeGroup.getSelectedToggle();
+
             String aquisicaoStr = tipoAquisicaoCombo.getValue() != null ? tipoAquisicaoCombo.getValue() : "Doação";
-            TipoAquisicao tipoAquisicao = aquisicaoStr.equals("Compra") ? TipoAquisicao.COMPRA : TipoAquisicao.DOACAO;
+            TipoAquisicao tipoAquisicao;
+
+            String idNotaFiscal = numeroNotaFiscalField.getText();
+
+            if (aquisicaoStr.equals("Compra")) {
+                tipoAquisicao = TipoAquisicao.COMPRA;
+
+                NotaFiscalService controllerNF = new NotaFiscalService();
+                notaFiscalSelecionada = controllerNF.buscarNotaFiscalPorCodigo(idNotaFiscal);
+            } else {
+                tipoAquisicao = TipoAquisicao.DOACAO;
+            }
 
             try {
 
@@ -308,45 +313,6 @@
             );
 
             materialService.cadastrarMaterial(novoEquipamento);
-        }
-
-
-        private void abrirModalNotaFiscal() {
-            try {
-
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/screens/cadastro/cadastro-notafiscal.fxml"));
-                Parent root = loader.load();
-                CadastroNotaFiscalController controllerNF = loader.getController();
-
-                if (this.notaFiscalSelecionada != null) {
-                    controllerNF.setNotaFiscalParaEdicao(this.notaFiscalSelecionada);
-                }
-
-
-                Stage stage = new Stage();
-                stage.setTitle("Cadastrar Nota Fiscal");
-                stage.setScene(new Scene(root));
-                stage.initModality(Modality.APPLICATION_MODAL);
-                stage.showAndWait();
-
-
-                NotaFiscal nfRetorno = controllerNF.getNotaFiscalSalva();
-
-                if (nfRetorno != null) {
-                    this.notaFiscalSelecionada = nfRetorno;
-                    numeroNotaFiscalField.setText(nfRetorno.getCodigo()); // Mostra o código visualmente
-                    numeroNotaFiscalField.setDisable(false);
-                    numeroNotaFiscalField.setManaged(false);
-                } else {
-                    // Se o usuário fechou sem salvar
-                    tipoAquisicaoCombo.setValue("Doação");
-                    numeroNotaFiscalField.setText("");
-                }
-
-            } catch (IOException e) {
-                System.err.println("Erro ao abrir tela de Nota Fiscal: " + e.getMessage());
-                e.printStackTrace();
-            }
         }
 
         public void preencherFormularioParaCopia(Material material, Long idPai) {
