@@ -24,7 +24,7 @@ public class MainController {
     public void loadNotaFiscalScreen(String fxmlPath) {
         loadScreenWithCallback( fxmlPath,
                 (CadastroNotaFiscalController controller) -> {
-                    controller.setIsModal(false);
+
                 }
         );
     }

@@ -13,18 +13,9 @@ public class NotaFiscalService {
 
     private void validarNotaFiscal(NotaFiscal nf) throws IllegalArgumentException {
 
-
-
         if (nf.getDataAquisicao() == null) {
             throw new IllegalArgumentException("NOTA FISCAL: A Data de Aquisição é obrigatória.");
         }
-
-
-        if (nf.getValor() == null || nf.getValor().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("NOTA FISCAL: O Valor é obrigatório e deve ser positivo.");
-        }
-
-
     }
 
     public boolean cadastrarNotaFiscal(NotaFiscal notaFiscal) {
@@ -42,7 +33,6 @@ public class NotaFiscalService {
 
 
     public NotaFiscal buscarOuCadastrar(NotaFiscal nfCandidata) throws IllegalArgumentException {
-
 
         if (nfCandidata == null || nfCandidata.getCodigo() == null || nfCandidata.getCodigo().trim().isEmpty()) {
             throw new IllegalArgumentException("O Código é obrigatório.");

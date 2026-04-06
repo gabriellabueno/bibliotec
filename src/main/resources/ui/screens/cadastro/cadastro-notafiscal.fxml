@@ -34,14 +34,6 @@
             <DatePicker fx:id="dataAquisicaoField" promptText="Selecione a Data" />
         </VBox>
 
-        <VBox spacing="5.0">
-            <Label style="-fx-font-weight: bold;" text="Valor Total da Compra" />
-            <HBox alignment="CENTER_LEFT" spacing="5.0">
-                <Text style="-fx-font-weight: bold;" text="R$" />
-                <TextField fx:id="valorField" HBox.hgrow="ALWAYS" />
-            </HBox>
-        </VBox>
-
         <HBox alignment="CENTER_RIGHT" spacing="10" VBox.vgrow="ALWAYS">
             <VBox.margin>
                 <Insets top="30.0" />

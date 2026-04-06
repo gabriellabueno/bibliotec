@@ -31,6 +31,6 @@ public class NotaFiscal {
     private LocalDate dataAquisicao;
 
     @Column(name = "valor", nullable = false)
-    private BigDecimal valor; // Usar BigDecimal para mapear DECIMAL SQL
+    private BigDecimal valor = BigDecimal.valueOf(0);
 
 }

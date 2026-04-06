@@ -91,7 +91,7 @@ public class NotaFiscalRepository {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            System.err.println("❌ Erro inesperado ao atualizar Nota Fiscal (Código: " + notaFiscal.getCodigo() + ")");
+            System.err.println("Erro inesperado ao atualizar Nota Fiscal (Código: " + notaFiscal.getCodigo() + ")");
             e.printStackTrace();
             return null;
         } finally {

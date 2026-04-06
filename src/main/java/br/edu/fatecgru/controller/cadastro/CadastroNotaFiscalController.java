@@ -20,7 +20,6 @@ public class CadastroNotaFiscalController implements Initializable {
     @FXML private TextField codigoField;
     @FXML private TextArea descricaoArea;
     @FXML private DatePicker dataAquisicaoField;
-    @FXML private TextField valorField;
     @FXML private Button cadastrarButton;
     @FXML private Button voltarButton;
 
@@ -34,11 +33,8 @@ public class CadastroNotaFiscalController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        formatarCamposNumericos();
-
 
         dataAquisicaoField.setDisable(false);
-        valorField.setEditable(true);
         descricaoArea.setEditable(true);
 
 
@@ -51,25 +47,9 @@ public class CadastroNotaFiscalController implements Initializable {
         });
     }
 
-    private boolean isModal = true;
-
-
-    public void setIsModal(boolean isModal) {
-        this.isModal = isModal;
-
-        if (!isModal) {
-            if (voltarButton != null) {
-                voltarButton.setVisible(false);
-                voltarButton.setManaged(false); // Não ocupa espaço no layout
-            }
-        }
-    }
-
 
     @FXML
     private void onCadastrarClick(ActionEvent event) {
-
-        cadastrarButton.setDisable(true);
 
         try {
             if (this.notaFiscalSalva != null) {
@@ -80,12 +60,9 @@ public class CadastroNotaFiscalController implements Initializable {
 
                 this.notaFiscalSalva = nfResultado;
 
-                mostrarAlerta(AlertType.INFORMATION, "Sucesso", "✅ Nota Fiscal " + this.notaFiscalSalva.getCodigo() + " atualizada e selecionada.");
+                mostrarAlerta(AlertType.INFORMATION, "Sucesso", "Nota Fiscal " + this.notaFiscalSalva.getCodigo() + " atualizada e selecionada.");
 
-                if (nfResultado != null && isModal) {
-                    fecharJanela();
-
-                } else if (nfResultado != null && !isModal) {
+                if (nfResultado != null) {
 
                     limparCamposNFSecundarios();
                     codigoField.clear();
@@ -103,18 +80,14 @@ public class CadastroNotaFiscalController implements Initializable {
 
             if (nfResultado != null) {
                 this.notaFiscalSalva = nfResultado;
-                mostrarAlerta(AlertType.INFORMATION, "Sucesso", "✅ Nova Nota Fiscal cadastrada e selecionada.");
+                mostrarAlerta(AlertType.INFORMATION, "Sucesso", "Nova Nota Fiscal cadastrada e selecionada.");
 
-                if (isModal) {
-                    fecharJanela();
 
-                } else {
+                limparCamposNFSecundarios();
+                codigoField.clear();
+                destravarCamposNFSecundarios();
+                this.notaFiscalSalva = null;
 
-                    limparCamposNFSecundarios();
-                    codigoField.clear();
-                    destravarCamposNFSecundarios();
-                    this.notaFiscalSalva = null;
-                }
 
             } else {
 
@@ -122,20 +95,17 @@ public class CadastroNotaFiscalController implements Initializable {
             }
 
         } catch (IllegalArgumentException ex) {
-            // Captura as exceções de validação da Service
 
             mostrarAlerta(AlertType.ERROR, "Erro", ex.getMessage());
             cadastrarButton.setDisable(false);
 
         } catch (RuntimeException ex) {
-            // Captura exceções genéricas
 
             mostrarAlerta(AlertType.ERROR, "Erro", ex.getMessage());
             cadastrarButton.setDisable(false);
             ex.printStackTrace();
 
         } catch (Exception e) {
-            // Captura exceções inesperadas
 
             mostrarAlerta(AlertType.ERROR, "Erro", e.getMessage());
             cadastrarButton.setDisable(false);
@@ -153,17 +123,6 @@ public class CadastroNotaFiscalController implements Initializable {
             throw new IllegalArgumentException("A data de aquisição é obrigatória.");
         }
 
-
-        String valorStr = valorField.getText().replace(',', '.');
-        BigDecimal valor = null;
-        try {
-            if (!valorStr.isEmpty()) {
-                valor = new BigDecimal(valorStr);
-            }
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Valor da Nota Fiscal inválido. Use apenas números.");
-        }
-        nf.setValor(valor);
     }
 
 
@@ -188,36 +147,14 @@ public class CadastroNotaFiscalController implements Initializable {
         stage.close();
     }
 
-    private void formatarCamposNumericos() {
-        valorField.setTextFormatter(new TextFormatter<>(change -> {
-
-            // Permite dígitos (0-9), um ponto (.) ou uma vírgula (,)
-            if (change.getText().matches("[0-9.,]*")) {
-                return change;
-            } else {
-                return null;
-            }
-        }));
-    }
-
     private void preencherCampos(NotaFiscal nf) {
         if (nf != null) {
 
             dataAquisicaoField.setValue(nf.getDataAquisicao());
 
-            // Converte BigDecimal para String
-            if (nf.getValor() != null) {
-                valorField.setText(nf.getValor().toPlainString().replace('.', ','));
-            } else {
-                valorField.clear();
-            }
-
             descricaoArea.setText(nf.getDescricao());
             codigoField.setText(nf.getCodigo());
-
             dataAquisicaoField.setDisable(true);
-
-            valorField.setEditable(true);
             descricaoArea.setEditable(true);
         }
     }
@@ -274,13 +211,11 @@ public class CadastroNotaFiscalController implements Initializable {
 
     private void destravarCamposNFSecundarios() {
         dataAquisicaoField.setDisable(false);
-        valorField.setEditable(true);
         descricaoArea.setEditable(true);
     }
 
     private void limparCamposNFSecundarios() {
         dataAquisicaoField.setValue(null);
-        valorField.clear();
         descricaoArea.clear();
     }
 
