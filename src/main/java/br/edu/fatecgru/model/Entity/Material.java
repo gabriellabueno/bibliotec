@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,6 +27,9 @@ public abstract class Material {
     @ManyToOne
     @JoinColumn(name = "fk_nota_fiscal")
     private NotaFiscal notaFiscal;
+
+    @Column(name = "valor_unitario")
+    private BigDecimal valorUnitario;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_aquisicao", nullable = false)

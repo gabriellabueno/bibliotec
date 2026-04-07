@@ -258,8 +258,18 @@ public class MaterialService {
         }
 
 
-        if (material.getTipoAquisicao() == TipoAquisicao.COMPRA && material.getNotaFiscal() == null) {
-            throw new IllegalArgumentException("Materiais comprados exigem vínculo com Nota Fiscal.");
+        if (material.getTipoAquisicao() == TipoAquisicao.COMPRA) {
+            if (material.getNotaFiscal() == null) {
+                throw new IllegalArgumentException("Materiais comprados exigem vínculo com Nota Fiscal.");
+            }
+
+            if (material.getValorUnitario() == null) {
+                throw new IllegalArgumentException("Materiais comprados exigem a informação do Valor Unitário.");
+            }
+
+            if (material.getValorUnitario().compareTo(java.math.BigDecimal.ZERO) <= 0) {
+                throw new IllegalArgumentException("O Valor Unitário deve ser maior que zero para materiais comprados.");
+            }
         }
     }
 

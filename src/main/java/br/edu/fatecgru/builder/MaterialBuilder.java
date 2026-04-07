@@ -8,8 +8,23 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @NoArgsConstructor
 public final class MaterialBuilder {
+
+
+    private static BigDecimal converterParaBigDecimal(TextField field) {
+        if (field == null || field.getText() == null || field.getText().trim().isEmpty()) {
+            return null;
+        }
+        try {
+            String valor = field.getText().replace("R$", "").replace(".", "").replace(",", ".").trim();
+            return new BigDecimal(valor);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
 
 
     // Coleta os dados e armazena no objeto
@@ -21,6 +36,7 @@ public final class MaterialBuilder {
             TextField localPublicacaoField, TextField anoPublicacaoField, TextArea palavrasChaveArea,
             TipoAquisicao tipoAquisicao,
             NotaFiscal notaFiscal,
+            TextField valorUnitarioField,
             Long idPai,
             boolean modoCopia)
     {
@@ -32,7 +48,9 @@ public final class MaterialBuilder {
             livro = new Livro();
         }
 
-        dadosComuns(livro, TipoMaterial.LIVRO, tipoAquisicao, notaFiscal, idPai, modoCopia);
+        BigDecimal valor = converterParaBigDecimal(valorUnitarioField);
+
+        dadosComuns(livro, TipoMaterial.LIVRO, tipoAquisicao, valor, notaFiscal, idPai, modoCopia);
 
         livro.setCodigo(codigoField.getText());
         livro.setIsbn(isbnField.getText());
@@ -56,6 +74,7 @@ public final class MaterialBuilder {
             TextField localPublicacaoField, TextField generoField, TextArea palavrasChaveArea,
             TipoAquisicao tipoAquisicao,
             NotaFiscal notaFiscal,
+            TextField valorUnitarioField,
             Long idPai,
             boolean modoCopia)
     {
@@ -66,7 +85,9 @@ public final class MaterialBuilder {
             revista = new Revista();
         }
 
-        dadosComuns(revista, TipoMaterial.REVISTA, tipoAquisicao, notaFiscal, idPai, modoCopia);
+        BigDecimal valor = converterParaBigDecimal(valorUnitarioField);
+
+        dadosComuns(revista, TipoMaterial.REVISTA, tipoAquisicao, valor, notaFiscal, idPai, modoCopia);
 
         revista.setCodigo(codigoField.getText());
         revista.setTitulo(tituloField.getText());
@@ -118,20 +139,26 @@ public final class MaterialBuilder {
     public static Equipamento toEquipamento(
             Equipamento equipamento,
             TextField codigoField, TextField nomeField, TextArea descricaoArea,
-            TipoAquisicao tipoAquisicao, NotaFiscal notaFiscal)
+            TipoAquisicao tipoAquisicao, NotaFiscal notaFiscal, TextField valorUnitarioField)
     {
         boolean isNovo = (equipamento == null);
         if (isNovo) {
             equipamento = new Equipamento();
         }
+
+        BigDecimal valorConvertido = converterParaBigDecimal(valorUnitarioField);
+
         equipamento.setTipoMaterial(TipoMaterial.EQUIPAMENTO);
         equipamento.setTipoAquisicao(tipoAquisicao);
         equipamento.setStatusMaterial(StatusMaterial.DISPONIVEL);
+        equipamento.setValorUnitario(valorConvertido);
 
         if (tipoAquisicao == TipoAquisicao.COMPRA) {
             equipamento.setNotaFiscal(notaFiscal);
+            equipamento.setValorUnitario(valorConvertido);
         } else {
             equipamento.setNotaFiscal(null);
+            equipamento.setValorUnitario(null);
         }
 
         equipamento.setCodigo(codigoField.getText());
@@ -142,12 +169,13 @@ public final class MaterialBuilder {
     }
 
     private static void dadosComuns(
-            Material material, TipoMaterial tipo, TipoAquisicao aquisicao,
+            Material material, TipoMaterial tipo, TipoAquisicao aquisicao, BigDecimal valorUnitario,
             NotaFiscal nf, Long idPai, boolean modoCopia)
     {
         material.setTipoMaterial(tipo);
         material.setTipoAquisicao(aquisicao);
         material.setStatusMaterial(StatusMaterial.DISPONIVEL);
+        material.setValorUnitario(valorUnitario);
 
         //  Livro e Revista usam cópia (tarja vermelha)
 
@@ -175,7 +203,7 @@ public final class MaterialBuilder {
     public static void fromLivro(
             Livro livro, TextField isbnField, TextField tituloField, TextField autorField,
             TextField editoraField, TextField edicaoField, TextField generoField, TextField assuntoField,
-            TextField localPublicacaoField, TextField anoPublicacaoField, TextArea palavrasChaveArea)
+            TextField localPublicacaoField, TextField anoPublicacaoField, TextArea palavrasChaveArea, TextField valorUnitarioField)
     {
         isbnField.setText(livro.getIsbn());
         tituloField.setText(livro.getTitulo());
@@ -187,12 +215,19 @@ public final class MaterialBuilder {
         localPublicacaoField.setText(livro.getLocalPublicacao());
         anoPublicacaoField.setText(livro.getAnoPublicacao());
         palavrasChaveArea.setText(livro.getPalavrasChave());
+
+        if (livro.getValorUnitario() != null) {
+            valorUnitarioField.setText(livro.getValorUnitario().toString());
+        } else {
+            valorUnitarioField.setText("");
+        }
+
     }
 
     public static void fromRevista(
             Revista revista, TextField tituloField, TextField volumeField, TextField numeroField,
             TextField editoraField, TextField assuntoField, TextField anoPublicacaoField,
-            TextField localPublicacaoField, TextField generoField, TextArea palavrasChaveArea)
+            TextField localPublicacaoField, TextField generoField, TextArea palavrasChaveArea, TextField valorUnitarioField)
     {
         tituloField.setText(revista.getTitulo());
         volumeField.setText(revista.getVolume());
@@ -223,7 +258,7 @@ public final class MaterialBuilder {
     }
 
     public static void fromEquipamento(
-            Equipamento equipamento, TextField nomeField, TextArea descricaoArea)
+            Equipamento equipamento, TextField nomeField, TextArea descricaoArea, TextField valorUnitarioField)
     {
         nomeField.setText(equipamento.getNome());
         descricaoArea.setText(equipamento.getDescricao());

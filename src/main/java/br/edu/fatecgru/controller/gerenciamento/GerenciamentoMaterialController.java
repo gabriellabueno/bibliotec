@@ -65,6 +65,7 @@ public class GerenciamentoMaterialController implements Initializable {
     @FXML private TextField localPublicacaoLivroField;
     @FXML private TextField anoPublicacaoLivroField;
     @FXML private TextArea palavrasChaveLivroArea;
+    @FXML private TextField valorUnitarioField;
 
     // REVISTA
     @FXML private TextField codigoRevistaField;
@@ -330,7 +331,7 @@ public class GerenciamentoMaterialController implements Initializable {
 
             MaterialBuilder.fromLivro(livro, isbnField, tituloLivroField, autorLivroField,
                     editoraLivroField, edicaoField, generoLivroField, assuntoLivroField,
-                    localPublicacaoLivroField, anoPublicacaoLivroField, palavrasChaveLivroArea);
+                    localPublicacaoLivroField, anoPublicacaoLivroField, palavrasChaveLivroArea, valorUnitarioField);
 
             codigoField.setText(livro.getCodigo());
             qntExemplares.setText(String.valueOf((livro.getTotalExemplares() )));
@@ -349,7 +350,7 @@ public class GerenciamentoMaterialController implements Initializable {
 
             MaterialBuilder.fromRevista(revista, tituloRevistaField, volumeRevistaField, numeroRevistaField,
                     editoraRevistaField, assuntoRevistaField, anoPublicacaoRevistaField,
-                    localPublicacaoRevistaField, generoRevistaField, palavrasChaveRevistaArea);
+                    localPublicacaoRevistaField, generoRevistaField, palavrasChaveRevistaArea, valorUnitarioField);
 
             codigoRevistaField.setText(revista.getCodigo());
             qntExemplares.setText(String.valueOf((revista.getTotalExemplares() )));
@@ -381,7 +382,7 @@ public class GerenciamentoMaterialController implements Initializable {
             rbEquipamento.setSelected(true);
             setCamposComuns(formEquipamento, false, true);
 
-            MaterialBuilder.fromEquipamento(equipamento, nomeEquipamentoField, descricaoEquipamentoArea);
+            MaterialBuilder.fromEquipamento(equipamento, nomeEquipamentoField, descricaoEquipamentoArea, valorUnitarioField);
 
             codigoEquipamentoField.setText(equipamento.getCodigo());
             boxQntExemplares.setVisible(false);
@@ -415,6 +416,7 @@ public class GerenciamentoMaterialController implements Initializable {
                     localPublicacaoLivroField, anoPublicacaoLivroField, palavrasChaveLivroArea,
                     tipoAquisicao,
                     nf,
+                    valorUnitarioField,
                     null,
                     false
             );
@@ -432,6 +434,7 @@ public class GerenciamentoMaterialController implements Initializable {
                     localPublicacaoRevistaField, generoRevistaField, palavrasChaveRevistaArea,
                     tipoAquisicao,
                     nf,
+                    valorUnitarioField,
                     null,
                     false
             );
@@ -457,7 +460,7 @@ public class GerenciamentoMaterialController implements Initializable {
                     equipamento,
                     codigoEquipamentoField, nomeEquipamentoField, descricaoEquipamentoArea,
                     tipoAquisicao,
-                    nf
+                    nf, valorUnitarioField
             );
             return equipamento;
         }

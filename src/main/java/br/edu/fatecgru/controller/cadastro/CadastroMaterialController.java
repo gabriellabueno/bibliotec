@@ -43,8 +43,10 @@
 
         @FXML private VBox vboxTipoAquisicao;
         @FXML private VBox vboxNotaFiscal;
+        @FXML private VBox vboxValorUnitario;
         @FXML private ComboBox<String> tipoAquisicaoCombo;
         @FXML private TextField numeroNotaFiscalField;
+        @FXML private TextField valorUnitarioField;
 
 
         @FXML private GridPane formLivro;
@@ -119,7 +121,8 @@
 
             numeroNotaFiscalField.setEditable(false);
             numeroNotaFiscalField.setDisable(true);
-
+            valorUnitarioField.setEditable(false);
+            valorUnitarioField.setDisable(true);
 
 
             materialTypeGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
@@ -131,19 +134,29 @@
 
                 if (newV != null) {
                     if (newV.equals("Compra")) {
+
                         InterfaceUtil.habilitarCamposNF(true, vboxNotaFiscal, numeroNotaFiscalField);
-
-
                         if (this.notaFiscalSelecionada == null) {
                             numeroNotaFiscalField.setEditable(true);
                             numeroNotaFiscalField.setDisable(false);
                         }
-                    } else {
-                        InterfaceUtil.habilitarCamposNF(false, vboxNotaFiscal, numeroNotaFiscalField);
 
+                        InterfaceUtil.habilitarCamposValorUnitario(true, vboxValorUnitario, valorUnitarioField);
+                        valorUnitarioField.setEditable(true);
+                        valorUnitarioField.setDisable(false);
+
+
+                    } else {
+
+                        InterfaceUtil.habilitarCamposNF(false, vboxNotaFiscal, numeroNotaFiscalField);
                         this.notaFiscalSelecionada = null;
                         numeroNotaFiscalField.clear();
                         numeroNotaFiscalField.setDisable(true);
+
+                        InterfaceUtil.habilitarCamposValorUnitario(false, vboxValorUnitario, valorUnitarioField);
+                        valorUnitarioField.clear();
+                        valorUnitarioField.setDisable(true);
+                        valorUnitarioField.setEditable(false);
                     }
                 }
 
@@ -215,6 +228,9 @@
 
             vboxNotaFiscal.setVisible(tipoAquisicao);
             vboxNotaFiscal.setManaged(tipoAquisicao);
+
+            vboxValorUnitario.setVisible(tipoAquisicao);
+            vboxValorUnitario.setManaged(tipoAquisicao);
         }
 
 
@@ -254,13 +270,13 @@
                         break;
                 }
 
-                InterfaceUtil.mostrarAlerta(AlertType.INFORMATION, "Sucesso", "✅ Material cadastrado com sucesso!");
+                InterfaceUtil.mostrarAlerta(AlertType.INFORMATION, "Sucesso", "Material cadastrado com sucesso!");
                 limparTodosForms();
 
             } catch (IllegalArgumentException e) {
-                InterfaceUtil.mostrarAlerta(AlertType.ERROR, "Erro de Validação", "❌ " + e.getMessage());
+                InterfaceUtil.mostrarAlerta(AlertType.ERROR, "Erro de Validação", e.getMessage());
             } catch (Exception e) {
-                InterfaceUtil.mostrarAlerta(AlertType.ERROR, "Erro Inesperado", "❌ Erro durante o cadastro: " + e.getMessage());
+                InterfaceUtil.mostrarAlerta(AlertType.ERROR, "Erro Inesperado", "Erro durante o cadastro: " + e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -272,7 +288,7 @@
                     codigoField, isbnField, tituloLivroField, autorLivroField,
                     editoraLivroField, edicaoField, generoLivroField, assuntoLivroField,
                     localPublicacaoLivroField, anoPublicacaoLivroField, palavrasChaveLivroArea,
-                    tipoAquisicao, this.notaFiscalSelecionada, codigoPai, modoCopia
+                    tipoAquisicao, this.notaFiscalSelecionada, valorUnitarioField, codigoPai, modoCopia
             );
 
             materialService.cadastrarMaterial(novoLivro);
@@ -286,7 +302,7 @@
                     codigoRevistaField, tituloRevistaField, volumeRevistaField, numeroRevistaField,
                     editoraRevistaField, assuntoRevistaField, anoPublicacaoRevistaField,
                     localPublicacaoRevistaField, generoRevistaField, palavrasChaveRevistaArea,
-                    tipoAquisicao, this.notaFiscalSelecionada, codigoPai, modoCopia
+                    tipoAquisicao, this.notaFiscalSelecionada, valorUnitarioField, codigoPai, modoCopia
             );
 
             materialService.cadastrarMaterial(novaRevista);
@@ -309,7 +325,7 @@
             Equipamento novoEquipamento = MaterialBuilder.toEquipamento(
                     null,
                     codigoEquipamentoField, nomeEquipamentoField, descricaoEquipamentoArea,
-                    tipoAquisicao, this.notaFiscalSelecionada
+                    tipoAquisicao, this.notaFiscalSelecionada, valorUnitarioField
             );
 
             materialService.cadastrarMaterial(novoEquipamento);
@@ -345,7 +361,7 @@
 
                 MaterialBuilder.fromLivro(livro, isbnField, tituloLivroField, autorLivroField,
                         editoraLivroField, edicaoField, generoLivroField, assuntoLivroField,
-                        localPublicacaoLivroField, anoPublicacaoLivroField, palavrasChaveLivroArea);
+                        localPublicacaoLivroField, anoPublicacaoLivroField, palavrasChaveLivroArea, valorUnitarioField);
 
             } else if (material instanceof Revista revista) {
                 rbRevista.setSelected(true);
@@ -353,7 +369,7 @@
 
                 MaterialBuilder.fromRevista(revista, tituloRevistaField, volumeRevistaField, numeroRevistaField,
                         editoraRevistaField, assuntoRevistaField, anoPublicacaoRevistaField,
-                        localPublicacaoRevistaField, generoRevistaField, palavrasChaveRevistaArea);
+                        localPublicacaoRevistaField, generoRevistaField, palavrasChaveRevistaArea, valorUnitarioField);
 
 
             } else if (material instanceof TG tg) {
@@ -368,7 +384,7 @@
                 rbEquipamento.setSelected(true);
                 apresentarForms(null);
 
-                MaterialBuilder.fromEquipamento(equipamento, nomeEquipamentoField, descricaoEquipamentoArea);
+                MaterialBuilder.fromEquipamento(equipamento, nomeEquipamentoField, descricaoEquipamentoArea, valorUnitarioField);
 
             }
         }
@@ -390,6 +406,7 @@
             autorLivroField.clear();
             editoraLivroField.clear();
             generoLivroField.clear();
+            valorUnitarioField.clear();
 
             // REVISTA
             codigoRevistaField.clear();
@@ -402,6 +419,7 @@
             editoraRevistaField.clear();
             generoRevistaField.clear();
             palavrasChaveRevistaArea.clear();
+            valorUnitarioField.clear();
 
             // TG
             codigoTGField.clear();
@@ -420,5 +438,6 @@
             codigoEquipamentoField.clear();
             nomeEquipamentoField.clear();
             descricaoEquipamentoArea.clear();
+            valorUnitarioField.clear();
         }
     }

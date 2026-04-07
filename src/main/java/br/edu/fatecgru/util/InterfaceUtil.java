@@ -92,6 +92,21 @@ public final class InterfaceUtil {
         }
     }
 
+    public static void habilitarCamposValorUnitario(boolean habilitar,
+                                         VBox vboxValorUnitario,
+                                         TextField valorUnitarioField) {
+
+        vboxValorUnitario.setVisible(true);
+        vboxValorUnitario.setManaged(true);
+
+        if (habilitar) {
+            valorUnitarioField.setDisable(true);
+            valorUnitarioField.clear();
+        } else {
+            valorUnitarioField.setDisable(false);
+        }
+    }
+
     public static Optional<ButtonType> mostrarAlertaComConfirmacao(String titulo, String cabecalho, String conteudo) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(titulo);
