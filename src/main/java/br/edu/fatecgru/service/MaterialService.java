@@ -12,12 +12,16 @@ public class MaterialService {
 
     private final MaterialRepository repository = new MaterialRepository();
 
+    private final NotaFiscalService notaFiscalService = new NotaFiscalService();
+
 
     public boolean cadastrarMaterial(Material material) {
 
         validarMaterial(material);
 
-
+        if (material.getTipoAquisicao() == TipoAquisicao.COMPRA && material.getNotaFiscal() != null) {
+            atualizarSaldoNotaFiscal(material.getNotaFiscal(), material.getValorUnitario(), true);
+        }
 
         if (material instanceof Livro livro) {
 
@@ -123,6 +127,28 @@ public class MaterialService {
                 repository.atualizarMaterial(pai);
             }
         }
+    }
+
+    private void atualizarSaldoNotaFiscal(NotaFiscal nf, java.math.BigDecimal valorMaterial, boolean isSoma) {
+        if (nf == null || valorMaterial == null) return;
+
+
+        java.math.BigDecimal totalAtual = nf.getValor() != null ? nf.getValor() : java.math.BigDecimal.ZERO;
+        java.math.BigDecimal novoTotal;
+
+        if (isSoma) {
+            novoTotal = totalAtual.add(valorMaterial);
+        } else {
+            novoTotal = totalAtual.subtract(valorMaterial);
+            if (novoTotal.compareTo(java.math.BigDecimal.ZERO) < 0) {
+                novoTotal = java.math.BigDecimal.ZERO;
+            }
+        }
+
+        nf.setValor(novoTotal);
+
+
+        notaFiscalService.atualizarNotaFiscal(nf);
     }
 
 
