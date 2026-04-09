@@ -55,9 +55,14 @@
             </ComboBox>
         </VBox>
 
-        <VBox fx:id="vboxNotaFiscal" spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+        <VBox fx:id="vboxNotaFiscal" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
             <Label style="-fx-font-weight: bold;" text="Nota Fiscal" />
             <TextField fx:id="numeroNotaFiscalField" prefWidth="280.0" />
+        </VBox>
+
+        <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+            <Label style="-fx-font-weight: bold;" text="Quantidade de Cópias" />
+            <TextField fx:id="quantidadeCopiasField" prefWidth="280.0"/>
         </VBox>
 
         <VBox fx:id="vboxValorUnitario" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
