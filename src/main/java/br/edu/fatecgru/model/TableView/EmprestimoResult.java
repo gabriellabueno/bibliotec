@@ -4,6 +4,8 @@ import br.edu.fatecgru.model.Entity.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @NoArgsConstructor
@@ -52,9 +54,12 @@ public class EmprestimoResult {
 
         e.setIdMaterial(codigoMaterial);
 
+        LocalDate dataEmprestimo = em.getDataEmprestimo();
+        LocalDate dataPrevistaDevolucao = em.getDataPrevistaDevolucao();
+
         // Campos de data e status
-        e.setDataEmprestimo(em.getDataEmprestimo().toString());
-        e.setDataPrevistaDevolucao(em.getDataPrevistaDevolucao().toString());
+        e.setDataEmprestimo(dataEmprestimo != null ? dataEmprestimo.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "");
+        e.setDataPrevistaDevolucao(dataPrevistaDevolucao != null ? dataPrevistaDevolucao.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "");
         e.setStatusEmprestimo(em.getStatusEmprestimo().toString());
 
         e.emprestimoOriginal = em;

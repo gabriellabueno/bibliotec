@@ -18,6 +18,13 @@ public class SideBarController {
     }
 
     @FXML
+    private void onSearchNotaFiscalClick() {
+        if (mainController != null) {
+            mainController.loadScreen("/ui/screens/pesquisa/pesquisa-nota-fiscal.fxml");
+        }
+    }
+
+    @FXML
     private void onSearchMaterialClick() {
         if (mainController != null) {
             mainController.loadScreen("/ui/screens/pesquisa/pesquisa-material.fxml");

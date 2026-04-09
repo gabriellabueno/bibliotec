@@ -12,6 +12,7 @@ import lombok.Setter;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -102,8 +103,8 @@ public class GerenciamentoEmprestimoController implements Initializable {
         }
 
         // 3. Preenchimento das Datas e Status
-        dataEmprestimoField.setText(emprestimo.getDataEmprestimo().toString());
-        dataPrevistaDevolucaoField.setText(emprestimo.getDataPrevistaDevolucao().toString());
+        dataEmprestimoField.setText(emprestimo.getDataEmprestimo().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        dataPrevistaDevolucaoField.setText(emprestimo.getDataPrevistaDevolucao().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
         // Data de Devolução (Campo opcional, só preenche se já foi devolvido)
         dataDevolucaoField.setValue(emprestimo.getDataDevolucao() != null

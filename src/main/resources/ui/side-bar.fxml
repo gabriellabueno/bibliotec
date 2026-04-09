@@ -59,6 +59,16 @@
                 </graphic>
             </Button>
 
+            <Button mnemonicParsing="false"  onAction="#onSearchNotaFiscalClick"  prefHeight="30.0" maxWidth="Infinity" text="Nota Fiscal" styleClass="nav-item-button">
+                <graphic>
+                    <ImageView fitHeight="18.0" fitWidth="18.0" preserveRatio="true">
+                        <image>
+                            <Image url="@../icons/note_icon.png"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+
             <Button mnemonicParsing="false"   onAction="#onSearchUserClick"  prefHeight="30.0" maxWidth="Infinity" text="Usuário" styleClass="nav-item-button">
                 <graphic>
                     <ImageView fitHeight="18.0" fitWidth="18.0" preserveRatio="true">
