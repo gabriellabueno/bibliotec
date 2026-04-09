@@ -60,8 +60,6 @@ public class CadastroNotaFiscalController implements Initializable {
 
                 this.notaFiscalSalva = nfResultado;
 
-                mostrarAlerta(AlertType.INFORMATION, "Sucesso", "Nota Fiscal " + this.notaFiscalSalva.getCodigo() + " atualizada e selecionada.");
-
                 if (nfResultado != null) {
 
                     limparCamposNFSecundarios();
@@ -80,7 +78,8 @@ public class CadastroNotaFiscalController implements Initializable {
 
             if (nfResultado != null) {
                 this.notaFiscalSalva = nfResultado;
-                mostrarAlerta(AlertType.INFORMATION, "Sucesso", "Nova Nota Fiscal cadastrada e selecionada.");
+                mostrarAlerta(AlertType.INFORMATION, "Sucesso", "Nova Nota Fiscal cadastrada.\nValor total: R$ "
+                                            + this.notaFiscalSalva.getValor() + ". \nPara alterar o valor vincule materiais.");
 
 
                 limparCamposNFSecundarios();
@@ -180,7 +179,8 @@ public class CadastroNotaFiscalController implements Initializable {
             travarCamposNFSecundarios();
             this.notaFiscalSalva = nfEncontrada; // Já define a NF a ser usada
 
-            mostrarAlerta(AlertType.INFORMATION, "Busca OK", "NF " + nfEncontrada.getCodigo() + " encontrada.");
+            mostrarAlerta(AlertType.INFORMATION, "Busca OK", "Nota Fiscal " + nfEncontrada.getCodigo() + " encontrada." +
+                                                "\nValor: R$ " + nfEncontrada.getValor() + "\nPara alterar o valor vincule materiais.");
 
         } else {
 

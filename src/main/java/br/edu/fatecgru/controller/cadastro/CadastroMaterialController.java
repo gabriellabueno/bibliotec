@@ -137,7 +137,9 @@
                 boolean isCompra = newVal.equals("Compra");
                 habilitarCamposCompra(isCompra);
 
-                if (!isCompra) {
+                if (isCompra) {
+                    InterfaceUtil.mostrarAlerta(AlertType.INFORMATION, "Atenção", "Cadastre a Nota Fiscal antes de vinculá-la ao Material.");
+                } else {
                     notaFiscalSelecionada = null;
                 }
             });

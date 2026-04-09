@@ -46,12 +46,12 @@
                 return true;
 
             } catch (ConstraintViolationException e) {
-                desfazerTransacaoSeAtiva(em);
+                rollbackSeTransacaoAtiva(em);
                 System.err.println("Erro de restrição ao cadastrar Material: " + e.getMessage());
                 return false;
 
             } catch (Exception e) {
-                desfazerTransacaoSeAtiva(em);
+                rollbackSeTransacaoAtiva(em);
                 System.err.println("Erro inesperado ao cadastrar Material: " + e.getMessage());
                 e.printStackTrace();
                 return false;
@@ -79,7 +79,7 @@
                 return true;
 
             } catch (Exception e) {
-                desfazerTransacaoSeAtiva(em);
+                rollbackSeTransacaoAtiva(em);
                 System.err.println("Erro ao atualizar Material: " + e.getMessage());
                 return false;
 
@@ -108,7 +108,7 @@
                 return true;
 
             } catch (Exception e) {
-                desfazerTransacaoSeAtiva(em);
+                rollbackSeTransacaoAtiva(em);
                 System.err.println("Erro ao excluir Material: " + e.getMessage());
                 e.printStackTrace();
                 return false;
@@ -363,7 +363,7 @@
             };
         }
 
-        private void desfazerTransacaoSeAtiva(EntityManager em) {
+        private void rollbackSeTransacaoAtiva(EntityManager em) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }

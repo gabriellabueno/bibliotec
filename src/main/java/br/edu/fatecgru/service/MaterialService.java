@@ -217,14 +217,14 @@ public class MaterialService {
         throw new IllegalArgumentException("Apenas Livros e Revistas suportam criação de cópias em lote.");
     }
 
-    private void atualizarSaldoNotaFiscal(NotaFiscal nf, BigDecimal valorMaterial, boolean Soma) {
+    private void atualizarSaldoNotaFiscal(NotaFiscal nf, BigDecimal valorMaterial, boolean isSoma) {
 
         if (nf == null || valorMaterial == null) {
             return;
         }
 
         BigDecimal totalAtual = nf.getValor() != null ? nf.getValor() : BigDecimal.ZERO;
-        BigDecimal novoTotal = Soma? totalAtual.add(valorMaterial) : totalAtual.subtract(valorMaterial);
+        BigDecimal novoTotal = isSoma? totalAtual.add(valorMaterial) : totalAtual.subtract(valorMaterial);
 
         if (novoTotal.compareTo(BigDecimal.ZERO) < 0) {
             novoTotal = BigDecimal.ZERO;
