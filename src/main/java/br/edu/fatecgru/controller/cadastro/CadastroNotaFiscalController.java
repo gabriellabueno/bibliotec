@@ -139,13 +139,6 @@ public class CadastroNotaFiscalController implements Initializable {
         return nf;
     }
 
-
-    @FXML
-    private void fecharJanela() {
-        Stage stage = (Stage) codigoField.getScene().getWindow();
-        stage.close();
-    }
-
     private void preencherCampos(NotaFiscal nf) {
         if (nf != null) {
 

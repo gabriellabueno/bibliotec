@@ -1,5 +1,6 @@
 package br.edu.fatecgru.controller;
 
+import br.edu.fatecgru.controller.pesquisa.PesquisaNotaFiscalController;
 import javafx.fxml.FXML;
 
 public class SideBarController {
@@ -20,7 +21,12 @@ public class SideBarController {
     @FXML
     private void onSearchNotaFiscalClick() {
         if (mainController != null) {
-            mainController.loadScreen("/ui/screens/pesquisa/pesquisa-nota-fiscal.fxml");
+            mainController.loadScreenWithCallback(
+                    "/ui/screens/pesquisa/pesquisa-nota-fiscal.fxml",
+                    (PesquisaNotaFiscalController controller) -> {
+                        controller.setMainController(mainController);
+                    }
+            );
         }
     }
 

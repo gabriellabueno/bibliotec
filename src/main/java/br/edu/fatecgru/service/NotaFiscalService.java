@@ -65,7 +65,11 @@ public class NotaFiscalService {
     }
 
     public NotaFiscal atualizarNotaFiscal(NotaFiscal nf) {
-        // Adicionar validações de negócio se necessário
+        NotaFiscal nfExistente = buscarNotaFiscalPorCodigo(nf.getCodigo());
+
+        if (nfExistente != null && !nfExistente.getId().equals(nf.getId())) {
+            throw new IllegalArgumentException("Já existe uma Nota Fiscal cadastrada com o código: " + nf.getCodigo());
+        }
 
         return repository.atualizarNotaFiscal(nf);
     }

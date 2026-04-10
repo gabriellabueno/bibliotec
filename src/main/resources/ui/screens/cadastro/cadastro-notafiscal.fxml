@@ -40,7 +40,6 @@
             </VBox.margin>
             <Button fx:id="cadastrarButton" onAction="#onCadastrarClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="+ Cadastrar">
             </Button>
-            <Button fx:id="voltarButton" onAction="#fecharJanela" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Voltar" />
         </HBox>
 
 
