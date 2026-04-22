@@ -9,7 +9,7 @@
 <VBox alignment="TOP_CENTER" prefHeight="935.0" prefWidth="1589.0" spacing="10.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.edu.fatecgru.controller.gerenciamento.GerenciamentoMaterialController">
 
     <padding>
-        <Insets bottom="30.0" left="300.0" right="300.0" top="100.0" />
+        <Insets bottom="30.0" left="300.0" right="300.0" top="70.0" />
     </padding>
 
     <HBox alignment="CENTER_LEFT" prefWidth="580.0" spacing="10.0">
@@ -19,7 +19,7 @@
 
     <Label style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;" text="Gerenciamento de Material">
         <VBox.margin>
-            <Insets bottom="20.0" />
+            <Insets bottom="10.0" />
         </VBox.margin>
     </Label>
 
@@ -63,13 +63,18 @@
 
         <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
             <Label style="-fx-font-weight: bold;" text="Quantidade de Cópias" />
-            <TextField fx:id="quantidadeCopiasField" prefWidth="280.0"/>
+            <TextField fx:id="quantidadeCopiasField" prefWidth="280.0" />
         </VBox>
 
         <VBox fx:id="vboxValorUnitario" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
             <Label style="-fx-font-weight: bold;" text="Valor Unitário" />
-            <TextField fx:id="valorUnitarioField" prefWidth="280.0"/>
+            <TextField fx:id="valorUnitarioField" prefWidth="280.0" />
         </VBox>
+      <rowConstraints>
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+      </rowConstraints>
 
 
     </GridPane>
@@ -137,6 +142,14 @@
                 <Label style="-fx-font-weight: bold;" text="Palavras-Chave" />
                 <TextArea fx:id="palavrasChaveLivroArea" prefHeight="60.0" promptText="Separe as palavras por vírgula." wrapText="true" />
             </VBox>
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+         </rowConstraints>
 
         </GridPane>
 
@@ -195,6 +208,14 @@
                 <Label style="-fx-font-weight: bold;" text="Palavras-Chave" />
                 <TextArea fx:id="palavrasChaveRevistaArea" prefHeight="60.0" promptText="Separe as palavras por vírgula." wrapText="true" />
             </VBox>
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+         </rowConstraints>
 
         </GridPane>
 
@@ -289,13 +310,16 @@
                 <Label style="-fx-font-weight: bold;" text="Descrição" />
                 <TextArea fx:id="descricaoEquipamentoArea" prefHeight="100.0" wrapText="true" />
             </VBox>
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+         </rowConstraints>
 
         </GridPane>
 
     </StackPane>
 
-    <HBox alignment="CENTER" prefWidth="580.0" spacing="50.0"
-              style="-fx-border-color: #D3D3D3; -fx-border-width: 1; -fx-padding: 10; -fx-background-color: #f7f7f7;">
+    <HBox alignment="CENTER" prefWidth="700.0" spacing="30.0" style="-fx-border-color: #D3D3D3; -fx-border-width: 1; -fx-padding: 10; -fx-background-color: #f7f7f7;">
 
         <HBox fx:id="boxTarjaVermelha" alignment="CENTER_LEFT" spacing="10.0">
                 <Label style="-fx-font-weight: bold;" text="Tarja Vermelha" />
@@ -316,16 +340,16 @@
     <HBox alignment="CENTER" prefWidth="580.0" spacing="10.0" style="-fx-padding: 10 0 0 0">
 
         <VBox.margin>
-            <Insets top="10.0" />
+            <Insets />
         </VBox.margin>
 
         <Region HBox.hgrow="ALWAYS" />
         <HBox alignment="CENTER_LEFT" prefWidth="580.0" spacing="10.0">
-            <Button fx:id="btnCadastrarCopia"  onAction="#cadastrarCopia" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20 10 20; -fx-cursor: hand;" text="Cadastrar Cópia" />
+            <Button fx:id="btnCadastrarCopia" onAction="#cadastrarCopia" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20 10 20; -fx-cursor: hand;" text="Cadastrar Cópia" />
         </HBox>
 
-        <HBox alignment="CENTER_RIGHT" prefWidth="580.0" spacing="10.0">
-            <Button onAction="#onExcluirClick" style="-fx-background-color: #b70c0c; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20 10 20; -fx-cursor: hand;" text="Excluir" />
+        <HBox alignment="CENTER_RIGHT" prefWidth="700.0" spacing="10.0">
+            <Button onAction="#onExcluirClick" style="-fx-background-color: #b70c0c; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20 10 20; -fx-cursor: hand;" text="Desativar Material" />
             <Button onAction="#onSalvarClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20 10 20; -fx-cursor: hand;" text="Salvar Alterações" />
         </HBox>
     </HBox>

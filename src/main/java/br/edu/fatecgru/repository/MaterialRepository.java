@@ -1,6 +1,7 @@
     package br.edu.fatecgru.repository;
 
     import br.edu.fatecgru.model.Entity.*;
+    import br.edu.fatecgru.model.Enum.StatusMaterial;
     import br.edu.fatecgru.model.Enum.TipoMaterial;
     import jakarta.persistence.EntityManager;
     import jakarta.persistence.NoResultException;
@@ -88,7 +89,7 @@
             }
         }
 
-        public boolean excluirMaterial(Material material) {
+        public boolean desativarMaterial(Material material) {
 
             EntityManager em = getEntityManager();
 
@@ -98,18 +99,19 @@
                 Material materialGerenciado = em.find(Material.class, material.getIdMaterial());
 
                 if (materialGerenciado == null) {
-                    System.err.println("Material não encontrado no banco para exclusão.");
+                    System.err.println("Material não encontrado no banco para desativação.");
                     em.getTransaction().rollback();
                     return false;
                 }
 
-                em.remove(materialGerenciado);
+                materialGerenciado.setStatusMaterial(StatusMaterial.INATIVO);
+                em.merge(materialGerenciado);
                 em.getTransaction().commit();
                 return true;
 
             } catch (Exception e) {
                 rollbackSeTransacaoAtiva(em);
-                System.err.println("Erro ao excluir Material: " + e.getMessage());
+                System.err.println("Erro ao desativar Material: " + e.getMessage());
                 e.printStackTrace();
                 return false;
 
@@ -234,10 +236,12 @@
 
             try {
                 String jpql = "SELECT l FROM Livro l WHERE lower(l.titulo) LIKE :termo OR lower(l.autor) LIKE :termo " +
-                            "OR l.isbn LIKE :termo OR lower(l.codigo) LIKE :termo OR lower(l.anoPublicacao) LIKE :termo" ;
+                        "OR l.isbn LIKE :termo OR lower(l.codigo) LIKE :termo OR lower(l.anoPublicacao) LIKE :termo " +
+                        "ORDER BY CASE WHEN l.statusMaterial = :inativo THEN 1 ELSE 0 END ASC";
 
                 TypedQuery<Livro> query = em.createQuery(jpql, Livro.class);
                 query.setParameter("termo", "%" + termo.toLowerCase() + "%");
+                query.setParameter("inativo", StatusMaterial.INATIVO);
                 return query.getResultList();
 
             } catch (Exception e) {
@@ -254,10 +258,12 @@
 
             try {
                 String jpql = "SELECT r FROM Revista r WHERE lower(r.titulo) LIKE :termo OR lower(r.editora) " +
-                            "LIKE :termo OR lower(r.codigo) LIKE :termo OR lower(r.anoPublicacao) LIKE :termo";
+                        "LIKE :termo OR lower(r.codigo) LIKE :termo OR lower(r.anoPublicacao) LIKE :termo " +
+                        "ORDER BY CASE WHEN r.statusMaterial = :inativo THEN 1 ELSE 0 END ASC";
 
                 TypedQuery<Revista> query = em.createQuery(jpql, Revista.class);
                 query.setParameter("termo", "%" + termo.toLowerCase() + "%");
+                query.setParameter("inativo", StatusMaterial.INATIVO);
                 return query.getResultList();
 
             } catch (Exception e) {
@@ -273,11 +279,13 @@
             EntityManager em = getEntityManager();
 
             try {
-                String jpql = "SELECT t FROM TG t WHERE lower(t.titulo)  LIKE :termo OR " +
-                            "lower(t.codigo) LIKE :termo OR lower(t.autor1) LIKE :termo";
+                String jpql = "SELECT t FROM TG t WHERE lower(t.titulo) LIKE :termo OR " +
+                        "lower(t.codigo) LIKE :termo OR lower(t.autor1) LIKE :termo " +
+                        "ORDER BY CASE WHEN t.statusMaterial = :inativo THEN 1 ELSE 0 END ASC";
 
                 TypedQuery<TG> query = em.createQuery(jpql, TG.class);
                 query.setParameter("termo", "%" + termo.toLowerCase() + "%");
+                query.setParameter("inativo", StatusMaterial.INATIVO);
                 return query.getResultList();
 
             } catch (Exception e) {
@@ -294,10 +302,14 @@
 
             try {
                 String jpql = "SELECT e FROM Equipamento e WHERE lower(e.nome) LIKE :termo " +
-                            "OR lower(e.codigo) LIKE :termo OR lower(e.descricao) LIKE :termo";
+                        "OR lower(e.codigo) LIKE :termo OR lower(e.descricao) LIKE :termo " +
+                        "ORDER BY CASE WHEN e.statusMaterial = :inativo THEN 1 ELSE 0 END ASC";
+
+
 
                 TypedQuery<Equipamento> query = em.createQuery(jpql, Equipamento.class);
                 query.setParameter("termo", "%" + termo.toLowerCase() + "%");
+                query.setParameter("inativo", StatusMaterial.INATIVO);
                 return query.getResultList();
 
             } catch (Exception e) {

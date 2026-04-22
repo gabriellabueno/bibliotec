@@ -20,7 +20,7 @@
     <VBox maxWidth="400.0" spacing="15.0">
 
         <VBox spacing="5.0">
-            <Label style="-fx-font-weight: bold;" text="Código" />
+            <Label style="-fx-font-weight: bold;" text="Código *" />
             <TextField fx:id="codigoField" />
         </VBox>
 
@@ -30,7 +30,7 @@
         </VBox>
 
         <VBox spacing="5.0">
-            <Label style="-fx-font-weight: bold;" text="Data de Aquisição" />
+            <Label style="-fx-font-weight: bold;" text="Data de Aquisição *" />
             <DatePicker fx:id="dataAquisicaoField" promptText="Selecione a Data" />
         </VBox>
 

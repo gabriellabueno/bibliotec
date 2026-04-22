@@ -32,17 +32,17 @@
         <Separator />
 
         <VBox spacing="5.0">
-            <Label text="ID" style="-fx-font-weight: bold;" />
+            <Label text="ID *" style="-fx-font-weight: bold;" />
             <TextField fx:id="idField" />
         </VBox>
 
         <VBox spacing="5.0">
-            <Label text="Nome" style="-fx-font-weight: bold;" />
+            <Label text="Nome *" style="-fx-font-weight: bold;" />
             <TextField fx:id="nomeField" />
         </VBox>
 
         <VBox spacing="5.0">
-            <Label text="E-mail" style="-fx-font-weight: bold;" />
+            <Label text="E-mail *" style="-fx-font-weight: bold;" />
             <TextField fx:id="emailField" />
         </VBox>
 

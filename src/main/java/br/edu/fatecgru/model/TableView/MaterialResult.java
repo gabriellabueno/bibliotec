@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class MaterialResult {
-    // Usamos String para tudo na tabela para facilitar a exibição
+    // String para  facilitar a exibição
     private String codigo;
     private String titulo;
     private String anoPublicacao;
@@ -24,7 +24,7 @@ public class MaterialResult {
 
 
 
-    // --- Métodos "Factory" para converter Entidades em MaterialResult ---
+    // Métodos "Factory" para converter Entidades em MaterialResult
 
     public static MaterialResult fromLivro(Livro l) {
         MaterialResult m = new MaterialResult();

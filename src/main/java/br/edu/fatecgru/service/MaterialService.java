@@ -1,6 +1,7 @@
 package br.edu.fatecgru.service;
 
 import br.edu.fatecgru.model.Entity.*;
+import br.edu.fatecgru.model.Enum.StatusMaterial;
 import br.edu.fatecgru.model.Enum.TipoAquisicao;
 import br.edu.fatecgru.repository.MaterialRepository;
 
@@ -64,25 +65,21 @@ public class MaterialService {
         return repository.atualizarMaterial(material);
     }
 
-    public boolean excluirMaterial(Material material) {
+    public boolean desativarMaterial(Material material) {
 
         if (material == null) {
             throw new IllegalArgumentException("Material não pode ser nulo.");
         }
 
-        if (possuiCopias(material)) {
-            int totalCopias = repository.contarCopiasPorIdPai(material.getIdMaterial(), material.getTipoMaterial());
-            throw new IllegalArgumentException(
-                    "Não é possível excluir este material. Existem " + totalCopias +
-                            " cópia(s) vinculada(s). Exclua as cópias primeiro."
-            );
+        if (material.getStatusMaterial() == StatusMaterial.INATIVO) {
+            throw new IllegalArgumentException("Este material já está desativado.");
         }
 
         if (material.getIdPai() != null) {
             decrementarTotalExemplaresDoPai(material.getIdPai());
         }
 
-        return repository.excluirMaterial(material);
+        return repository.desativarMaterial(material);
     }
 
     public void incrementarTotalExemplaresDoPai(Long idPai) {

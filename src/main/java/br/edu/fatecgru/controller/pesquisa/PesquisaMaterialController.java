@@ -3,6 +3,7 @@ package br.edu.fatecgru.controller.pesquisa;
 import br.edu.fatecgru.controller.MainController;
 import br.edu.fatecgru.controller.gerenciamento.GerenciamentoMaterialController;
 import br.edu.fatecgru.model.Entity.*;
+import br.edu.fatecgru.model.Enum.StatusMaterial;
 import br.edu.fatecgru.model.TableView.MaterialResult;
 import br.edu.fatecgru.service.MaterialService;
 
@@ -68,6 +69,21 @@ public class PesquisaMaterialController implements Initializable {
 
         rbLivro.setSelected(true);
         updateTableColumns();
+
+        resultsTable.setRowFactory(tv -> new TableRow<MaterialResult>() {
+            @Override
+            protected void updateItem(MaterialResult result, boolean empty) {
+                super.updateItem(result, empty);
+
+                if (result == null || empty) {
+                    setOpacity(1.0);
+                } else if (result.getMaterialOriginal().getStatusMaterial() == StatusMaterial.INATIVO) {
+                    setOpacity(0.6);
+                } else {
+                    setOpacity(1.0);
+                }
+            }
+        });
     }
 
     // Importante: O nome na PropertyValueFactory deve ser igual ao nome do atributo na classe MaterialResult.

@@ -182,16 +182,16 @@ public class GerenciamentoMaterialController implements Initializable {
     @FXML
     private void onExcluirClick() {
 
-        String mensagemConfirmacao = "";
+        String mensagemConfirmacao;
 
-        if ( materialEmEdicao.getTipoMaterial() == TipoMaterial.LIVRO ||
+        if (materialEmEdicao.getTipoMaterial() == TipoMaterial.LIVRO ||
                 materialEmEdicao.getTipoMaterial() == TipoMaterial.REVISTA) {
+
             if (materialEmEdicao.getIdPai() != null) {
-                mensagemConfirmacao = "Tem certeza que deseja excluir esta cópia?";
+                mensagemConfirmacao = "Tem certeza que deseja desativar esta cópia? \nEla não poderá mais ser emprestada.";
+
             } else {
-                mensagemConfirmacao = "Tem certeza que deseja excluir?\n\n" +
-                        "⚠️ ATENÇÃO: Este é o material original (tarja vermelha). " +
-                        "Se houver cópias vinculadas, a exclusão não será permitida.";
+                mensagemConfirmacao = "Tem certeza que deseja desativar este material? \nEle não poderá mais ser emprestado, mas continuará no sistema.";
 
             }
         } else {
@@ -203,7 +203,7 @@ public class GerenciamentoMaterialController implements Initializable {
                 ButtonType.YES, ButtonType.NO);
 
         confirmacao.setHeaderText(null);
-        confirmacao.setTitle("Exclusão de Material");
+        confirmacao.setTitle("Desativar Material");
         confirmacao.getButtonTypes().setAll(
                 new ButtonType("Sim", ButtonBar.ButtonData.YES),
                 new ButtonType("Não", ButtonBar.ButtonData.NO)
@@ -211,13 +211,13 @@ public class GerenciamentoMaterialController implements Initializable {
 
         // Listener para captar botão selecionado
         confirmacao.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.YES) {
+            if (response.getButtonData() == ButtonBar.ButtonData.YES) {
                 try {
-                    boolean sucesso = materialService.excluirMaterial(materialEmEdicao);
+                    boolean sucesso = materialService.desativarMaterial(materialEmEdicao);
 
                     if (sucesso) {
                         Alert sucesso_alert = new Alert(Alert.AlertType.INFORMATION,
-                                "✅ Material excluído com sucesso!", ButtonType.OK);
+                                "Material desativado com sucesso!", ButtonType.OK);
                         sucesso_alert.showAndWait();
 
                         if (mainController != null) {
@@ -225,21 +225,21 @@ public class GerenciamentoMaterialController implements Initializable {
                         }
                     } else {
                         new Alert(Alert.AlertType.ERROR,
-                                "❌ Erro ao excluir o material. Tente novamente.", ButtonType.OK).showAndWait();
+                                "Erro ao desativar o material. Tente novamente.", ButtonType.OK).showAndWait();
                     }
 
                 } catch (IllegalArgumentException e) {
                     Alert erro = new Alert(Alert.AlertType.WARNING,
                             "⚠️ " + e.getMessage(),
                             ButtonType.OK);
-                    erro.setHeaderText("Não é possível excluir");
+                    erro.setHeaderText("Não é possível desativar");
                     erro.showAndWait();
 
                 } catch (Exception e) {
                     // Erro inesperado
                     e.printStackTrace();
                     Alert erro = new Alert(Alert.AlertType.ERROR,
-                            "❌ Erro inesperado ao excluir: " + e.getMessage(),
+                            "Erro inesperado: " + e.getMessage(),
                             ButtonType.OK);
                     erro.showAndWait();
                 }

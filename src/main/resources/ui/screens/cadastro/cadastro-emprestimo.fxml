@@ -32,19 +32,19 @@
     <VBox maxWidth="400.0" spacing="25.0">
 
         <VBox spacing="5.0">
-            <Label style="-fx-font-weight: bold;" text="Usuário" />
+            <Label style="-fx-font-weight: bold;" text="Usuário *" />
             <TextField fx:id="usuario" prefWidth="400.0" promptText="Insira o ID do usuário">
             </TextField>
         </VBox>
 
         <VBox spacing="5.0">
-            <Label style="-fx-font-weight: bold;" text="Material" />
+            <Label style="-fx-font-weight: bold;" text="Material *" />
             <TextField fx:id="material" prefWidth="400.0" promptText="Insira o Código do material">
             </TextField>
         </VBox>
 
         <VBox spacing="5.0">
-            <Label style="-fx-font-weight: bold;" text="Data do Empréstimo" />
+            <Label style="-fx-font-weight: bold;" text="Data do Empréstimo *" />
             <TextField fx:id="dataEmprestimoField" promptText="__/__/____" />
         </VBox>
 
