@@ -2,18 +2,17 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
 
-<?import javafx.scene.control.cell.PropertyValueFactory?>
-<VBox alignment="TOP_CENTER" prefHeight="752.0" prefWidth="1124.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="br.edu.fatecgru.controller.gerenciamento.GerenciamentoUsuarioController">
+<VBox alignment="TOP_CENTER" prefHeight="752.0" prefWidth="1124.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.edu.fatecgru.controller.gerenciamento.GerenciamentoUsuarioController">
 
     <padding>
         <Insets bottom="30.0" left="300.0" right="300.0" top="100.0" />
     </padding>
 
     <HBox alignment="CENTER_LEFT" prefWidth="580.0" spacing="10.0">
-        <Button style="-fx-background-color: #5a1a1a; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Voltar" onAction="#onVoltarClick" />
+        <Button onAction="#onVoltarClick" style="-fx-background-color: #5a1a1a; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Voltar" />
     </HBox>
 
     <Label style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;" text="Gerenciamento de Usuário">
@@ -43,6 +42,11 @@
         <VBox fx:id="statusContainer" maxWidth="400" spacing="10.0" style="-fx-border-color: #D3D3D3; -fx-border-width: 1; -fx-padding: 10; -fx-background-color: #f7f7f7;">
 
             <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <Label style="-fx-font-weight: bold;" text="Matrícula:" />
+                <Label fx:id="matriculaStatusLabel" style="-fx-font-weight: bold; -fx-padding: 2 5; -fx-background-color: #1a1a57; -fx-text-fill: white; -fx-border-radius: 3;" text="Ativa" />
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
                 <Label style="-fx-font-weight: bold;" text="Penalidade:" />
                 <Label fx:id="penalidadeStatusLabel" style="-fx-font-weight: bold; -fx-padding: 2 5; -fx-background-color: #5a1a1a; -fx-text-fill: white; -fx-border-radius: 3;" text="NÃO" />
             </HBox>
@@ -54,31 +58,31 @@
         </VBox>
 
         <VBox prefWidth="900">
-            <Label text="Empréstimos do Usuário" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
-            <TableView fx:id="emprestimosTableView" onMouseClicked="#handleEmprestimoClick" VBox.vgrow="ALWAYS" prefHeight="200.0">
+            <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Empréstimos do Usuário" />
+            <TableView fx:id="emprestimosTableView" onMouseClicked="#handleEmprestimoClick" prefHeight="200.0" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="colEmprestimoID" text="ID Empréstimo" prefWidth="90.0">
-                        <cellValueFactory><PropertyValueFactory property="idEmprestimo"></PropertyValueFactory></cellValueFactory>
+                    <TableColumn fx:id="colEmprestimoID" prefWidth="90.0" text="ID Empréstimo">
+                        <cellValueFactory><PropertyValueFactory property="idEmprestimo" /></cellValueFactory>
                     </TableColumn>
-                    <TableColumn fx:id="colMaterialIDEmprestimo" text="ID Material" prefWidth="80.0">
-                        <cellValueFactory><PropertyValueFactory property="idMaterial"></PropertyValueFactory></cellValueFactory>
+                    <TableColumn fx:id="colMaterialIDEmprestimo" prefWidth="80.0" text="ID Material">
+                        <cellValueFactory><PropertyValueFactory property="idMaterial" /></cellValueFactory>
                     </TableColumn>
-                    <TableColumn fx:id="colDataEmprestimo" text="Data Empréstimo" prefWidth="150.0">
-                        <cellValueFactory><PropertyValueFactory property="dataEmprestimo"></PropertyValueFactory></cellValueFactory>
+                    <TableColumn fx:id="colDataEmprestimo" prefWidth="150.0" text="Data Empréstimo">
+                        <cellValueFactory><PropertyValueFactory property="dataEmprestimo" /></cellValueFactory>
                     </TableColumn>
-                    <TableColumn fx:id="colDataPrevista" text="Devolução Prevista" prefWidth="150.0">
-                        <cellValueFactory><PropertyValueFactory property="dataPrevistaDevolucao"></PropertyValueFactory></cellValueFactory>
+                    <TableColumn fx:id="colDataPrevista" prefWidth="150.0" text="Devolução Prevista">
+                        <cellValueFactory><PropertyValueFactory property="dataPrevistaDevolucao" /></cellValueFactory>
                     </TableColumn>
-                    <TableColumn fx:id="colStatusEmprestimo" text="Status" prefWidth="120.0">
-                        <cellValueFactory><PropertyValueFactory property="statusEmprestimo"></PropertyValueFactory></cellValueFactory>
+                    <TableColumn fx:id="colStatusEmprestimo" prefWidth="120.0" text="Status">
+                        <cellValueFactory><PropertyValueFactory property="statusEmprestimo" /></cellValueFactory>
                     </TableColumn>
                 </columns>
             </TableView>
         </VBox>
 
-    <HBox alignment="BOTTOM_RIGHT" VBox.vgrow="ALWAYS" spacing="10.0">
-        <Button style="-fx-background-color: #b70c0c; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Excluir" onAction="#onExcluirClick"  />
-        <Button style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Salvar Alterações" onAction="#onSalvarClick" />
+    <HBox alignment="BOTTOM_RIGHT" spacing="10.0" VBox.vgrow="ALWAYS">
+        <Button fx:id="matriculaButton" onAction="#onDesativarClick" style="-fx-background-color: #b70c0c; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Desativar Matrícula" />
+        <Button onAction="#onSalvarClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Salvar Alterações" />
     </HBox>
 
 </VBox>

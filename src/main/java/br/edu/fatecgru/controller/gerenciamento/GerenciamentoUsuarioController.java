@@ -41,6 +41,8 @@ public class GerenciamentoUsuarioController implements Initializable {
     @FXML private TextField emailField;
     @FXML private Label penalidadeStatusLabel;
     @FXML private Label emprestimosStatusLabel;
+    @FXML private Label matriculaStatusLabel;
+    @FXML private Button matriculaButton;
 
 
     @FXML private TableView<EmprestimoResult> emprestimosTableView;
@@ -57,6 +59,7 @@ public class GerenciamentoUsuarioController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         configurarFactoriesEmprestimos();
         emprestimosTableView.setItems(listaEmprestimos);
+
     }
 
     private void configurarFactoriesEmprestimos() {
@@ -80,6 +83,16 @@ public class GerenciamentoUsuarioController implements Initializable {
         nomeField.setText(usuario.getNome());
         emailField.setText(usuario.getEmail());
         idField.setEditable(false);
+
+
+
+        if (usuario.isMatriculaAtiva()) {
+            matriculaStatusLabel.setText("Ativa");
+
+        } else {
+            matriculaStatusLabel.setText("Inativa");
+            matriculaButton.setText("Reativar Matricula");
+        }
 
         if (this.emprestimosDoUsuario != null) {
             atualizarStatusView();
@@ -226,17 +239,23 @@ public class GerenciamentoUsuarioController implements Initializable {
     }
 
     @FXML
-    private void onExcluirClick() {
+    private void onDesativarClick() {
+
+        String palavra = "desativa";
+
         if (usuarioEmEdicao == null) {
-            InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro", "Nenhum usuário selecionado para exclusão.");
+            InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro", "Nenhum usuário selecionado.");
             return;
         }
 
+        if (!usuarioEmEdicao.isMatriculaAtiva()) {
+            palavra = "reativa";
+        }
 
         Optional<ButtonType> result = InterfaceUtil.mostrarAlertaComConfirmacao(
-                "Confirmação de Exclusão",
-                "Você tem certeza que deseja EXCLUIR o usuário " + usuarioEmEdicao.getNome() + "?",
-                "Esta ação é irreversível e excluirá todos os dados do usuário, exceto empréstimos já finalizados."
+                "Confirmação",
+                "Você tem certeza que deseja " + palavra + "r a matrícula do usuário " + usuarioEmEdicao.getNome() + "?",
+                "Esse campo é apenas informativo, ainda será possível cadastrar novos empréstimos para o usuário."
         );
 
 
@@ -247,16 +266,17 @@ public class GerenciamentoUsuarioController implements Initializable {
 
                 if (ativos > 0) {
 
-                    InterfaceUtil.mostrarAlerta(Alert.AlertType.WARNING, "Bloqueio de Exclusão",
-                            "Não é possível excluir o usuário. Ele possui " + ativos + " empréstimo(s) ativo(s) ou pendente(s)."
+                    InterfaceUtil.mostrarAlerta(Alert.AlertType.WARNING, "Bloqueio",
+                            "Não é possível " + palavra + "r a matrícula do usuário. Ele possui " + ativos + " empréstimo(s) ativo(s) ou pendente(s)."
                     );
                     return;
                 }
 
 
-                usuarioService.excluirUsuario(usuarioEmEdicao.getIdUsuario());
+                usuarioEmEdicao.setMatriculaAtiva(!usuarioEmEdicao.isMatriculaAtiva());
+                usuarioService.atualizarUsuario(usuarioEmEdicao);
 
-                InterfaceUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Usuário excluído com sucesso!");
+                InterfaceUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Matrícula " + palavra + "da com sucesso!");
 
 
                 mainController.loadScreen("/ui/screens/pesquisa/pesquisa-usuario.fxml");
@@ -264,11 +284,11 @@ public class GerenciamentoUsuarioController implements Initializable {
             } catch (RuntimeException e) {
 
                 e.printStackTrace();
-                InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro ao Excluir", "Falha na exclusão do usuário: " + e.getMessage());
+                InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro ao " + palavra + "r Matrícula", e.getMessage());
             } catch (Exception e) {
 
                 e.printStackTrace();
-                InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro Inesperado", "Ocorreu um erro ao processar a exclusão.");
+                InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro Inesperado", e.getMessage());
             }
         }
     }

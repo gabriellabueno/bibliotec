@@ -64,6 +64,7 @@ public class CadastroUsuarioController implements Initializable {
             novoUsuario.setDocente(isDocente);
 
             novoUsuario.setPenalidade(false);
+            novoUsuario.setMatriculaAtiva(true);
 
 
             if (usuarioService.cadastrarUsuario(novoUsuario)) {

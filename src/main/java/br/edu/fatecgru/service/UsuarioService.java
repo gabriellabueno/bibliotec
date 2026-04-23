@@ -48,11 +48,4 @@ public class UsuarioService {
         }
     }
 
-    public void excluirUsuario(String idUsuario) {
-        if (!usuarioRepository.excluirUsuario(idUsuario)) {
-
-            throw new RuntimeException("Falha na exclusão do usuário. Verifique se ele ainda existe.");
-        }
-    }
-
 }

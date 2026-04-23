@@ -33,4 +33,7 @@ public class Usuario {
 
     @Column(name = "dataFimPenalidade")
     private LocalDate dataFimPenalidade;
+
+    @Column(name = "matriculaAtiva")
+    private boolean matriculaAtiva;
 }
