@@ -26,12 +26,27 @@
 
         <VBox spacing="5.0">
             <Label style="-fx-font-weight: bold;" text="Descrição" />
-            <TextArea fx:id="descricaoArea" prefHeight="70.0" promptText="Descreva os materiais e valores individuais." wrapText="true" />
+            <TextArea fx:id="descricaoArea" prefHeight="70.0" promptText="Descreva informações adicionais que julgar relevante." wrapText="true" />
         </VBox>
 
         <VBox spacing="5.0">
             <Label style="-fx-font-weight: bold;" text="Data de Aquisição *" />
-            <DatePicker fx:id="dataAquisicaoField" promptText="Selecione a Data" />
+            <DatePicker fx:id="dataAquisicaoField"/>
+        </VBox>
+
+        <VBox spacing="5.0">
+            <Label style="-fx-font-weight: bold;" text="Valor dos Impostos *" />
+            <TextField fx:id="valorImpostosField" />
+        </VBox>
+
+        <VBox spacing="5.0">
+            <Label style="-fx-font-weight: bold;" text="Valor de Desconto" />
+            <TextField fx:id="valorDescontoField" promptText="Deixe em branco caso não se aplique."/>
+        </VBox>
+
+        <VBox spacing="5.0">
+            <Label style="-fx-font-weight: bold;" text="Valor Total *" />
+            <TextField fx:id="valorTotalField" />
         </VBox>
 
         <HBox alignment="CENTER_RIGHT" spacing="10" VBox.vgrow="ALWAYS">

@@ -7,6 +7,7 @@
     import jakarta.persistence.NoResultException;
     import jakarta.persistence.TypedQuery;
     import org.hibernate.exception.ConstraintViolationException;
+    import jakarta.persistence.EntityManager;
 
     import java.util.Collections;
     import java.util.List;
@@ -388,6 +389,20 @@
             MapeamentoTipoMaterial(String nome, String alias) {
                 this.nome = nome;
                 this.alias = alias;
+            }
+        }
+        public List<Material> buscarMateriaisPorNotaFiscal(String codigoNota) {
+            EntityManager em = getEntityManager(); // Obtém a conexão
+            try {
+                return em.createQuery(
+                                "SELECT m FROM Material m WHERE m.notaFiscal.codigo = :codigo", Material.class)
+                        .setParameter("codigo", codigoNota)
+                        .getResultList();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return Collections.emptyList();
+            } finally {
+                em.close(); // Sempre fechar o EntityManager
             }
         }
     }

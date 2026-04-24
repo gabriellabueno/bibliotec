@@ -30,7 +30,13 @@ public class NotaFiscal {
     @Column(name = "data_aquisicao", nullable = false)
     private LocalDate dataAquisicao;
 
-    @Column(name = "valor", nullable = false)
-    private BigDecimal valor = BigDecimal.valueOf(0);
+    @Column(name = "valor_total", nullable = false)
+    private BigDecimal valorTotal;
+
+    @Column(name = "valor_impostos", nullable = false)
+    private BigDecimal valorImpostos;
+
+    @Column(name = "valor_desconto")
+    private BigDecimal valorDesconto;
 
 }

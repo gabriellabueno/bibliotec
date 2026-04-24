@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.Button?>
 <VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="1003.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.edu.fatecgru.controller.gerenciamento.GerenciamentoNotaFiscalController">
 
     <padding>
@@ -31,20 +28,33 @@
             <TextArea fx:id="descricaoArea" prefHeight="70.0" promptText="Descreva os materiais e valores individuais." wrapText="true" />
         </VBox>
 
-        <HBox alignment="CENTER_LEFT" prefWidth="800.0" spacing="100.0">
-            <VBox spacing="5.0">
-                <Label style="-fx-font-weight: bold;" text="Data de Aquisição" />
-                <DatePicker fx:id="dataAquisicaoField" promptText="Selecione a Data" />
-            </VBox>
+        <VBox spacing="5.0">
+            <Label style="-fx-font-weight: bold;" text="Data de Aquisição" />
+            <DatePicker fx:id="dataAquisicaoField" promptText="Selecione a Data" />
+        </VBox>
 
-            <VBox fx:id="boxValor" spacing="5.0" prefWidth="130">
-                <Label style="-fx-font-weight: bold;" text="Valor Total" />
-                <TextField fx:id="valorField" prefWidth="60.0"/>
-            </VBox>
-        </HBox>
+        <VBox prefWidth="130" spacing="5.0">
+            <Label style="-fx-font-weight: bold;" text="Valor de Impostos" />
+            <TextField fx:id="valorImpostosField" prefWidth="60.0" />
+        </VBox>
+
+        <VBox prefWidth="130" spacing="5.0">
+            <Label style="-fx-font-weight: bold;" text="Valor de Desconto" />
+            <TextField fx:id="valorDescontoField" prefWidth="60.0" />
+        </VBox>
+
+        <VBox prefWidth="130" spacing="5.0">
+            <Label style="-fx-font-weight: bold;" text="Valor Total" />
+            <TextField fx:id="valorTotalField" prefWidth="60.0" />
+        </VBox>
+
+        <VBox prefWidth="570.0" spacing="5.0">
+            <Label style="-fx-font-weight: bold;" text="Itens" />
+            <ListView fx:id="listaItens" layoutX="14.0" layoutY="200.0" prefHeight="250.0" prefWidth="570.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
+        </VBox>
+
 
         <HBox alignment="CENTER_RIGHT" prefWidth="580.0" spacing="10.0">
-            <Button onAction="#onExcluirClick" style="-fx-background-color: #b70c0c; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20 10 20; -fx-cursor: hand;" text="Excluir" />
             <Button onAction="#onSalvarClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20 10 20; -fx-cursor: hand;" text="Salvar Alterações" />
         </HBox>
 

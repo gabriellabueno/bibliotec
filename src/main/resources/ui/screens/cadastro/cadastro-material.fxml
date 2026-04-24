@@ -59,7 +59,7 @@
 
         <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
             <Label style="-fx-font-weight: bold;" text="Quantidade de Cópias" />
-            <TextField fx:id="quantidadeCopiasField" prefWidth="280.0" />
+            <TextField fx:id="quantidadeCopiasField" prefWidth="280.0" promptText="Deixe em branco caso não se aplique" />
         </VBox>
 
         <VBox fx:id="vboxValorUnitario" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">

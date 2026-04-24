@@ -220,14 +220,14 @@ public class MaterialService {
             return;
         }
 
-        BigDecimal totalAtual = nf.getValor() != null ? nf.getValor() : BigDecimal.ZERO;
+        BigDecimal totalAtual = nf.getValorTotal() != null ? nf.getValorTotal() : BigDecimal.ZERO;
         BigDecimal novoTotal = isSoma? totalAtual.add(valorMaterial) : totalAtual.subtract(valorMaterial);
 
         if (novoTotal.compareTo(BigDecimal.ZERO) < 0) {
             novoTotal = BigDecimal.ZERO;
         }
 
-        nf.setValor(novoTotal);
+        nf.setValorTotal(novoTotal);
         notaFiscalService.atualizarNotaFiscal(nf);
     }
 
@@ -314,5 +314,12 @@ public class MaterialService {
         if (valor == null) {
             throw new IllegalArgumentException(mensagem);
         }
+    }
+
+    public List<Material> buscarMateriaisPorNotaFiscal(String codigoNota) {
+        if (codigoNota == null || codigoNota.trim().isEmpty()) {
+            throw new IllegalArgumentException("O código da Nota Fiscal não pode ser nulo ou vazio.");
+        }
+        return repository.buscarMateriaisPorNotaFiscal(codigoNota);
     }
 }

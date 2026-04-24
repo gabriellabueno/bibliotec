@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
-import javafx.stage.Stage;
 import lombok.Getter;
 
 public class CadastroNotaFiscalController implements Initializable {
@@ -20,8 +19,11 @@ public class CadastroNotaFiscalController implements Initializable {
     @FXML private TextField codigoField;
     @FXML private TextArea descricaoArea;
     @FXML private DatePicker dataAquisicaoField;
+    @FXML private TextField valorImpostosField;
+    @FXML private TextField valorDescontoField;
+    @FXML private TextField valorTotalField;
     @FXML private Button cadastrarButton;
-    @FXML private Button voltarButton;
+
 
     private final NotaFiscalService notaFiscalService = new NotaFiscalService();
 
@@ -78,8 +80,8 @@ public class CadastroNotaFiscalController implements Initializable {
 
             if (nfResultado != null) {
                 this.notaFiscalSalva = nfResultado;
-                mostrarAlerta(AlertType.INFORMATION, "Sucesso", "Nova Nota Fiscal cadastrada.\nValor total: R$ "
-                                            + this.notaFiscalSalva.getValor() + ". \nPara alterar o valor vincule materiais.");
+                mostrarAlerta(AlertType.INFORMATION, "Sucesso", "Nova Nota Fiscal de código" + nfResultado.getCodigo() + " cadastrada."
+                        + "\nPara adicionar valores individuais vincule materiais.");
 
 
                 limparCamposNFSecundarios();
@@ -115,13 +117,29 @@ public class CadastroNotaFiscalController implements Initializable {
     private void coletarValoresDosCamposParaObjeto(NotaFiscal nf) throws IllegalArgumentException {
 
         nf.setDescricao(descricaoArea.getText());
-
-
         nf.setDataAquisicao(dataAquisicaoField.getValue());
+
+        nf.setValorImpostos(converterBigDecimal(valorImpostosField.getText()));
+        nf.setValorTotal(converterBigDecimal(valorTotalField.getText()));
+        nf.setValorDesconto(converterBigDecimal(valorDescontoField.getText()));
+
         if (nf.getDataAquisicao() == null) {
             throw new IllegalArgumentException("A data de aquisição é obrigatória.");
         }
 
+    }
+
+    private BigDecimal converterBigDecimal(String valor) {
+        if (valor == null || valor.trim().isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        try {
+            String formatado = valor.replace(",", ".");
+            return new BigDecimal(formatado);
+
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Valor inválido: " + valor);
+        }
     }
 
 
@@ -173,7 +191,7 @@ public class CadastroNotaFiscalController implements Initializable {
             this.notaFiscalSalva = nfEncontrada; // Já define a NF a ser usada
 
             mostrarAlerta(AlertType.INFORMATION, "Busca OK", "Nota Fiscal " + nfEncontrada.getCodigo() + " encontrada." +
-                                                "\nValor: R$ " + nfEncontrada.getValor() + "\nPara alterar o valor vincule materiais.");
+                                                "\nValor: R$ " + nfEncontrada.getValorTotal() + "\nPara alterar o valor vincule materiais.");
 
         } else {
 

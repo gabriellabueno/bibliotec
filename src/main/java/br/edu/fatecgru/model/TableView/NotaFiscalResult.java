@@ -26,7 +26,7 @@ public class NotaFiscalResult {
         nfr.codigo.set(nf.getCodigo());
         nfr.descricao.set(nf.getDescricao());
         nfr.dataAquisicao.set(data != null ? data.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "");
-        nfr.valor.set(String.valueOf(nf.getValor()));
+        nfr.valor.set(String.valueOf(nf.getValorTotal()));
 
         nfr.nfOriginal = nf;
 
