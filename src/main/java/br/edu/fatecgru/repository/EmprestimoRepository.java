@@ -2,6 +2,7 @@ package br.edu.fatecgru.repository;
 
 import br.edu.fatecgru.model.Entity.Emprestimo;
 import br.edu.fatecgru.model.Entity.Material;
+import br.edu.fatecgru.model.Entity.NotaFiscal;
 import br.edu.fatecgru.model.Enum.StatusEmprestimo;
 import br.edu.fatecgru.util.JPAUtil;
 import jakarta.persistence.EntityManager;
@@ -51,12 +52,14 @@ public class EmprestimoRepository {
         EntityManager em = JPAUtil.getEntityManager();
         try {
 
-            String jpql = "SELECT COUNT(e) FROM Emprestimo e WHERE e.usuario.idUsuario = :idUsuario AND e.statusEmprestimo != :statusDevolvido";
+            String jpql = "SELECT COUNT(e) FROM Emprestimo e " +
+                    "WHERE e.usuario.idUsuario = :idUsuario " +
+                    "AND e.statusEmprestimo NOT IN :statusExcluidos";
 
             TypedQuery<Long> query = em.createQuery(jpql, Long.class);
             query.setParameter("idUsuario", idUsuario);
-            query.setParameter("statusDevolvido", StatusEmprestimo.DEVOLVIDO);
-
+            query.setParameter("statusExcluidos",
+                    List.of(StatusEmprestimo.DEVOLVIDO, StatusEmprestimo.CANCELADO));
 
             return query.getSingleResult();
 
@@ -86,36 +89,27 @@ public class EmprestimoRepository {
         }
     }
 
-    public void excluirEmprestimo(Long idEmprestimo) throws Exception {
+    public boolean atualizarEmprestimo(Emprestimo emprestimo) throws Exception {
         EntityManager em = JPAUtil.getEntityManager();
+
         try {
             em.getTransaction().begin();
 
-
-            Emprestimo emprestimo = em.find(Emprestimo.class, idEmprestimo);
-
-            if (emprestimo == null) {
-                throw new IllegalArgumentException("Empréstimo não encontrado para exclusão (ID: " + idEmprestimo + ")");
-            }
+            Material materialComStatusAtualizado = emprestimo.getMaterial();
+            em.merge(materialComStatusAtualizado);
 
 
-            em.remove(emprestimo);
-
+            em.merge(emprestimo);
             em.getTransaction().commit();
-
-        } catch (IllegalArgumentException e) {
-
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new Exception("Erro de Exclusão: " + e.getMessage());
+            return true;
 
         } catch (Exception e) {
-
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            throw new Exception("Erro inesperado ao excluir o empréstimo: " + e.getMessage());
+
+            System.err.println("Erro ao atualizar Empréstimo: " + e.getMessage());
+            return false;
 
         } finally {
             em.close();

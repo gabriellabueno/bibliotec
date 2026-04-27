@@ -1,6 +1,7 @@
     package br.edu.fatecgru.repository;
 
     import br.edu.fatecgru.model.Entity.*;
+    import br.edu.fatecgru.model.Enum.StatusEmprestimo;
     import br.edu.fatecgru.model.Enum.StatusMaterial;
     import br.edu.fatecgru.model.Enum.TipoMaterial;
     import jakarta.persistence.EntityManager;
@@ -17,7 +18,6 @@
     public class MaterialRepository {
 
         // MÉTODOS DE CRUD DE MATERIAL
-
         public boolean cadastrarMaterial(Material material) {
 
             EntityManager em = getEntityManager();

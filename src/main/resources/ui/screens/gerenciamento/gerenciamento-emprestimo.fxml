@@ -89,7 +89,7 @@
 
     </HBox>
     <HBox alignment="CENTER_RIGHT" prefWidth="580.0" spacing="10.0">
-        <Button onAction="#onExcluir" style="-fx-background-color: #b70c0c; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Excluir" />
+        <Button  fx:id="btnCancelar" onAction="#onCancelar" style="-fx-background-color: #b70c0c; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Cancelar" />
         <Button fx:id="btnSalvar" onAction="#onSalvar" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Salvar Alterações" />
     </HBox>
 

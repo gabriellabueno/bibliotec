@@ -98,15 +98,17 @@ public class EmprestimoService {
     }
 
 
-    public void excluirEmprestimo(Emprestimo emprestimo) throws IllegalStateException, Exception {
-        if (emprestimo.getDataDevolucao() == null) {
-            // Se o empréstimo estava ativo, o material deve voltar a ser DISPONÍVEL
-            Material material = emprestimo.getMaterial();
-            material.setStatusMaterial(StatusMaterial.DISPONIVEL);
-            materialRepository.cadastrarMaterial(material);
+    public boolean cancelarEmprestimo(Emprestimo emprestimo) throws Exception {
+
+        if (emprestimo.getStatusEmprestimo() == StatusEmprestimo.CANCELADO) {
+            throw new IllegalArgumentException("Este empréstimo já foi cancelado.");
         }
 
-        emprestimoRepository.excluirEmprestimo(emprestimo.getIdEmprestimo()); // Assume que existe o método no Repository
+        Material material = emprestimo.getMaterial();
+        material.setStatusMaterial(StatusMaterial.DISPONIVEL);
+        emprestimo.setStatusEmprestimo(StatusEmprestimo.CANCELADO);
+
+        return emprestimoRepository.atualizarEmprestimo(emprestimo);
     }
 
 

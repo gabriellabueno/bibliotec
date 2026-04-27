@@ -176,7 +176,8 @@ public class GerenciamentoMaterialController implements Initializable {
             InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro de Validação", "❌ " + e.getMessage());
         } catch (Exception e) {
             InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro Inesperado", "❌ Erro durante a atualização: " + e.getMessage());
-            e.printStackTrace();        }
+            e.printStackTrace();
+        }
     }
 
     @FXML

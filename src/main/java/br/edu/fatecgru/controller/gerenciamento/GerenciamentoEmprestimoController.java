@@ -1,15 +1,25 @@
 package br.edu.fatecgru.controller.gerenciamento;
 
 import br.edu.fatecgru.controller.MainController;
+import br.edu.fatecgru.controller.cadastro.CadastroNotaFiscalController;
 import br.edu.fatecgru.model.Entity.*;
 import br.edu.fatecgru.model.Enum.StatusEmprestimo;
 import br.edu.fatecgru.service.EmprestimoService;
 import br.edu.fatecgru.util.InterfaceUtil;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import lombok.Setter;
 
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -42,6 +52,7 @@ public class GerenciamentoEmprestimoController implements Initializable {
     // === BOTÕES DE AÇÃO ===
     @FXML private Button btnSalvar;
     @FXML private Button btnRenovar;
+    @FXML private Button btnCancelar;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -112,23 +123,30 @@ public class GerenciamentoEmprestimoController implements Initializable {
                 : null);
 
         // Status
-        statusEmprestimoField.setText(emprestimo.getStatusEmprestimo().toString());
+        StatusEmprestimo statusEmprestimo = emprestimo.getStatusEmprestimo();
+        statusEmprestimoField.setText(statusEmprestimo.toString());
+        if (statusEmprestimo.equals(StatusEmprestimo.CANCELADO)) {
+            btnCancelar.setDisable(true);
+            btnRenovar.setDisable(true);
+            btnSalvar.setDisable(true);
+            dataDevolucaoField.setEditable(false);
+        } else {
+            // Atualiza a UI com o status real (ativo, atrasado ou devolvido)
+            statusEmprestimoField.setText(emprestimo.getStatusEmprestimo().toString());
+
+            boolean finalizado = emprestimo.getStatusEmprestimo() == StatusEmprestimo.DEVOLVIDO;
+
+            btnSalvar.setDisable(finalizado);
+            btnRenovar.setDisable(finalizado || emprestimo.isRenovado() || emprestimo.getStatusEmprestimo() == StatusEmprestimo.ATRASADO); // Renovação 1x e não pode estar ATRASADO
+
+            if (finalizado) {
+                dataDevolucaoField.promptTextProperty().set("Empréstimo Finalizado");
+            }
+        }
 
 
         // (#) Verifica se Data Prevista já passou (aplica penalidade se necessário)
-       // emprestimoService.verificarEaplicarAtraso(emprestimo);
-
-        // Atualiza a UI com o status real (ativo, atrasado ou devolvido)
-        statusEmprestimoField.setText(emprestimo.getStatusEmprestimo().toString());
-
-        boolean finalizado = emprestimo.getStatusEmprestimo() == StatusEmprestimo.DEVOLVIDO;
-
-        btnSalvar.setDisable(finalizado);
-        btnRenovar.setDisable(finalizado || emprestimo.isRenovado() || emprestimo.getStatusEmprestimo() == StatusEmprestimo.ATRASADO); // Renovação 1x e não pode estar ATRASADO
-
-        if (finalizado) {
-            dataDevolucaoField.promptTextProperty().set("Empréstimo Finalizado");
-        }
+        // emprestimoService.verificarEaplicarAtraso(emprestimo);
     }
 
     // === MÉTODOS DE AÇÃO (A SEREM IMPLEMENTADOS) ===
@@ -191,27 +209,37 @@ public class GerenciamentoEmprestimoController implements Initializable {
     }
 
     @FXML
-    private void onExcluir() {
+    private void onCancelar() {
         if (emprestimoEmEdicao == null) return;
 
-        String mensagem = "Tem certeza que deseja EXCLUIR este registro de empréstimo? Esta ação é irreversível e removerá o registro do sistema.";
+        String mensagem = "Tem certeza que deseja CANCELAR este registro de empréstimo? Esta ação é irreversível e removerá o registro do sistema.";
 
-        if (!confirmarAcao("Excluir Empréstimo", "Confirma a exclusão?", mensagem)) {
+        if (!confirmarAcao("Cancelar Empréstimo", "Confirma a ação?", mensagem)) {
             return;
         }
 
+        // Retorna o motivo ou vazio se o usuário cancelou
+        Optional<String> motivo = abrirModalMotivoCancelamento();
+        if (motivo.isEmpty()) {
+            return; // usuário clicou Cancelar no modal de motivo — não faz nada
+        }
+
         try {
-            emprestimoService.excluirEmprestimo(emprestimoEmEdicao);
+            boolean sucesso = emprestimoService.cancelarEmprestimo(emprestimoEmEdicao);
 
-            InterfaceUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Registro de empréstimo excluído.");
+            if (sucesso) {
+                InterfaceUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Registro de empréstimo cancelado.");
+            }
 
+            statusEmprestimoField.setText("CANCELADO");
+            dataDevolucaoField.setEditable(false);
 
             if (mainController != null) {
                 mainController.loadScreen("/ui/screens/pesquisa/pesquisa-emprestimo.fxml");
             }
 
         } catch (Exception e) {
-            InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível excluir o empréstimo: " + e.getMessage());
+          // InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível cancelar o empréstimo: " + e.getMessage());
         }
     }
 
@@ -228,6 +256,44 @@ public class GerenciamentoEmprestimoController implements Initializable {
     @FXML
     private void voltar() {
         mainController.loadScreen("/ui/screens/pesquisa/pesquisa-usuario.fxml");
+    }
+
+    private static Optional<String> abrirModalMotivoCancelamento() {
+        TextArea motivo = new TextArea();
+        motivo.setPromptText("Digite o motivo aqui...");
+        motivo.setWrapText(true);
+        motivo.setPrefRowCount(4);
+
+        Label erro = new Label("⚠ O motivo é obrigatório.");
+        erro.setStyle("-fx-text-fill: red; -fx-font-size: 12px;");
+        erro.setVisible(false);
+
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Cancelamento de Empréstimo");
+        dialog.setHeaderText("Indique o motivo do cancelamento");
+
+        ButtonType okType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancelType = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(okType, cancelType);
+
+        VBox content = new VBox(8, new Label("Motivo:"), motivo, erro);
+        content.setPadding(new Insets(10));
+        content.setPrefWidth(400);
+        dialog.getDialogPane().setContent(content);
+
+        dialog.setOnShown(e -> {
+            Button botaoOk = (Button) dialog.getDialogPane().lookupButton(okType);
+            botaoOk.addEventFilter(ActionEvent.ACTION, ev -> {
+                if (motivo.getText().trim().isEmpty()) {
+                    erro.setVisible(true);
+                    ev.consume();
+                }
+            });
+        });
+
+        dialog.setResultConverter(bt -> bt == okType ? motivo.getText().trim() : null);
+
+        return dialog.showAndWait();
     }
 
 }
