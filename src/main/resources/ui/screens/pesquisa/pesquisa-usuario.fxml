@@ -14,7 +14,7 @@
     </padding>
 
 
-    <Label text="Pesquisa" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;">
+    <Label text="Pesquisa de Usuário" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;">
         <VBox.margin>
             <Insets bottom="10.0" />
         </VBox.margin>

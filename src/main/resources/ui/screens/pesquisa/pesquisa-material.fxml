@@ -12,7 +12,7 @@
         <Insets top="30.0" left="100.0" right="100.0" bottom="50.0" />
     </padding>
 
-    <Label text="Pesquisa" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;">
+    <Label text="Pesquisa de Material" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;">
         <VBox.margin>
             <Insets bottom="10.0" />
         </VBox.margin>

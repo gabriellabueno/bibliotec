@@ -91,7 +91,7 @@
 
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
                 <Label style="-fx-font-weight: bold;" text="ISBN *" />
-                <TextField fx:id="isbnField" promptText="- - - - - - - - -" />
+                <TextField fx:id="isbnField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
@@ -101,12 +101,12 @@
 
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                 <Label style="-fx-font-weight: bold;" text="Autor *" />
-                <TextField fx:id="autorLivroField" promptText="Nome do Autor" />
+                <TextField fx:id="autorLivroField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
                 <Label style="-fx-font-weight: bold;" text="Editora *" />
-                <TextField fx:id="editoraLivroField" promptText="Nome da Editora." />
+                <TextField fx:id="editoraLivroField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
@@ -116,7 +116,7 @@
 
             <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="3">
                 <Label style="-fx-font-weight: bold;" text="Gênero *" />
-                <TextField fx:id="generoLivroField" promptText="Gênero ou área." />
+                <TextField fx:id="generoLivroField" />
             </VBox>
 
             <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3">

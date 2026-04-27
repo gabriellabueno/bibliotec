@@ -1,6 +1,7 @@
 package br.edu.fatecgru.controller;
 
 import br.edu.fatecgru.controller.pesquisa.PesquisaNotaFiscalController;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
 public class SideBarController {
@@ -38,6 +39,13 @@ public class SideBarController {
     }
 
     @FXML
+    public void onSearchLoanClick(ActionEvent actionEvent) {
+        if (mainController != null) {
+            mainController.loadScreen("/ui/screens/pesquisa/pesquisa-emprestimo.fxml");
+        }
+    }
+
+    @FXML
     private void onSearchUserClick() {
         if (mainController != null) {
             mainController.loadScreen("/ui/screens/pesquisa/pesquisa-usuario.fxml");
@@ -71,6 +79,4 @@ public class SideBarController {
             mainController.loadScreen("/ui/screens/cadastro/cadastro-usuario.fxml");
         }
     }
-
-
 }
