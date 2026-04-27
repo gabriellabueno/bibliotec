@@ -73,6 +73,10 @@
                 <Label style="-fx-font-weight: bold;" text="Status do Empréstimo" />
                 <TextField fx:id="statusEmprestimoField" editable="false" style="-fx-background-color: #f0f0f0; -fx-font-weight: bold;" />
             </VBox>
+            <VBox fx:id="motivoCancelamentoBox" spacing="5.0" visible="false">
+                <Label style="-fx-font-weight: bold;" text="Motivo do Cancelamento" />
+                <TextField fx:id="motivoCancelamentoField" editable="false" style="-fx-background-color: #f0f0f0; -fx-font-weight: bold;" />
+            </VBox>
 
         </VBox>
     </HBox>

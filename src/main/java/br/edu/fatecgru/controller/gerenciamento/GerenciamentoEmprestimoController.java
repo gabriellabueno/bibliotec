@@ -48,6 +48,8 @@ public class GerenciamentoEmprestimoController implements Initializable {
     @FXML private TextField dataPrevistaDevolucaoField;
     @FXML private DatePicker dataDevolucaoField; // Campo que pode ser editado/preenchido para devolver
     @FXML private TextField statusEmprestimoField;
+    @FXML private TextField motivoCancelamentoField;
+    @FXML private VBox motivoCancelamentoBox;
 
     // === BOTÕES DE AÇÃO ===
     @FXML private Button btnSalvar;
@@ -126,6 +128,10 @@ public class GerenciamentoEmprestimoController implements Initializable {
         StatusEmprestimo statusEmprestimo = emprestimo.getStatusEmprestimo();
         statusEmprestimoField.setText(statusEmprestimo.toString());
         if (statusEmprestimo.equals(StatusEmprestimo.CANCELADO)) {
+
+            motivoCancelamentoBox.setVisible(true);
+            motivoCancelamentoField.setText(emprestimo.getMotivoCancelamento());
+
             btnCancelar.setDisable(true);
             btnRenovar.setDisable(true);
             btnSalvar.setDisable(true);
@@ -218,44 +224,26 @@ public class GerenciamentoEmprestimoController implements Initializable {
             return;
         }
 
-        // Retorna o motivo ou vazio se o usuário cancelou
         Optional<String> motivo = abrirModalMotivoCancelamento();
-        if (motivo.isEmpty()) {
-            return; // usuário clicou Cancelar no modal de motivo — não faz nada
-        }
+
+        if (motivo.isEmpty())  return; // usuário clicou Cancelar no modal de motivo — não faz nada
 
         try {
-            boolean sucesso = emprestimoService.cancelarEmprestimo(emprestimoEmEdicao);
-
+            boolean sucesso = emprestimoService.cancelarEmprestimo(emprestimoEmEdicao, motivo.get());
             if (sucesso) {
                 InterfaceUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Registro de empréstimo cancelado.");
+                statusEmprestimoField.setText("CANCELADO");
+                motivoCancelamentoBox.setVisible(true);
+                motivoCancelamentoField.setText(emprestimoEmEdicao.getMotivoCancelamento());
+                dataDevolucaoField.setEditable(false);
+                if (mainController != null) {
+                    mainController.loadScreen("/ui/screens/pesquisa/pesquisa-emprestimo.fxml");
+                }
             }
-
-            statusEmprestimoField.setText("CANCELADO");
-            dataDevolucaoField.setEditable(false);
-
-            if (mainController != null) {
-                mainController.loadScreen("/ui/screens/pesquisa/pesquisa-emprestimo.fxml");
-            }
-
         } catch (Exception e) {
-          // InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível cancelar o empréstimo: " + e.getMessage());
+            InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro", "Não foi possível cancelar o empréstimo: " + e.getMessage());
         }
-    }
 
-    private boolean confirmarAcao(String titulo, String cabecalho, String conteudo) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(titulo);
-        alert.setHeaderText(cabecalho);
-        alert.setContentText(conteudo);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        return result.isPresent() && result.get() == ButtonType.OK;
-    }
-
-    @FXML
-    private void voltar() {
-        mainController.loadScreen("/ui/screens/pesquisa/pesquisa-usuario.fxml");
     }
 
     private static Optional<String> abrirModalMotivoCancelamento() {
@@ -294,6 +282,21 @@ public class GerenciamentoEmprestimoController implements Initializable {
         dialog.setResultConverter(bt -> bt == okType ? motivo.getText().trim() : null);
 
         return dialog.showAndWait();
+    }
+
+    private boolean confirmarAcao(String titulo, String cabecalho, String conteudo) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(cabecalho);
+        alert.setContentText(conteudo);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.isPresent() && result.get() == ButtonType.OK;
+    }
+
+    @FXML
+    private void voltar() {
+        mainController.loadScreen("/ui/screens/pesquisa/pesquisa-usuario.fxml");
     }
 
 }

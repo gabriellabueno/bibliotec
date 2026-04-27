@@ -45,4 +45,7 @@ public class Emprestimo {
 
     @Column(name = "renovado", nullable = false)
     private boolean renovado = false;
+
+    @Column(name = "motivo_cancelamento")
+    private String motivoCancelamento;
 }

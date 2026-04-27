@@ -98,7 +98,7 @@ public class EmprestimoService {
     }
 
 
-    public boolean cancelarEmprestimo(Emprestimo emprestimo) throws Exception {
+    public boolean cancelarEmprestimo(Emprestimo emprestimo, String motivo) throws Exception {
 
         if (emprestimo.getStatusEmprestimo() == StatusEmprestimo.CANCELADO) {
             throw new IllegalArgumentException("Este empréstimo já foi cancelado.");
@@ -107,6 +107,7 @@ public class EmprestimoService {
         Material material = emprestimo.getMaterial();
         material.setStatusMaterial(StatusMaterial.DISPONIVEL);
         emprestimo.setStatusEmprestimo(StatusEmprestimo.CANCELADO);
+        emprestimo.setMotivoCancelamento(motivo);
 
         return emprestimoRepository.atualizarEmprestimo(emprestimo);
     }
