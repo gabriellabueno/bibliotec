@@ -56,6 +56,17 @@ public class GerenciamentoEmprestimoController implements Initializable {
     @FXML private Button btnRenovar;
     @FXML private Button btnCancelar;
 
+    private String telaOrigem = "/ui/screens/pesquisa/pesquisa-emprestimo.fxml";
+
+    public void setTelaOrigem(String telaOrigem) {
+        this.telaOrigem = telaOrigem;
+    }
+
+    @FXML
+    private void voltar() {
+        mainController.loadScreen(telaOrigem);
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         idUsuarioField.setEditable(false);
@@ -294,9 +305,5 @@ public class GerenciamentoEmprestimoController implements Initializable {
         return result.isPresent() && result.get() == ButtonType.OK;
     }
 
-    @FXML
-    private void voltar() {
-        mainController.loadScreen("/ui/screens/pesquisa/pesquisa-usuario.fxml");
-    }
 
 }

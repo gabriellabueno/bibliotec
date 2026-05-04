@@ -11,6 +11,7 @@ import br.edu.fatecgru.repository.MaterialRepository;
 import br.edu.fatecgru.repository.UsuarioRepository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class EmprestimoService {
 
@@ -29,6 +30,10 @@ public class EmprestimoService {
 
     private LocalDate calcularDataPrevistaDevolucao(LocalDate dataEmprestimo, int prazoDias) {
         return dataEmprestimo.plusDays(prazoDias);
+    }
+
+    public List<Emprestimo> buscarEmprestimo(String termo, StatusEmprestimo statusEmprestimo) {
+        return emprestimoRepository.buscarEmprestimo(termo, statusEmprestimo);
     }
 
 

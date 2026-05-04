@@ -55,6 +55,16 @@ public class GerenciamentoUsuarioController implements Initializable {
 
     private ObservableList<EmprestimoResult> listaEmprestimos = FXCollections.observableArrayList();
 
+    private String telaOrigem = "/ui/screens/pesquisa/pesquisa-usuario.fxml"; // padrão correto
+
+    public void setTelaOrigem(String telaOrigem) {
+        this.telaOrigem = telaOrigem;
+    }
+
+    @FXML
+    private void voltar() {
+        mainController.loadScreen(telaOrigem);
+    }
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         configurarFactoriesEmprestimos();

@@ -1,18 +1,54 @@
 package br.edu.fatecgru.repository;
 
 import br.edu.fatecgru.model.Entity.Emprestimo;
+import br.edu.fatecgru.model.Entity.Livro;
 import br.edu.fatecgru.model.Entity.Material;
 import br.edu.fatecgru.model.Entity.NotaFiscal;
 import br.edu.fatecgru.model.Enum.StatusEmprestimo;
+import br.edu.fatecgru.model.Enum.StatusMaterial;
 import br.edu.fatecgru.util.JPAUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.hibernate.exception.ConstraintViolationException;
 
+import java.util.Collections;
 import java.util.List;
+
+import static br.edu.fatecgru.util.JPAUtil.getEntityManager;
 
 public class EmprestimoRepository {
 
+
+    public List<Emprestimo> buscarEmprestimo(String termo, StatusEmprestimo statusEmprestimo) {
+
+        EntityManager em = getEntityManager();
+
+
+        try {
+            String jpql =
+                    "SELECT e FROM Emprestimo e " +
+                            "JOIN e.usuario u " +
+                            "JOIN e.material m " +
+                            "WHERE e.statusEmprestimo = :status " +
+                            "AND (" +
+                            "LOWER(u.nome) LIKE :termo " +
+                            "OR CAST(m.id AS string) LIKE :termo " +
+                            "OR CAST(e.id AS string) LIKE :termo" +
+                            ") " +
+                            "ORDER BY e.dataEmprestimo DESC";
+
+            TypedQuery<Emprestimo> query = em.createQuery(jpql, Emprestimo.class);
+            query.setParameter("status", statusEmprestimo);
+            query.setParameter("termo", "%" + termo.toLowerCase() + "%");
+            return query.getResultList();
+
+        } catch (Exception e) {
+            return Collections.emptyList();
+
+        } finally {
+            em.close();
+        }
+    }
 
     public Emprestimo cadastrarEmprestimo(Emprestimo emprestimo) throws Exception {
         EntityManager em = JPAUtil.getEntityManager();

@@ -2,6 +2,7 @@ package br.edu.fatecgru.controller;
 
 import br.edu.fatecgru.controller.cadastro.CadastroNotaFiscalController;
 import br.edu.fatecgru.controller.gerenciamento.GerenciamentoMaterialController;
+import br.edu.fatecgru.controller.pesquisa.PesquisaEmprestimoController;
 import br.edu.fatecgru.controller.pesquisa.PesquisaMaterialController;
 import br.edu.fatecgru.controller.pesquisa.PesquisaUsuarioController;
 import javafx.fxml.FXML;
@@ -44,6 +45,10 @@ public class MainController {
 
             if (controller instanceof PesquisaUsuarioController pesquisaUsuarioController) {
                 pesquisaUsuarioController.setMainController(this);
+            }
+
+            if (controller instanceof PesquisaEmprestimoController pesquisaEmprestimoController) {
+                pesquisaEmprestimoController.setMainController(this);
             }
 
 
