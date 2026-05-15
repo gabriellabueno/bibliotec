@@ -2,7 +2,7 @@ package br.edu.fatecgru.controller.gerenciamento;
 
 import br.edu.fatecgru.controller.MainController;
 import br.edu.fatecgru.model.Entity.*;
-import br.edu.fatecgru.model.TableView.ItemResumo;
+import br.edu.fatecgru.model.TableView.ItemResult;
 import br.edu.fatecgru.service.MaterialService;
 import br.edu.fatecgru.service.NotaFiscalService;
 import br.edu.fatecgru.util.InterfaceUtil;
@@ -40,7 +40,7 @@ public class GerenciamentoNotaFiscalController implements Initializable {
     @FXML private TextField valorImpostosField;
     @FXML private TextField valorDescontoField;
 
-    @FXML private ListView<ItemResumo> listaItens;
+    @FXML private ListView<ItemResult> listaItens;
 
 
     @Override
@@ -48,7 +48,7 @@ public class GerenciamentoNotaFiscalController implements Initializable {
 
         listaItens.setCellFactory(param -> new ListCell<>() {
             @Override
-            protected void updateItem(ItemResumo item, boolean empty) {
+            protected void updateItem(ItemResult item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setGraphic(null);
@@ -105,7 +105,7 @@ public class GerenciamentoNotaFiscalController implements Initializable {
                     return ":Equipamento: " + ((Equipamento) m).getNome();
                 }));
 
-        List<ItemResumo> resumidos = new ArrayList<>();
+        List<ItemResult> resumidos = new ArrayList<>();
         grupos.forEach((chave, lista) -> {
             Material m = lista.get(0);
             String tipo = m.getClass().getSimpleName();
@@ -122,7 +122,7 @@ public class GerenciamentoNotaFiscalController implements Initializable {
                 titulo = e.getNome();
             }
 
-            resumidos.add(new ItemResumo(tipo, titulo, idExtra, lista.size(), m.getValorUnitario()));
+            resumidos.add(new ItemResult(tipo, titulo, idExtra, lista.size(), m.getValorUnitario()));
         });
 
         listaItens.getItems().setAll(resumidos);

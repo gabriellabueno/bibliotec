@@ -14,17 +14,16 @@ public class EmprestimoResult {
 
     private String idEmprestimo;
     private String idMaterial;
+    private String tituloMaterial;
+    private String idUsuario;
+    private String nomeUsuario;
     private String dataEmprestimo;
     private String dataPrevistaDevolucao;
     private String statusEmprestimo;
     private Emprestimo emprestimoOriginal;
 
     private static String getCodigoDoMaterial(Material material) {
-        if (material == null) {
-            return "N/A";
-        }
 
-        // Tenta fazer o cast para as subclasses conhecidas
         if (material instanceof Livro livro) {
             return livro.getCodigo();
         } else if (material instanceof Revista revista) {
@@ -34,10 +33,15 @@ public class EmprestimoResult {
         } else if (material instanceof Equipamento equipamento) {
             return equipamento.getCodigo();
         }
+        return "Sem Informações.";
+    }
 
-        // Caso Material seja uma instância que não se encaixa nas subclasses esperadas
-        // (Isso deve ser evitado pelo seu modelo de dados)
-        return "Desconhecido";
+    private static String getTituloDoMaterial(Material material) {
+        if (material instanceof Livro livro)     return livro.getTitulo();
+        if (material instanceof Revista revista) return revista.getTitulo();
+        if (material instanceof TG tg)           return tg.getTitulo();
+        if (material instanceof Equipamento e)   return e.getNome();
+        return "Sem Informações.";
     }
 
     public static EmprestimoResult fromEmprestimo(Emprestimo em) {
@@ -45,21 +49,17 @@ public class EmprestimoResult {
 
         e.setIdEmprestimo(String.valueOf(em.getIdEmprestimo()));
 
-        // =========================================================================
-        // OBTENÇÃO DO CÓDIGO VIA FUNÇÃO AUXILIAR COM CAST EXPLÍCITO
-        // =========================================================================
-        String codigoMaterial = Optional.ofNullable(em.getMaterial())
-                .map(EmprestimoResult::getCodigoDoMaterial) // Chama o novo método auxiliar
-                .orElse("N/A");
+        Material material = em.getMaterial();
+        e.setIdMaterial(material != null ? getCodigoDoMaterial(material) : "N/A");
+        e.setTituloMaterial(material != null ? getTituloDoMaterial(material) : "N/A");
 
-        e.setIdMaterial(codigoMaterial);
+        Usuario usuario = em.getUsuario();
+        e.setIdUsuario(usuario != null ? usuario.getIdUsuario() : "N/A");
+        e.setNomeUsuario(usuario != null ? usuario.getNome() : "N/A");
 
-        LocalDate dataEmprestimo = em.getDataEmprestimo();
-        LocalDate dataPrevistaDevolucao = em.getDataPrevistaDevolucao();
-
-        // Campos de data e status
-        e.setDataEmprestimo(dataEmprestimo != null ? dataEmprestimo.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "");
-        e.setDataPrevistaDevolucao(dataPrevistaDevolucao != null ? dataPrevistaDevolucao.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "");
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        e.setDataEmprestimo(em.getDataEmprestimo() != null ? em.getDataEmprestimo().format(fmt) : "");
+        e.setDataPrevistaDevolucao(em.getDataPrevistaDevolucao() != null ? em.getDataPrevistaDevolucao().format(fmt) : "");
         e.setStatusEmprestimo(em.getStatusEmprestimo().toString());
 
         e.emprestimoOriginal = em;

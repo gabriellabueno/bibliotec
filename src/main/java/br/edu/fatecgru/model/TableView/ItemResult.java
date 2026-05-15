@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemResumo {
+public class ItemResult {
 
     private String tipo;
     private String titulo;

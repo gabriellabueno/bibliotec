@@ -11,6 +11,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.hibernate.exception.ConstraintViolationException;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,21 +27,43 @@ public class EmprestimoRepository {
 
 
         try {
-            String jpql =
+
+            String termoLower = termo.toLowerCase().trim();
+            LocalDate dataParaBusca = converterTermoData(termoLower);
+
+            StringBuilder jpql = new StringBuilder(
                     "SELECT e FROM Emprestimo e " +
                             "JOIN e.usuario u " +
                             "JOIN e.material m " +
                             "WHERE e.statusEmprestimo = :status " +
                             "AND (" +
                             "LOWER(u.nome) LIKE :termo " +
-                            "OR CAST(m.id AS string) LIKE :termo " +
-                            "OR CAST(e.id AS string) LIKE :termo" +
-                            ") " +
-                            "ORDER BY e.dataEmprestimo DESC";
+                            "OR LOWER(u.idUsuario) LIKE :termo " +
+                            "OR LOWER(TREAT(m AS Livro).codigo) LIKE :termo " +
+                            "OR LOWER(TREAT(m AS Revista).codigo) LIKE :termo " +
+                            "OR LOWER(TREAT(m AS TG).codigo) LIKE :termo " +
+                            "OR LOWER(TREAT(m AS Equipamento).codigo) LIKE :termo " +
+                            "OR LOWER(TREAT(m AS Livro).titulo) LIKE :termo " +
+                            "OR LOWER(TREAT(m AS Revista).titulo) LIKE :termo " +
+                            "OR LOWER(TREAT(m AS TG).titulo) LIKE :termo " +
+                            "OR LOWER(TREAT(m AS Equipamento).nome) LIKE :termo"
+            );
 
-            TypedQuery<Emprestimo> query = em.createQuery(jpql, Emprestimo.class);
+            if (dataParaBusca != null) {
+                jpql.append(" OR e.dataEmprestimo = :data");
+                jpql.append(" OR e.dataPrevistaDevolucao = :data");
+            }
+
+            jpql.append(") ORDER BY e.dataEmprestimo DESC");
+
+            TypedQuery<Emprestimo> query = em.createQuery(jpql.toString(), Emprestimo.class);
             query.setParameter("status", statusEmprestimo);
-            query.setParameter("termo", "%" + termo.toLowerCase() + "%");
+            query.setParameter("termo", "%" + termoLower + "%");
+
+            if (dataParaBusca != null) {
+                query.setParameter("data", dataParaBusca);
+            }
+
             return query.getResultList();
 
         } catch (Exception e) {
@@ -48,6 +72,20 @@ public class EmprestimoRepository {
         } finally {
             em.close();
         }
+    }
+
+    private LocalDate converterTermoData(String termo) {
+
+        try {
+            return LocalDate.parse(termo.trim(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        } catch (Exception ignored) {}
+
+
+        try {
+            return LocalDate.parse(termo.trim(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        } catch (Exception ignored) {}
+
+        return null;
     }
 
     public Emprestimo cadastrarEmprestimo(Emprestimo emprestimo) throws Exception {
