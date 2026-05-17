@@ -209,9 +209,24 @@ public class MaterialService {
 
             return copia;
 
+        } else if (pai instanceof Equipamento equipamentoPai) {
+            Equipamento copia = new Equipamento();
+
+            copia.setTipoMaterial(equipamentoPai.getTipoMaterial());
+            copia.setTipoAquisicao(equipamentoPai.getTipoAquisicao());
+            copia.setNotaFiscal(equipamentoPai.getNotaFiscal());
+            copia.setValorUnitario(equipamentoPai.getValorUnitario());
+            copia.setIdPai(equipamentoPai.getIdMaterial());
+            copia.setStatusMaterial(equipamentoPai.getStatusMaterial());
+
+            copia.setCodigo(novoCodigo);
+            copia.setNome(equipamentoPai.getNome());
+            copia.setDescricao(equipamentoPai.getDescricao());
+
+            return copia;
         }
 
-        throw new IllegalArgumentException("Apenas Livros e Revistas suportam criação de cópias em lote.");
+       throw new IllegalArgumentException("Não foi possível criar cópia do Material");
     }
 
     private void atualizarSaldoNotaFiscal(NotaFiscal nf, BigDecimal valorMaterial, boolean isSoma) {

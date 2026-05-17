@@ -46,6 +46,8 @@ public class GerenciamentoMaterialController implements Initializable {
     @FXML private TextField tarjaVermelha;
     @FXML private TextField qntExemplares;
     @FXML private TextField disponibilidade;
+    @FXML private VBox vboxQntCopias;
+    @FXML private VBox vboxValorUnitario;
 
 
     @FXML private GridPane formLivro;
@@ -125,16 +127,10 @@ public class GerenciamentoMaterialController implements Initializable {
         tipoAquisicaoCombo.setDisable(true);
         disponibilidade.setEditable(false);
 
+        vboxQntCopias.setVisible(false);
+        vboxQntCopias.setManaged(false);
+
         ocultarTodosFormularios();
-
-
-        if("Compra".equals(tipoAquisicaoCombo.getValue())) {
-            InterfaceUtil.habilitarCamposNF(true, vboxNotaFiscal, numeroNotaFiscalField);
-        } else {
-            InterfaceUtil.habilitarCamposNF(false, vboxNotaFiscal, numeroNotaFiscalField);
-            tipoAquisicaoCombo.setDisable(true);
-        }
-
 
         numeroNotaFiscalField.setOnMouseClicked(e -> {
             if ("Compra".equals(tipoAquisicaoCombo.getValue())) {
@@ -314,13 +310,17 @@ public class GerenciamentoMaterialController implements Initializable {
         this.materialEmEdicao = material;
         this.notaFiscalAtual = material.getNotaFiscal();
 
+
         if (material.getTipoAquisicao() == TipoAquisicao.COMPRA) {
+            InterfaceUtil.habilitarCamposNF(true, vboxNotaFiscal, numeroNotaFiscalField);
+            InterfaceUtil.habilitarCamposValorUnitario(true,vboxValorUnitario, valorUnitarioField);
             tipoAquisicaoCombo.getSelectionModel().select("Compra");
             numeroNotaFiscalField.setText(material.getCodigoNotaFiscal());
+            valorUnitarioField.setText(material.getValorUnitario().toString());
         } else {
             tipoAquisicaoCombo.getSelectionModel().select("Doação");
-            numeroNotaFiscalField.setText("");
-            numeroNotaFiscalField.setDisable(true);
+            InterfaceUtil.habilitarCamposNF(false, vboxNotaFiscal, numeroNotaFiscalField);
+            InterfaceUtil.habilitarCamposValorUnitario(false,vboxValorUnitario, valorUnitarioField);
         }
 
         ocultarTodosFormularios();
@@ -377,6 +377,7 @@ public class GerenciamentoMaterialController implements Initializable {
             codigoTGField.setText(tg.getCodigo());
             boxQntExemplares.setVisible(false);
             disponibilidade.setText(tg.getStatusMaterial().toString());
+            btnCadastrarCopia.setVisible(false);
 
         } else if (material instanceof Equipamento equipamento) {
 

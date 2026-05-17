@@ -95,7 +95,7 @@
         </VBox>
 
         <VBox styleClass="nav-section" maxWidth="Infinity">
-            <Label text="Cadastrar" styleClass="section-header">
+            <Label text="Cadastro" styleClass="section-header">
                 <graphic>
                     <ImageView fitHeight="18.0" fitWidth="18.0" preserveRatio="true">
                         <image>

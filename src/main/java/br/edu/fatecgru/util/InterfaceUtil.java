@@ -81,14 +81,15 @@ public final class InterfaceUtil {
                                          VBox vboxNotaFiscal,
                                          TextField numeroNotaFiscalField) {
 
-        vboxNotaFiscal.setVisible(true);
-        vboxNotaFiscal.setManaged(true);
 
         if (habilitar) {
-            numeroNotaFiscalField.setDisable(true);
-            numeroNotaFiscalField.clear();
+            vboxNotaFiscal.setVisible(true);
+            vboxNotaFiscal.setManaged(true);
+            numeroNotaFiscalField.setVisible(true);
+            numeroNotaFiscalField.setEditable(true);
         } else {
-            numeroNotaFiscalField.setDisable(false);
+            vboxNotaFiscal.setVisible(false);
+            vboxNotaFiscal.setManaged(false);
         }
     }
 
@@ -96,14 +97,14 @@ public final class InterfaceUtil {
                                          VBox vboxValorUnitario,
                                          TextField valorUnitarioField) {
 
-        vboxValorUnitario.setVisible(true);
-        vboxValorUnitario.setManaged(true);
+
 
         if (habilitar) {
-            valorUnitarioField.setDisable(true);
-            valorUnitarioField.clear();
+            vboxValorUnitario.setVisible(true);
+            vboxValorUnitario.setManaged(true);
         } else {
-            valorUnitarioField.setDisable(false);
+            vboxValorUnitario.setVisible(false);
+            vboxValorUnitario.setManaged(false);
         }
     }
 

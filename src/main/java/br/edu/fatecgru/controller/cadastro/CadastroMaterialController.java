@@ -42,6 +42,7 @@
         @FXML private TextField numeroNotaFiscalField;
         @FXML private TextField valorUnitarioField;
         @FXML private TextField quantidadeCopiasField;
+        @FXML private VBox vboxQntCopias;
 
 
         @FXML private GridPane formLivro;
@@ -123,7 +124,8 @@
                 tipoAquisicaoCombo.setValue("Doação");
             }
 
-            desabilitarCamposCompra();
+            InterfaceUtil.habilitarCamposNF(false, vboxNotaFiscal, numeroNotaFiscalField);
+            InterfaceUtil.habilitarCamposValorUnitario(false,vboxValorUnitario, valorUnitarioField);
         }
 
         private void configurarListenerTipoMaterial() {
@@ -135,11 +137,14 @@
                 if (newVal == null) return;
 
                 boolean isCompra = newVal.equals("Compra");
-                habilitarCamposCompra(isCompra);
 
                 if (isCompra) {
+                    InterfaceUtil.habilitarCamposNF(true, vboxNotaFiscal, numeroNotaFiscalField);
+                    InterfaceUtil.habilitarCamposValorUnitario(true,vboxValorUnitario, valorUnitarioField);
                     InterfaceUtil.mostrarAlerta(AlertType.INFORMATION, "Atenção", "Cadastre a Nota Fiscal antes de vinculá-la ao Material.");
                 } else {
+                    InterfaceUtil.habilitarCamposNF(false, vboxNotaFiscal, numeroNotaFiscalField);
+                    InterfaceUtil.habilitarCamposValorUnitario(false,vboxValorUnitario, valorUnitarioField);
                     notaFiscalSelecionada = null;
                 }
             });
@@ -173,16 +178,16 @@
 
             switch (selecionado.getId()) {
                 case "rbLivro":
-                    exibirForm(formLivro, true, true);
+                    exibirForm(formLivro, true, true, true);
                     break;
                 case "rbRevista":
-                    exibirForm(formRevista, true, true);
+                    exibirForm(formRevista, true, true, true);
                     break;
                 case "rbTG":
-                    exibirForm(formTG, false, false);
+                    exibirForm(formTG, false, false, false);
                     break;
                 case "rbEquipamento":
-                    exibirForm(formEquipamento, true, true);
+                    exibirForm(formEquipamento, true, true, true);
                     break;
             }
 
@@ -200,7 +205,7 @@
             });
         }
 
-        public void exibirForm(GridPane form, boolean tarjaVermelha, boolean tipoAquisicao) {
+        public void exibirForm(GridPane form, boolean tarjaVermelha, boolean tipoAquisicao, boolean copias) {
             form.setVisible(true);
             form.setManaged(true);
 
@@ -215,6 +220,10 @@
 
             vboxValorUnitario.setVisible(tipoAquisicao);
             vboxValorUnitario.setManaged(tipoAquisicao);
+
+            vboxQntCopias.setVisible(copias);
+            vboxQntCopias.setManaged(copias);
+
         }
 
 
@@ -311,8 +320,12 @@
             codigoPai = idPai;
             modoCopia = true;
 
-            quantidadeCopiasField.setVisible(false);
-            quantidadeCopiasField.setManaged(false);
+            rbLivro.setDisable(true);
+            rbRevista.setDisable(true);
+            rbTG.setDisable(true);
+            rbEquipamento.setDisable(true);
+
+            tipoAquisicaoCombo.setDisable(true);
 
             // CAMPOS COMUNS
             codigoField.setText("");
@@ -324,11 +337,13 @@
             if (material.getTipoAquisicao() == TipoAquisicao.COMPRA) {
                 tipoAquisicaoCombo.getSelectionModel().select("Compra");
                 numeroNotaFiscalField.setText(material.getCodigoNotaFiscal());
+                InterfaceUtil.habilitarCamposNF(true, vboxNotaFiscal, numeroNotaFiscalField);
+                InterfaceUtil.habilitarCamposValorUnitario(true,vboxValorUnitario, valorUnitarioField);
 
             } else {
                 tipoAquisicaoCombo.getSelectionModel().select("Doação");
-                numeroNotaFiscalField.setText("");
-                numeroNotaFiscalField.setDisable(true);
+                InterfaceUtil.habilitarCamposNF(false, vboxNotaFiscal, numeroNotaFiscalField);
+                InterfaceUtil.habilitarCamposValorUnitario(false,vboxValorUnitario, valorUnitarioField);
             }
 
             // PREENCHE DE ACORDO COM TIPO
@@ -348,48 +363,20 @@
                         editoraRevistaField, assuntoRevistaField, anoPublicacaoRevistaField,
                         localPublicacaoRevistaField, generoRevistaField, palavrasChaveRevistaArea, valorUnitarioField);
 
-
-            } else if (material instanceof TG tg) {
-                rbTG.setSelected(true);
-                apresentarForms(null);
-
-                MaterialBuilder.fromTG(tg, tituloTGField, subtituloTGField, assuntoTGField,
-                        autor1TGField, ra1TGField, autor2TGField, ra2TGField,
-                        localPublicacaoTGField, anoPublicacaoTGField, palavrasChaveTGArea);
-
             } else if (material instanceof Equipamento equipamento) {
                 rbEquipamento.setSelected(true);
                 apresentarForms(null);
 
                 MaterialBuilder.fromEquipamento(equipamento, nomeEquipamentoField, descricaoEquipamentoArea, valorUnitarioField);
 
+                boxTarjaVermelha.setVisible(false);
             }
+
+            vboxQntCopias.setVisible(false);
+            vboxQntCopias.setManaged(false);
+
         }
 
-
-        // MÉTODOS AUXILIARES
-
-        private void habilitarCamposCompra(boolean habilitar) {
-            InterfaceUtil.habilitarCamposNF(habilitar, vboxNotaFiscal, numeroNotaFiscalField);
-            InterfaceUtil.habilitarCamposValorUnitario(habilitar, vboxValorUnitario, valorUnitarioField);
-
-            numeroNotaFiscalField.setDisable(!habilitar);
-            numeroNotaFiscalField.setEditable(habilitar);
-            valorUnitarioField.setDisable(!habilitar);
-            valorUnitarioField.setEditable(habilitar);
-
-            if (!habilitar) {
-                numeroNotaFiscalField.clear();
-                valorUnitarioField.clear();
-            }
-        }
-
-        private void desabilitarCamposCompra() {
-            numeroNotaFiscalField.setEditable(false);
-            numeroNotaFiscalField.setDisable(true);
-            valorUnitarioField.setEditable(false);
-            valorUnitarioField.setDisable(true);
-        }
 
         private void limparTodosForms() {
 
