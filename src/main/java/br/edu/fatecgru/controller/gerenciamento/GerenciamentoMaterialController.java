@@ -161,20 +161,103 @@ public class GerenciamentoMaterialController implements Initializable {
 
         try {
             Material materialAtualizado = coletarDadosAtualizados(materialEmEdicao);
+            if (materialAtualizado == null) return;
 
-            boolean sucesso = materialService.atualizarMaterial(materialAtualizado);
+            boolean tipoMaterial = materialAtualizado instanceof Livro
+                    || materialAtualizado instanceof Revista;
 
-            if (sucesso) {
-                InterfaceUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "✅ Material atualizado com sucesso!");
+            if (materialAtualizado.getIdPai() != null) {
+                Alert aviso = new Alert(Alert.AlertType.CONFIRMATION);
+                aviso.setTitle("Material Cópia");
+                aviso.setHeaderText("Este material é uma cópia.");
+                aviso.setContentText(
+                        "Você está editando uma cópia vinculada a um material com tarja vermelha.\n" +
+                                "As alterações serão aplicadas somente nesta cópia, se deseja aplicar em todos os exemplares atualize o material de tarja vermelha.\n\n" +
+                                "Deseja continuar?");
+                aviso.getButtonTypes().setAll(
+                        new ButtonType("Continuar", ButtonBar.ButtonData.YES),
+                        new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE));
+
+                aviso.showAndWait().ifPresent(resp -> {
+                    if (resp.getButtonData() == ButtonBar.ButtonData.YES) {
+                        executarAtualizacaoSimples(materialAtualizado);
+                    }
+                });
+                return;
             }
 
+            boolean tarjaVermelha = (materialAtualizado instanceof Livro l && l.isTarjaVermelha())
+                    || (materialAtualizado instanceof Revista r && r.isTarjaVermelha());
+
+            if (tipoMaterial && tarjaVermelha) {
+
+                Alert pergunta = new Alert(Alert.AlertType.CONFIRMATION);
+                pergunta.setTitle("Atualizar Cópias");
+                pergunta.setHeaderText("Este material possui cópias cadastradas.");
+                pergunta.setContentText(
+                        "Deseja realizar as alterações em todas as cópias?\n\n" +
+                                "• Sim: Atualiza o original e todas as cópias (os códigos individuais são mantidos).\n" +
+                                "• Não: atualiza apenas este material.");
+                ButtonType btnSim    = new ButtonType("Sim",  ButtonBar.ButtonData.YES);
+                ButtonType btnNao    = new ButtonType("Não",         ButtonBar.ButtonData.NO);
+                ButtonType btnCancel = new ButtonType("Cancelar",             ButtonBar.ButtonData.CANCEL_CLOSE);
+                pergunta.getButtonTypes().setAll(btnSim, btnNao, btnCancel);
+
+                pergunta.showAndWait().ifPresent(resp -> {
+                    if (resp.getButtonData() == ButtonBar.ButtonData.YES) {
+
+                        try {
+                            boolean sucesso = materialService.atualizarMaterialComCopias(materialAtualizado);
+                            if (sucesso) {
+                                InterfaceUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso",
+                                        "Material e todas as cópias atualizados com sucesso!");
+                            }
+                        } catch (IllegalArgumentException e) {
+                            InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR,
+                                    "Erro de Validação", e.getMessage());
+                        } catch (Exception e) {
+                            InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR,
+                                    "Erro Inesperado", e.getMessage());
+                            e.printStackTrace();
+                        }
+
+                    } else if (resp.getButtonData() == ButtonBar.ButtonData.NO) {
+                        executarAtualizacaoSimples(materialAtualizado);
+                    }
+                });
+                return;
+            }
+
+            executarAtualizacaoSimples(materialAtualizado);
+
         } catch (IllegalArgumentException e) {
-            InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro de Validação", "❌ " + e.getMessage());
+            InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR,
+                    "Erro de Validação", e.getMessage());
         } catch (Exception e) {
-            InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro Inesperado", "❌ Erro durante a atualização: " + e.getMessage());
+            InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR,
+                    "Erro Inesperado", "Erro durante a atualização: " + e.getMessage());
             e.printStackTrace();
         }
     }
+
+
+    private void executarAtualizacaoSimples(Material material) {
+        try {
+            boolean sucesso = materialService.atualizarMaterial(material);
+            if (sucesso) {
+                InterfaceUtil.mostrarAlerta(Alert.AlertType.INFORMATION,
+                        "Sucesso", "Material atualizado com sucesso!");
+            }
+        } catch (IllegalArgumentException e) {
+            InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR,
+                    "Erro de Validação", e.getMessage());
+        } catch (Exception e) {
+            InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR,
+                    "Erro Inesperado", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
 
     @FXML
     private void onExcluirClick() {

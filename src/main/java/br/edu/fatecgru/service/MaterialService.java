@@ -17,17 +17,6 @@ public class MaterialService {
 
     // MÉTODOS PARA CRUD
 
-    public boolean cadastrarMaterial(Material material) {
-
-        validarMaterial(material);
-
-        if (material.getTipoAquisicao() == TipoAquisicao.COMPRA && material.getNotaFiscal() != null) {
-            atualizarSaldoNotaFiscal(material.getNotaFiscal(), material.getValorUnitario(), true);
-        }
-
-        return cadastrarMaterialInterno(material);
-    }
-
     public boolean cadastrarMaterialComCopias(Material material, int quantidadeCopias) {
 
         if (quantidadeCopias < 0) {
@@ -35,12 +24,6 @@ public class MaterialService {
         }
 
         validarMaterial(material);
-
-        if (deveAtualizarNotaFiscal(material)) {
-            BigDecimal valorTotal = material.getValorUnitario()
-                    .multiply(BigDecimal.valueOf(1 + quantidadeCopias));
-            atualizarSaldoNotaFiscal(material.getNotaFiscal(), valorTotal, true);
-        }
 
         if (!cadastrarMaterialInterno(material)) {
             return false;
@@ -65,6 +48,21 @@ public class MaterialService {
         return repository.atualizarMaterial(material);
     }
 
+    public boolean atualizarMaterialComCopias(Material material) {
+        validarMaterial(material);
+
+        if (!repository.atualizarMaterial(material)) {
+            return false;
+        }
+
+        List<Material> copias = repository.buscarCopiasPorIdPai(material.getIdMaterial());
+        for (Material copia : copias) {
+            sincronizarCopiaComPai(copia, material);
+            repository.atualizarMaterial(copia);
+        }
+        return true;
+    }
+
     public boolean desativarMaterial(Material material) {
 
         if (material == null) {
@@ -80,20 +78,6 @@ public class MaterialService {
         }
 
         return repository.desativarMaterial(material);
-    }
-
-    public void incrementarTotalExemplaresDoPai(Long idPai) {
-
-        Material pai = repository.buscarMaterialPorId(idPai);
-
-        if (pai instanceof Livro livroPai) {
-            livroPai.setTotalExemplares(livroPai.getTotalExemplares() + 1);
-            repository.atualizarMaterial(pai);
-
-        } else if(pai instanceof Revista revistaPai) {
-            revistaPai.setTotalExemplares(revistaPai.getTotalExemplares() + 1);
-            repository.atualizarMaterial(pai);
-        }
     }
 
     private void decrementarTotalExemplaresDoPai(Long idPai) {
@@ -139,18 +123,6 @@ public class MaterialService {
         }
 
         return repository.cadastrarMaterial(material);
-    }
-
-    private boolean deveAtualizarNotaFiscal(Material material) {
-
-        return material.getTipoAquisicao() == TipoAquisicao.COMPRA && material.getNotaFiscal() != null;
-    }
-
-    private boolean possuiCopias(Material material) {
-
-        return (material instanceof Livro livro && livro.isTarjaVermelha()
-                || material instanceof Revista revista && revista.isTarjaVermelha())
-                && repository.contarCopiasPorIdPai(material.getIdMaterial(), material.getTipoMaterial()) > 0;
     }
 
     private String gerarProximoCodigo(Material material) {
@@ -229,23 +201,40 @@ public class MaterialService {
        throw new IllegalArgumentException("Não foi possível criar cópia do Material");
     }
 
-    private void atualizarSaldoNotaFiscal(NotaFiscal nf, BigDecimal valorMaterial, boolean isSoma) {
+    private void sincronizarCopiaComPai(Material copia, Material pai) {
 
-        if (nf == null || valorMaterial == null) {
-            return;
+
+        copia.setTipoAquisicao(pai.getTipoAquisicao());
+        copia.setNotaFiscal(pai.getNotaFiscal());
+        copia.setValorUnitario(pai.getValorUnitario());
+        copia.setStatusMaterial(pai.getStatusMaterial());
+
+        if (pai instanceof Livro livroPai && copia instanceof Livro livroCopia) {
+            livroCopia.setIsbn(livroPai.getIsbn());
+            livroCopia.setTitulo(livroPai.getTitulo());
+            livroCopia.setAutor(livroPai.getAutor());
+            livroCopia.setEditora(livroPai.getEditora());
+            livroCopia.setEdicao(livroPai.getEdicao());
+            livroCopia.setGenero(livroPai.getGenero());
+            livroCopia.setAssunto(livroPai.getAssunto());
+            livroCopia.setLocalPublicacao(livroPai.getLocalPublicacao());
+            livroCopia.setAnoPublicacao(livroPai.getAnoPublicacao());
+            livroCopia.setPalavrasChave(livroPai.getPalavrasChave());
+            livroCopia.setTarjaVermelha(false); // cópias nunca são tarja vermelha
+
+        } else if (pai instanceof Revista revistaPai && copia instanceof Revista revistaCopia) {
+            revistaCopia.setTitulo(revistaPai.getTitulo());
+            revistaCopia.setVolume(revistaPai.getVolume());
+            revistaCopia.setNumero(revistaPai.getNumero());
+            revistaCopia.setEditora(revistaPai.getEditora());
+            revistaCopia.setGenero(revistaPai.getGenero());
+            revistaCopia.setAssunto(revistaPai.getAssunto());
+            revistaCopia.setLocalPublicacao(revistaPai.getLocalPublicacao());
+            revistaCopia.setAnoPublicacao(revistaPai.getAnoPublicacao());
+            revistaCopia.setPalavrasChave(revistaPai.getPalavrasChave());
+            revistaCopia.setTarjaVermelha(false);
         }
-
-        BigDecimal totalAtual = nf.getValorTotal() != null ? nf.getValorTotal() : BigDecimal.ZERO;
-        BigDecimal novoTotal = isSoma? totalAtual.add(valorMaterial) : totalAtual.subtract(valorMaterial);
-
-        if (novoTotal.compareTo(BigDecimal.ZERO) < 0) {
-            novoTotal = BigDecimal.ZERO;
-        }
-
-        nf.setValorTotal(novoTotal);
-        notaFiscalService.atualizarNotaFiscal(nf);
     }
-
 
     // MÉTODOS PARA VALIDAÇÃO
 

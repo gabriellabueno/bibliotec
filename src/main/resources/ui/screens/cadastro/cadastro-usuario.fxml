@@ -3,7 +3,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
-<?import java.lang.String?>
 
 <VBox alignment="TOP_CENTER" spacing="20.0" prefHeight="600.0" prefWidth="580.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="br.edu.fatecgru.controller.cadastro.CadastroUsuarioController">

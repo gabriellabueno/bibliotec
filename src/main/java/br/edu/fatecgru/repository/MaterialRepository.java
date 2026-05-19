@@ -363,6 +363,36 @@
             }
         }
 
+        public List<Material> buscarMateriaisPorNotaFiscal(String codigoNota) {
+            EntityManager em = getEntityManager();
+            try {
+                return em.createQuery(
+                                "SELECT m FROM Material m WHERE m.notaFiscal.codigo = :codigo", Material.class)
+                        .setParameter("codigo", codigoNota)
+                        .getResultList();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return Collections.emptyList();
+            } finally {
+                em.close();
+            }
+        }
+
+        public List<Material> buscarCopiasPorIdPai(Long idPai) {
+            EntityManager em = getEntityManager();
+            try {
+                return em.createQuery(
+                                "SELECT m FROM Material m WHERE m.idPai = :idPai", Material.class)
+                        .setParameter("idPai", idPai)
+                        .getResultList();
+            } catch (Exception e) {
+                System.err.println("Erro ao buscar cópias por idPai: " + e.getMessage());
+                return Collections.emptyList();
+            } finally {
+                em.close();
+            }
+        }
+
 
         // MÉTODOS AUXILIARES
 
@@ -391,18 +421,5 @@
                 this.alias = alias;
             }
         }
-        public List<Material> buscarMateriaisPorNotaFiscal(String codigoNota) {
-            EntityManager em = getEntityManager(); // Obtém a conexão
-            try {
-                return em.createQuery(
-                                "SELECT m FROM Material m WHERE m.notaFiscal.codigo = :codigo", Material.class)
-                        .setParameter("codigo", codigoNota)
-                        .getResultList();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return Collections.emptyList();
-            } finally {
-                em.close(); // Sempre fechar o EntityManager
-            }
-        }
+
     }
