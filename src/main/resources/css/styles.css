@@ -5,50 +5,42 @@
 
 .center-title {
     -fx-text-fill: #670B0B;
-    -fx-font-size: 60px;
+    -fx-font-size: 40px;
     -fx-font-weight: bold;
 }
 
 .subtitle {
-    -fx-font-size: 25px;
+    -fx-font-size: 20px;
     -fx-text-fill: #000000;
     -fx-padding: 5px 0 0 0;
 }
 
-.main-card {
+.card {
     -fx-background-color: #E5E5E5;
-    -fx-padding: 10px 10px;
-    -fx-spacing: 5px;
-    -fx-background-radius: 5px;
-    -fx-border-radius: 5px;
-    -fx-border-color: #161654;
-    -fx-border-width: 1px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 4);
+}
+
+
+.card-header {
+    -fx-background-color: #670B0B;;
+    -fx-background-radius: 8px 8px 0px 0px;
+    -fx-padding: 12px 15px;
 }
 
 .card-title {
-    -fx-text-fill: #000000;
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
     -fx-font-weight: bold;
+}
+
+
+.card-body {
+    -fx-padding: 20px;
+}
+
+.card-text {
+    -fx-text-fill: black;
     -fx-font-size: 14px;
-    -fx-alignment: CENTER_LEFT;
-
-    -fx-max-width: Infinity;
-
-    -fx-border-color: transparent transparent #161654 transparent;
-    -fx-border-width: 1px;
-    -fx-padding: 0 5px 5px 5px;
-    -fx-margin: 0 0 5px 0;
-}
-
-.card-item-button {
-    -fx-background-color: transparent;
-    -fx-text-fill: #000000;
-    -fx-alignment: CENTER_LEFT;
-    -fx-padding: 0 10px 0 15px;
-    -fx-font-size: 12px;
-    -fx-cursor: hand;
-}
-
-.card-item-button:hover {
-    -fx-background-color: #D0D0D0;
+    -fx-line-spacing: 4px;
 }

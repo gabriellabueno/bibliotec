@@ -46,7 +46,7 @@
 
     -fx-max-width: Infinity;
 
-    /* linha divisária */
+    /* linha divisória */
     -fx-border-color: transparent transparent #161654 transparent;
     -fx-border-width: 1px;
     -fx-padding: 0 5px 5px 5px;

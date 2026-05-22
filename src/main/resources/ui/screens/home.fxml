@@ -1,31 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.image.*?>
-<?import javafx.geometry.Insets?>
 <?import java.lang.String?>
 
+<VBox alignment="TOP_CENTER" prefHeight="653.0" prefWidth="1260.0" spacing="10.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="br.edu.fatecgru.controller.HomeController">
 
-<VBox alignment="TOP_CENTER" prefHeight="400.0" prefWidth="600.0"
-      xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+    <padding>
+        <Insets top="30.0" />
+    </padding>
 
     <HBox alignment="CENTER" prefHeight="60.0" prefWidth="220.0" spacing="6.0">
         <children>
-            <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
                 <image>
                     <Image url="/images/bibliotec_logo.png" />
                 </image>
             </ImageView>
             <Label text="Bibliotec" styleClass="center-title" />
         </children>
-        <padding>
-            <Insets top="200.0" />
-        </padding>
     </HBox>
 
+    <Label text="Gestão inteligente de acervo e empréstimos." styleClass="subtitle"/>
 
-    <Label text="Gestão inteligente de acervo e empréstimos" styleClass="subtitle"/>
+    <GridPane alignment="CENTER" hgap="50.0" vgap="50.0">
+        <VBox.margin>
+            <Insets top="40.0" />
+        </VBox.margin>
+
+        <columnConstraints>
+            <ColumnConstraints halignment="CENTER" hgrow="NEVER" minWidth="400.0" prefWidth="400.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="NEVER" minWidth="400.0" prefWidth="400.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="50.0" vgrow="NEVER" />
+            <RowConstraints minHeight="50.0" vgrow="NEVER" />
+        </rowConstraints>
+
+        <VBox maxWidth="400.0" styleClass="card" GridPane.columnIndex="0" GridPane.rowIndex="0">
+            <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="card-header">
+                <ImageView fitHeight="24.0" fitWidth="24.0">
+                    <Image url="/icons/search_white_icon.png" />
+                </ImageView>
+                <Label styleClass="card-title" text="Pesquisa" />
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="card-body">
+                <Label HBox.hgrow="ALWAYS" styleClass="card-text" text="● Busque materiais, notas fiscais, empréstimos ou usuários por nome, código ou outros termos.&#xA;● Clique duas vezes no item desejado para abrir a tela de gerenciamento." wrapText="true" />
+            </HBox>
+        </VBox>
+
+        <VBox maxWidth="400.0" styleClass="card" GridPane.columnIndex="1" GridPane.rowIndex="0">
+            <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="card-header">
+                <ImageView fitHeight="24.0" fitWidth="24.0">
+                    <Image url="/icons/manage_white_icon.png" />
+                </ImageView>
+                <Label styleClass="card-title" text="Gerenciamento" />
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="card-body">
+                <Label HBox.hgrow="ALWAYS" styleClass="card-text" text="● Atualize as informações dos registros ou desative materiais e empréstimos.&#xA;● Acompanhe toda a movimentação de empréstimos, incluindo prazos, atrasos e devoluções.&#xA;● Você também pode gerenciar os empréstimos direto na tela do usuário." wrapText="true" />
+            </HBox>
+        </VBox>
+
+        <VBox maxWidth="400.0" styleClass="card" GridPane.columnIndex="0" GridPane.rowIndex="1">
+            <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="card-header">
+                <ImageView fitHeight="24.0" fitWidth="24.0">
+                    <Image url="/icons/copy_icon.png" />
+                </ImageView>
+                <Label styleClass="card-title" text="Cópias" />
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="card-body">
+                <Label HBox.hgrow="ALWAYS" styleClass="card-text" text="● Cadastre um lote de exemplares de uma só vez ao cadastrar um material de tarja vermelha.&#xA;● Se precisar cadastrar mais cópias depois, adicione-as na tela de gerenciamento do material." wrapText="true" />
+            </HBox>
+        </VBox>
+
+        <VBox maxWidth="400.0" styleClass="card" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="card-header">
+                <ImageView fitHeight="24.0" fitWidth="24.0">
+                    <Image url="/icons/note_white_icon.png" />
+                </ImageView>
+                <Label styleClass="card-title" text="Notas Fiscais" />
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="card-body">
+                <Label HBox.hgrow="ALWAYS" styleClass="card-text" text="● Cadastre a nota fiscal antes de tudo.&#xA;● Depois, vincule-a ao cadastrar o material usando o campo de código da nota.&#xA;● Também é possível mudar ou desvincular a nota fiscal ao gerenciar o material." wrapText="true" />
+            </HBox>
+        </VBox>
+
+    </GridPane>
 
     <stylesheets>
         <String fx:value="/css/styles.css" />
