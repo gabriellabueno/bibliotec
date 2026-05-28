@@ -19,7 +19,14 @@ public final class MaterialBuilder {
             return null;
         }
         try {
-            String valor = field.getText().replace("R$", "").replace(".", "").replace(",", ".").trim();
+            String valor = field.getText().replace("R$", "").trim();
+
+            if (valor.contains(",")) {
+
+                valor = valor.replace(".", "").replace(",", ".");
+            }
+
+
             return new BigDecimal(valor);
         } catch (NumberFormatException e) {
             return null;
@@ -201,10 +208,10 @@ public final class MaterialBuilder {
     // Preenche os campos a partir do objeto
 
     public static void fromLivro(
-            Livro livro, TextField isbnField, TextField tituloField, TextField autorField,
-            TextField editoraField, TextField edicaoField, TextField generoField, TextField assuntoField,
-            TextField localPublicacaoField, TextField anoPublicacaoField, TextArea palavrasChaveArea, TextField valorUnitarioField)
-    {
+            Livro livro, TextField isbnField, TextField tituloField, TextField autorField, TextField editoraField,
+            TextField edicaoField, TextField generoField, TextField assuntoField, TextField localPublicacaoField,
+            TextField anoPublicacaoField, TextArea palavrasChaveArea, TextField valorUnitarioField) {
+
         isbnField.setText(livro.getIsbn());
         tituloField.setText(livro.getTitulo());
         autorField.setText(livro.getAutor());
@@ -217,7 +224,7 @@ public final class MaterialBuilder {
         palavrasChaveArea.setText(livro.getPalavrasChave());
 
         if (livro.getValorUnitario() != null) {
-            valorUnitarioField.setText(livro.getValorUnitario().toString());
+            valorUnitarioField.setText(livro.getValorUnitario().toPlainString().replace(".", ","));
         } else {
             valorUnitarioField.setText("");
         }
@@ -238,6 +245,13 @@ public final class MaterialBuilder {
         localPublicacaoField.setText(revista.getLocalPublicacao());
         generoField.setText(revista.getGenero());
         palavrasChaveArea.setText(revista.getPalavrasChave());
+
+        if (revista.getValorUnitario() != null) {
+            valorUnitarioField.setText(revista.getValorUnitario().toPlainString().replace(".", ","));
+        } else {
+            valorUnitarioField.setText("");
+        }
+
     }
 
     public static void fromTG(
@@ -262,6 +276,12 @@ public final class MaterialBuilder {
     {
         nomeField.setText(equipamento.getNome());
         descricaoArea.setText(equipamento.getDescricao());
+
+        if (equipamento.getValorUnitario() != null) {
+            valorUnitarioField.setText(equipamento.getValorUnitario().toPlainString().replace(".", ","));
+        } else {
+            valorUnitarioField.setText("");
+        }
     }
 
 }

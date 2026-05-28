@@ -46,14 +46,7 @@
 
         <VBox fx:id="vboxTipoAquisicao" spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
             <Label style="-fx-font-weight: bold;" text="Tipo de Aquisição" />
-            <ComboBox fx:id="tipoAquisicaoCombo" prefWidth="280.0">
-                <items>
-                    <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="Z" />
-                        <String fx:value="Doação" />
-                    </FXCollections>
-                </items>
-            </ComboBox>
+            <ComboBox fx:id="tipoAquisicaoCombo" prefWidth="280.0"> </ComboBox>
         </VBox>
 
         <VBox fx:id="vboxNotaFiscal" spacing="5.0" GridPane.rowIndex="2">

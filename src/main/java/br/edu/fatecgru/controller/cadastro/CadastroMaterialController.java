@@ -326,7 +326,7 @@
             rbTG.setDisable(true);
             rbEquipamento.setDisable(true);
 
-            tipoAquisicaoCombo.setDisable(true);
+            tipoAquisicaoCombo.setDisable(false);
 
             // CAMPOS COMUNS
             codigoField.setText("");

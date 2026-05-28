@@ -30,6 +30,7 @@ public class EmprestimoRepository {
 
             String termoLower = termo.toLowerCase().trim();
             LocalDate dataParaBusca = converterTermoData(termoLower);
+            Long idEmprestimoBusca = converterTermoId(termoLower);
 
             StringBuilder jpql = new StringBuilder(
                     "SELECT e FROM Emprestimo e " +
@@ -49,6 +50,10 @@ public class EmprestimoRepository {
                             "OR LOWER(TREAT(m AS Equipamento).nome) LIKE :termo"
             );
 
+            if (idEmprestimoBusca != null) {
+                jpql.append(" OR e.idEmprestimo = :idEmprestimo");
+            }
+
             if (dataParaBusca != null) {
                 jpql.append(" OR e.dataEmprestimo = :data");
                 jpql.append(" OR e.dataPrevistaDevolucao = :data");
@@ -59,6 +64,10 @@ public class EmprestimoRepository {
             TypedQuery<Emprestimo> query = em.createQuery(jpql.toString(), Emprestimo.class);
             query.setParameter("status", statusEmprestimo);
             query.setParameter("termo", "%" + termoLower + "%");
+
+            if (idEmprestimoBusca != null) {
+                query.setParameter("idEmprestimo", idEmprestimoBusca);
+            }
 
             if (dataParaBusca != null) {
                 query.setParameter("data", dataParaBusca);
@@ -85,6 +94,13 @@ public class EmprestimoRepository {
             return LocalDate.parse(termo.trim(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         } catch (Exception ignored) {}
 
+        return null;
+    }
+
+    private Long converterTermoId(String termo) {
+        try {
+            return Long.parseLong(termo.trim());
+        } catch (NumberFormatException ignored) {}
         return null;
     }
 

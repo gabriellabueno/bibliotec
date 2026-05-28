@@ -166,7 +166,6 @@ public class GerenciamentoEmprestimoController implements Initializable {
         // emprestimoService.verificarEaplicarAtraso(emprestimo);
     }
 
-    // === MÉTODOS DE AÇÃO (A SEREM IMPLEMENTADOS) ===
 
     @FXML
     private void onSalvar() {
@@ -181,7 +180,7 @@ public class GerenciamentoEmprestimoController implements Initializable {
         }
 
         try {
-            LocalDate dataDevolucao = LocalDate.now();
+            LocalDate dataDevolucao = dataDevolucaoField.getValue();
 
             emprestimoService.registrarDevolucao(emprestimoEmEdicao, dataDevolucao);
 

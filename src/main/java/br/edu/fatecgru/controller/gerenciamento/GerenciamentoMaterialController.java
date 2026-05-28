@@ -9,6 +9,7 @@ import br.edu.fatecgru.model.Enum.TipoAquisicao;
 import br.edu.fatecgru.model.Enum.TipoMaterial;
 import br.edu.fatecgru.service.MaterialService;
 
+import br.edu.fatecgru.service.NotaFiscalService;
 import br.edu.fatecgru.util.InterfaceUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -108,23 +109,30 @@ public class GerenciamentoMaterialController implements Initializable {
 
 
     private NotaFiscal notaFiscalSelecionada = null;
+    private String tipoAquisicaoOriginal;
+    private NotaFiscal notaFiscalOriginal;
+    private boolean ignorarMudancaTipo = false;
+
+    private final NotaFiscalService notaFiscalService = new NotaFiscalService();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+        tipoAquisicaoCombo.getItems().setAll("Compra", "Doação");
+
+        valorUnitarioField.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal.matches("[\\d]*([,][\\d]{0,2})?")) {
+                valorUnitarioField.setText(oldVal);
+            }
+        });
 
         rbLivro.setDisable(true);
         rbRevista.setDisable(true);
         rbTG.setDisable(true);
         rbEquipamento.setDisable(true);
 
-        codigoField.setEditable(false);
-        codigoRevistaField.setEditable(false);
-        codigoTGField.setEditable(false);
-        codigoEquipamentoField.setEditable(false);
-
         qntExemplares.setEditable(false);
         tarjaVermelha.setEditable(false);
-        tipoAquisicaoCombo.setDisable(true);
         disponibilidade.setEditable(false);
 
         vboxQntCopias.setVisible(false);
@@ -132,11 +140,6 @@ public class GerenciamentoMaterialController implements Initializable {
 
         ocultarTodosFormularios();
 
-        numeroNotaFiscalField.setOnMouseClicked(e -> {
-            if ("Compra".equals(tipoAquisicaoCombo.getValue())) {
-                abrirModalNotaFiscal();
-            }
-        });
 
         // MÁSCARAS
         InterfaceUtil.aplicarMascaraTamanhoFixo(anoPublicacaoLivroField, 4);
@@ -158,6 +161,65 @@ public class GerenciamentoMaterialController implements Initializable {
 
     @FXML
     private void onSalvarClick() {
+
+        String codigoDigitado = numeroNotaFiscalField.getText().trim();
+        boolean campoVazio     = codigoDigitado.isEmpty();
+        boolean codigoMudou    = !campoVazio && (notaFiscalOriginal == null
+                || !codigoDigitado.equals(notaFiscalOriginal.getCodigo()));
+        boolean nfDesvinculada = campoVazio && notaFiscalOriginal != null;
+
+        if (nfDesvinculada) {
+            Alert aviso = new Alert(Alert.AlertType.CONFIRMATION);
+            aviso.setTitle("Desvincular Nota Fiscal");
+            aviso.setHeaderText("Atenção");
+            aviso.setContentText(
+                    "O código da nota fiscal foi removido.\n" +
+                            "Salvar irá desvincular este item da nota fiscal atual. Deseja continuar?");
+            aviso.getButtonTypes().setAll(
+                    new ButtonType("Sim",      ButtonBar.ButtonData.YES),
+                    new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE));
+
+            boolean[] prosseguir = {false};
+            aviso.showAndWait().ifPresent(resp -> {
+                if (resp.getButtonData() == ButtonBar.ButtonData.YES) {
+                    this.notaFiscalAtual = null;
+                    prosseguir[0] = true;
+                }
+            });
+            if (!prosseguir[0]) return;
+
+        } else if (codigoMudou) {
+            NotaFiscal nfEncontrada = notaFiscalService.buscarNotaFiscalPorCodigo(codigoDigitado);
+
+            if (nfEncontrada == null) {
+                InterfaceUtil.mostrarAlerta(Alert.AlertType.WARNING,
+                        "Nota Fiscal não encontrada",
+                        "Nenhuma nota fiscal encontrada com o código \"" + codigoDigitado + "\".\n" +
+                                "Corrija o código antes de salvar.");
+                return;
+            }
+
+            String mensagem = notaFiscalOriginal != null
+                    ? "Alterar a nota fiscal irá desvincular este item da nota fiscal atual.\nDeseja continuar?"
+                    : "Este item será vinculado à nota fiscal \"" + codigoDigitado + "\". Deseja continuar?";
+
+            Alert aviso = new Alert(Alert.AlertType.CONFIRMATION);
+            aviso.setTitle("Alterar Nota Fiscal");
+            aviso.setHeaderText("Atenção");
+            aviso.setContentText(mensagem);
+            aviso.getButtonTypes().setAll(
+                    new ButtonType("Sim",      ButtonBar.ButtonData.YES),
+                    new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE));
+
+            boolean[] prosseguir = {false};
+            aviso.showAndWait().ifPresent(resp -> {
+                if (resp.getButtonData() == ButtonBar.ButtonData.YES) {
+                    this.notaFiscalAtual = nfEncontrada;
+                    prosseguir[0] = true;
+                }
+            });
+            if (!prosseguir[0]) return;
+        }
 
         try {
             Material materialAtualizado = coletarDadosAtualizados(materialEmEdicao);
@@ -353,109 +415,56 @@ public class GerenciamentoMaterialController implements Initializable {
     }
 
 
-
-    private void abrirModalNotaFiscal() {
-        try {
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/screens/cadastro/cadastro-notafiscal.fxml"));
-            Parent root = loader.load();
-            CadastroNotaFiscalController controllerNF = loader.getController();
-
-            if (this.notaFiscalAtual != null) {
-                controllerNF.setNotaFiscalParaEdicao(this.notaFiscalAtual);
-            }
-
-            Stage stage = new Stage();
-            stage.setTitle("Cadastrar Nota Fiscal");
-            stage.setScene(new Scene(root));
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.showAndWait();
-
-            NotaFiscal nfRetorno = controllerNF.getNotaFiscalSalva();
-
-
-            if (nfRetorno != null) {
-                this.notaFiscalAtual = nfRetorno;
-                numeroNotaFiscalField.setText(nfRetorno.getCodigo()); // Mostra o código visualmente
-            }
-        } catch (IOException e) {
-            System.err.println("Erro ao abrir tela de Nota Fiscal: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-
-
-
     public void preencherFormularioParaEdicao(Material material) {
         if (material == null) return;
 
         this.materialEmEdicao = material;
         this.notaFiscalAtual = material.getNotaFiscal();
 
-
         if (material.getTipoAquisicao() == TipoAquisicao.COMPRA) {
             InterfaceUtil.habilitarCamposNF(true, vboxNotaFiscal, numeroNotaFiscalField);
-            InterfaceUtil.habilitarCamposValorUnitario(true,vboxValorUnitario, valorUnitarioField);
+            InterfaceUtil.habilitarCamposValorUnitario(true, vboxValorUnitario, valorUnitarioField);
             tipoAquisicaoCombo.getSelectionModel().select("Compra");
             numeroNotaFiscalField.setText(material.getCodigoNotaFiscal());
             valorUnitarioField.setText(material.getValorUnitario().toString());
         } else {
             tipoAquisicaoCombo.getSelectionModel().select("Doação");
             InterfaceUtil.habilitarCamposNF(false, vboxNotaFiscal, numeroNotaFiscalField);
-            InterfaceUtil.habilitarCamposValorUnitario(false,vboxValorUnitario, valorUnitarioField);
+            InterfaceUtil.habilitarCamposValorUnitario(false, vboxValorUnitario, valorUnitarioField);
         }
 
         ocultarTodosFormularios();
 
         if (material instanceof Livro livro) {
-
             rbLivro.setSelected(true);
             setCamposComuns(formLivro, true, true);
-
             MaterialBuilder.fromLivro(livro, isbnField, tituloLivroField, autorLivroField,
                     editoraLivroField, edicaoField, generoLivroField, assuntoLivroField,
                     localPublicacaoLivroField, anoPublicacaoLivroField, palavrasChaveLivroArea, valorUnitarioField);
-
             codigoField.setText(livro.getCodigo());
-            qntExemplares.setText(String.valueOf((livro.getTotalExemplares() )));
+            qntExemplares.setText(String.valueOf(livro.getTotalExemplares()));
             tarjaVermelha.setText(livro.isTarjaVermelha() ? "SIM" : "NÃO");
             disponibilidade.setText(livro.getStatusMaterial().toString());
-
-            if(!livro.isTarjaVermelha()) {
-                btnCadastrarCopia.setVisible(false);
-            }
-
+            if (!livro.isTarjaVermelha()) btnCadastrarCopia.setVisible(false);
 
         } else if (material instanceof Revista revista) {
-
             rbRevista.setSelected(true);
             setCamposComuns(formRevista, true, true);
-
             MaterialBuilder.fromRevista(revista, tituloRevistaField, volumeRevistaField, numeroRevistaField,
                     editoraRevistaField, assuntoRevistaField, anoPublicacaoRevistaField,
                     localPublicacaoRevistaField, generoRevistaField, palavrasChaveRevistaArea, valorUnitarioField);
-
             codigoRevistaField.setText(revista.getCodigo());
-            qntExemplares.setText(String.valueOf((revista.getTotalExemplares() )));
-            codigoRevistaField.setText(revista.getCodigo());
+            qntExemplares.setText(String.valueOf(revista.getTotalExemplares()));
             tarjaVermelha.setText(revista.isTarjaVermelha() ? "SIM" : "NÃO");
             disponibilidade.setText(revista.getStatusMaterial().toString());
-
-            if(!revista.isTarjaVermelha()) {
-                btnCadastrarCopia.setVisible(false);
-            }
-
+            if (!revista.isTarjaVermelha()) btnCadastrarCopia.setVisible(false);
 
         } else if (material instanceof TG tg) {
-
             rbTG.setSelected(true);
             setCamposComuns(formTG, false, false);
-
             MaterialBuilder.fromTG(tg, tituloTGField, subtituloTGField, assuntoTGField,
                     autor1TGField, ra1TGField, autor2TGField, ra2TGField,
                     localPublicacaoTGField, anoPublicacaoTGField, palavrasChaveTGArea);
-
             vboxNotaFiscal.setVisible(false);
             codigoTGField.setText(tg.getCodigo());
             boxQntExemplares.setVisible(false);
@@ -463,22 +472,38 @@ public class GerenciamentoMaterialController implements Initializable {
             btnCadastrarCopia.setVisible(false);
 
         } else if (material instanceof Equipamento equipamento) {
-
             rbEquipamento.setSelected(true);
             setCamposComuns(formEquipamento, false, true);
-
             MaterialBuilder.fromEquipamento(equipamento, nomeEquipamentoField, descricaoEquipamentoArea, valorUnitarioField);
-
             codigoEquipamentoField.setText(equipamento.getCodigo());
             boxQntExemplares.setVisible(false);
             disponibilidade.setText(equipamento.getStatusMaterial().name());
         }
+
+
+        tipoAquisicaoOriginal = tipoAquisicaoCombo.getValue();
+        notaFiscalOriginal    = this.notaFiscalAtual;
+
+
+        tipoAquisicaoCombo.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (ignorarMudancaTipo || newVal == null || newVal.equals(oldVal)) return;
+            atualizarVisibilidadeCamposAquisicao(newVal);
+        });
     }
 
+    private void atualizarVisibilidadeCamposAquisicao(String tipoSelecionado) {
+        boolean isCompra = "Compra".equals(tipoSelecionado);
+        InterfaceUtil.habilitarCamposNF(isCompra, vboxNotaFiscal, numeroNotaFiscalField);
+        InterfaceUtil.habilitarCamposValorUnitario(isCompra, vboxValorUnitario, valorUnitarioField);
+    }
 
 
     private Material coletarDadosAtualizados(Material material) {
 
+        String valorTexto = valorUnitarioField.getText().trim()
+                .replace(".", "")
+                .replace(",", ".");
+        valorUnitarioField.setText(valorTexto);
 
         TipoAquisicao tipoAquisicao = null;
         String tipoAqStr = tipoAquisicaoCombo.getSelectionModel().getSelectedItem();
