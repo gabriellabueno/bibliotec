@@ -80,8 +80,8 @@ public class CadastroNotaFiscalController implements Initializable {
 
             if (nfResultado != null) {
                 this.notaFiscalSalva = nfResultado;
-                mostrarAlerta(AlertType.INFORMATION, "Sucesso", "Nova Nota Fiscal de código" + nfResultado.getCodigo() + " cadastrada."
-                        + "\nPara adicionar valores individuais vincule materiais.");
+                mostrarAlerta(AlertType.INFORMATION, "Sucesso", "Nova Nota Fiscal de código " + nfResultado.getCodigo() + " cadastrada."
+                        + "\nPara adicionar itens individuais vincule materiais.");
 
 
                 limparCamposNFSecundarios();
@@ -123,10 +123,6 @@ public class CadastroNotaFiscalController implements Initializable {
         nf.setValorTotal(converterBigDecimal(valorTotalField.getText()));
         nf.setValorDesconto(converterBigDecimal(valorDescontoField.getText()));
 
-        if (nf.getDataAquisicao() == null) {
-            throw new IllegalArgumentException("A data de aquisição é obrigatória.");
-        }
-
     }
 
     private BigDecimal converterBigDecimal(String valor) {
@@ -144,9 +140,6 @@ public class CadastroNotaFiscalController implements Initializable {
 
 
     private NotaFiscal criarObjetoCandidato() {
-        if (codigoField.getText().trim().isEmpty()) {
-            throw new IllegalArgumentException("O código da Nota Fiscal não pode ser vazio.");
-        }
 
         NotaFiscal nf = new NotaFiscal();
         nf.setCodigo(codigoField.getText().trim());
@@ -190,8 +183,7 @@ public class CadastroNotaFiscalController implements Initializable {
             travarCamposNFSecundarios();
             this.notaFiscalSalva = nfEncontrada; // Já define a NF a ser usada
 
-            mostrarAlerta(AlertType.INFORMATION, "Busca OK", "Nota Fiscal " + nfEncontrada.getCodigo() + " encontrada." +
-                                                "\nValor: R$ " + nfEncontrada.getValorTotal() + "\nPara alterar o valor vincule materiais.");
+            mostrarAlerta(AlertType.INFORMATION, "Busca OK", "Nota Fiscal " + nfEncontrada.getCodigo() + " encontrada.");
 
         } else {
 
@@ -228,6 +220,9 @@ public class CadastroNotaFiscalController implements Initializable {
     private void limparCamposNFSecundarios() {
         dataAquisicaoField.setValue(null);
         descricaoArea.clear();
+        valorTotalField.clear();
+        valorImpostosField.clear();
+        valorDescontoField.clear();
     }
 
     private void mostrarAlerta(AlertType type, String title, String message) {

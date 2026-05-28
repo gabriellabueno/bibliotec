@@ -10,6 +10,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.hibernate.exception.ConstraintViolationException;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,11 +24,6 @@ public class UsuarioService {
     public boolean cadastrarUsuario(Usuario usuario) {
         validarUsuario(usuario);
         return usuarioRepository.cadastrarUsuario(usuario);
-    }
-
-
-    private void validarUsuario(Usuario usuario) throws IllegalArgumentException {
-
     }
 
     public List<Usuario> buscarUsuario(String termo, boolean isDocente) {
@@ -46,6 +43,33 @@ public class UsuarioService {
 
             throw new RuntimeException("Falha na atualização do usuário.");
         }
+    }
+
+    private void validarUsuario(Usuario usuario) {
+        List<String> erros = new ArrayList<>();
+
+        if (isVazio(usuario.getIdUsuario()))   erros.add("ID");
+        if (isVazio(usuario.getNome()))        erros.add("Nome");
+        if (isVazio(usuario.getEmail()))       erros.add("E-mail");
+
+        if (!isVazio(usuario.getIdUsuario())
+                && usuarioRepository.buscarUsuarioPorId(usuario.getIdUsuario()) != null) {
+            erros.add("ID '" + usuario.getIdUsuario() + "' já está em uso");
+        }
+
+        if (!isVazio(usuario.getEmail())
+                && usuarioRepository.buscarUsuarioPorEmail(usuario.getEmail()) != null) {
+            erros.add("E-mail '" + usuario.getEmail() + "' já está em uso");
+        }
+
+        if (!erros.isEmpty()) {
+            String mensagem = "Campos inválidos ou obrigatórios:\n• " + String.join("\n• ", erros);
+            throw new IllegalArgumentException(mensagem);
+        }
+    }
+
+    private boolean isVazio(String valor) {
+        return valor == null || valor.trim().isEmpty();
     }
 
 }

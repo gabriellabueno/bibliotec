@@ -3,6 +3,7 @@ package br.edu.fatecgru.service;
 import br.edu.fatecgru.model.Entity.NotaFiscal;
 import br.edu.fatecgru.repository.NotaFiscalRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.math.BigDecimal; // Import necessário
 
@@ -10,13 +11,6 @@ public class NotaFiscalService {
 
     private final NotaFiscalRepository repository = new NotaFiscalRepository();
 
-
-    private void validarNotaFiscal(NotaFiscal nf) throws IllegalArgumentException {
-
-        if (nf.getDataAquisicao() == null) {
-            throw new IllegalArgumentException("NOTA FISCAL: A Data de Aquisição é obrigatória.");
-        }
-    }
 
     public boolean cadastrarNotaFiscal(NotaFiscal notaFiscal) {
 
@@ -34,10 +28,11 @@ public class NotaFiscalService {
 
     public NotaFiscal buscarOuCadastrar(NotaFiscal nfCandidata) throws IllegalArgumentException {
 
-        if (nfCandidata == null || nfCandidata.getCodigo() == null || nfCandidata.getCodigo().trim().isEmpty()) {
-            throw new IllegalArgumentException("O Código é obrigatório.");
+        if (nfCandidata == null) {
+            throw new IllegalArgumentException("Nota Fiscal não pode ser nula.");
         }
 
+        validarNotaFiscal(nfCandidata);
 
         NotaFiscal nfExistente = buscarNotaFiscalPorCodigo(nfCandidata.getCodigo());
 
@@ -48,10 +43,8 @@ public class NotaFiscalService {
         }
 
 
-        validarNotaFiscal(nfCandidata);
 
-
-        if (this.cadastrarNotaFiscal(nfCandidata)) { // Já chama validarNotaFiscal() internamente
+        if (this.cadastrarNotaFiscal(nfCandidata)) {
             System.out.println("Nova Nota Fiscal cadastrada com sucesso.");
             return nfCandidata;
         }
@@ -72,5 +65,23 @@ public class NotaFiscalService {
         }
 
         return repository.atualizarNotaFiscal(nf);
+    }
+
+    private void validarNotaFiscal(NotaFiscal nf) {
+        List<String> erros = new ArrayList<>();
+
+        if (nf.getCodigo() == null || nf.getCodigo().trim().isEmpty())      erros.add("Código");
+        if (nf.getDataAquisicao() == null)                                  erros.add("Data de Aquisição");
+
+        if (nf.getValorImpostos() == null || nf.getValorImpostos().compareTo(BigDecimal.ZERO) <= 0)
+            erros.add("Valor de Impostos (não pode ser nulo ou negativo)");
+
+        if (nf.getValorTotal() == null || nf.getValorTotal().compareTo(BigDecimal.ZERO) <= 0)
+            erros.add("Valor Total (deve ser maior que zero)");
+
+        if (!erros.isEmpty()) {
+            String mensagem = "Campos inválidos ou obrigatórios:\n• " + String.join("\n• ", erros);
+            throw new IllegalArgumentException(mensagem);
+        }
     }
 }

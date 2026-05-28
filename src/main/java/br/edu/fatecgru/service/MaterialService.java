@@ -6,6 +6,7 @@ import br.edu.fatecgru.model.Enum.TipoAquisicao;
 import br.edu.fatecgru.repository.MaterialRepository;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -119,7 +120,7 @@ public class MaterialService {
             livro.setTotalExemplares(livro.isTarjaVermelha() ? 1 : 0);
 
         } else if (material instanceof Revista revista) {
-            revista.setTotalExemplares(1);
+            revista.setTotalExemplares(revista.isTarjaVermelha() ? 1 : 0);
         }
 
         return repository.cadastrarMaterial(material);
@@ -220,7 +221,7 @@ public class MaterialService {
             livroCopia.setLocalPublicacao(livroPai.getLocalPublicacao());
             livroCopia.setAnoPublicacao(livroPai.getAnoPublicacao());
             livroCopia.setPalavrasChave(livroPai.getPalavrasChave());
-            livroCopia.setTarjaVermelha(false); // cópias nunca são tarja vermelha
+            livroCopia.setTarjaVermelha(false);
 
         } else if (pai instanceof Revista revistaPai && copia instanceof Revista revistaCopia) {
             revistaCopia.setTitulo(revistaPai.getTitulo());
@@ -239,85 +240,82 @@ public class MaterialService {
     // MÉTODOS PARA VALIDAÇÃO
 
     private void validarMaterial(Material material) {
-
+        List<String> erros = new ArrayList<>();
         boolean isNovoCadastro = material.getIdMaterial() == null;
 
         if (material instanceof Livro livro) {
-            validarCampoObrigatorio(livro.getTipoAquisicao(), "LIVRO: Tipo de Aquisição é obrigatório.");
-            validarTextoObrigatorio(livro.getCodigo(), "LIVRO: O Código é obrigatório.");
-            validarTextoObrigatorio(livro.getIsbn(), "LIVRO: O ISBN é obrigatório.");
-            validarTextoObrigatorio(livro.getTitulo(), "LIVRO: O Título é obrigatório.");
-            validarTextoObrigatorio(livro.getAutor(), "LIVRO: O Autor é obrigatório.");
-            validarTextoObrigatorio(livro.getEditora(), "LIVRO: A Editora é obrigatória.");
-            validarTextoObrigatorio(livro.getGenero(), "LIVRO: O Gênero é obrigatório.");
-            validarTextoObrigatorio(livro.getAnoPublicacao(), "LIVRO: O Ano de Publicação é obrigatório.");
-            validarTextoObrigatorio(livro.getPalavrasChave(), "LIVRO: As Palavras-chave são obrigatórias.");
+            if (livro.getTipoAquisicao() == null)            erros.add("Tipo de Aquisição");
+            if (isVazio(livro.getCodigo()))                  erros.add("Código");
+            if (isVazio(livro.getIsbn()))                    erros.add("ISBN");
+            if (isVazio(livro.getTitulo()))                  erros.add("Título");
+            if (isVazio(livro.getAutor()))                   erros.add("Autor");
+            if (isVazio(livro.getEditora()))                 erros.add("Editora");
+            if (isVazio(livro.getGenero()))                  erros.add("Gênero");
+            if (isVazio(livro.getAnoPublicacao()))           erros.add("Ano de Publicação");
+            if (isVazio(livro.getPalavrasChave()))           erros.add("Palavras-chave");
 
-            if (isNovoCadastro && repository.buscarLivroPorCodigo(livro.getCodigo()) != null) {
-                throw new IllegalArgumentException("LIVRO: O Código '" + livro.getCodigo() + "' já está em uso.");
+            if (isNovoCadastro && !isVazio(livro.getCodigo())
+                    && repository.buscarLivroPorCodigo(livro.getCodigo()) != null) {
+                erros.add("Código '" + livro.getCodigo() + "' já está em uso");
             }
 
         } else if (material instanceof Revista revista) {
-            validarCampoObrigatorio(revista.getTipoAquisicao(), "REVISTA: Tipo de Aquisição é obrigatório.");
-            validarTextoObrigatorio(revista.getCodigo(), "REVISTA: O Código é obrigatório.");
-            validarTextoObrigatorio(revista.getTitulo(), "REVISTA: O Título é obrigatório.");
-            validarTextoObrigatorio(revista.getVolume(), "REVISTA: O Volume é obrigatório.");
-            validarTextoObrigatorio(revista.getEditora(), "REVISTA: A Editora é obrigatória.");
-            validarTextoObrigatorio(revista.getGenero(), "REVISTA: O Gênero é obrigatório.");
-            validarTextoObrigatorio(revista.getAnoPublicacao(), "REVISTA: O Ano de Publicação é obrigatório.");
-            validarTextoObrigatorio(revista.getPalavrasChave(), "REVISTA: As Palavras-chave são obrigatórias.");
+            if (revista.getTipoAquisicao() == null)          erros.add("Tipo de Aquisição");
+            if (isVazio(revista.getCodigo()))                erros.add("Código");
+            if (isVazio(revista.getTitulo()))                erros.add("Título");
+            if (isVazio(revista.getVolume()))                erros.add("Volume");
+            if (isVazio(revista.getEditora()))               erros.add("Editora");
+            if (isVazio(revista.getGenero()))                erros.add("Gênero");
+            if (isVazio(revista.getAnoPublicacao()))         erros.add("Ano de Publicação");
+            if (isVazio(revista.getPalavrasChave()))         erros.add("Palavras-chave");
 
-            if (isNovoCadastro && repository.buscarRevistaPorCodigo(revista.getCodigo()) != null) {
-                throw new IllegalArgumentException("REVISTA: O Código '" + revista.getCodigo() + "' já está em uso.");
+            if (isNovoCadastro && !isVazio(revista.getCodigo())
+                    && repository.buscarRevistaPorCodigo(revista.getCodigo()) != null) {
+                erros.add("Código '" + revista.getCodigo() + "' já está em uso");
             }
 
         } else if (material instanceof TG tg) {
-            validarTextoObrigatorio(tg.getCodigo(), "TG: O Código é obrigatório.");
-            validarTextoObrigatorio(tg.getTitulo(), "TG: O Título é obrigatório.");
-            validarTextoObrigatorio(tg.getSubtitulo(), "TG: O Subtítulo é obrigatório.");
-            validarTextoObrigatorio(tg.getAssunto(), "TG: O Assunto é obrigatório.");
-            validarTextoObrigatorio(tg.getAutor1(), "TG: O Autor 1 é obrigatório.");
-            validarTextoObrigatorio(tg.getRa1(), "TG: O RA 1 é obrigatório.");
-            validarTextoObrigatorio(tg.getLocalPublicacao(), "TG: O Local de Publicação é obrigatório.");
-            validarTextoObrigatorio(tg.getAnoPublicacao(), "TG: O Ano de Publicação é obrigatório.");
-            validarTextoObrigatorio(tg.getPalavrasChave(), "TG: As Palavras-chave são obrigatórias.");
+            if (isVazio(tg.getCodigo()))                     erros.add("Código");
+            if (isVazio(tg.getTitulo()))                     erros.add("Título");
+            if (isVazio(tg.getSubtitulo()))                  erros.add("Subtítulo");
+            if (isVazio(tg.getAssunto()))                    erros.add("Assunto");
+            if (isVazio(tg.getAutor1()))                     erros.add("Autor 1");
+            if (isVazio(tg.getRa1()))                        erros.add("RA 1");
+            if (isVazio(tg.getLocalPublicacao()))            erros.add("Local de Publicação");
+            if (isVazio(tg.getAnoPublicacao()))              erros.add("Ano de Publicação");
+            if (isVazio(tg.getPalavrasChave()))              erros.add("Palavras-chave");
 
-            if (isNovoCadastro && repository.buscarTGPorCodigo(tg.getCodigo()) != null) {
-                throw new IllegalArgumentException("TG: O Código '" + tg.getCodigo() + "' já está em uso.");
+            if (isNovoCadastro && !isVazio(tg.getCodigo())
+                    && repository.buscarTGPorCodigo(tg.getCodigo()) != null) {
+                erros.add("Código '" + tg.getCodigo() + "' já está em uso");
             }
 
         } else if (material instanceof Equipamento equipamento) {
-            validarTextoObrigatorio(equipamento.getCodigo(), "EQUIPAMENTO: O Código é obrigatório.");
-            validarTextoObrigatorio(equipamento.getNome(), "EQUIPAMENTO: O Nome é obrigatório.");
-            validarTextoObrigatorio(equipamento.getDescricao(), "EQUIPAMENTO: A Descrição é obrigatória.");
+            if (isVazio(equipamento.getCodigo()))            erros.add("Código");
+            if (isVazio(equipamento.getNome()))              erros.add("Nome");
+            if (isVazio(equipamento.getDescricao()))         erros.add("Descrição");
 
-            if (isNovoCadastro && repository.buscarEquipamentoPorCodigo(equipamento.getCodigo()) != null) {
-                throw new IllegalArgumentException("EQUIPAMENTO: O Código '" + equipamento.getCodigo() + "' já está em uso.");
+            if (isNovoCadastro && !isVazio(equipamento.getCodigo())
+                    && repository.buscarEquipamentoPorCodigo(equipamento.getCodigo()) != null) {
+                erros.add("Código '" + equipamento.getCodigo() + "' já está em uso");
             }
         }
 
         if (material.getTipoAquisicao() == TipoAquisicao.COMPRA) {
-
-            if (material.getNotaFiscal() == null) {
-                throw new IllegalArgumentException("Materiais comprados exigem vínculo com Nota Fiscal.");
-            }
-
-            if (material.getValorUnitario() == null || material.getValorUnitario().compareTo(BigDecimal.ZERO) <= 0) {
-                throw new IllegalArgumentException("Materiais comprados exigem Valor Unitário maior que zero.");
-            }
+            if (material.getNotaFiscal() == null)
+                erros.add("Nota Fiscal é obrigatória para compras");
+            if (material.getValorUnitario() == null || material.getValorUnitario().compareTo(BigDecimal.ZERO) <= 0)
+                erros.add("Valor Unitário deve ser maior que zero");
         }
-    }
 
-    private void validarTextoObrigatorio(String valor, String mensagem) {
-        if (valor == null || valor.trim().isEmpty()) {
+        if (!erros.isEmpty()) {
+            String mensagem = "Campos inválidos ou obrigatórios:\n• " + String.join("\n• ", erros);
             throw new IllegalArgumentException(mensagem);
         }
     }
 
-    private void validarCampoObrigatorio(Object valor, String mensagem) {
-        if (valor == null) {
-            throw new IllegalArgumentException(mensagem);
-        }
+    private boolean isVazio(String valor) {
+        return valor == null || valor.trim().isEmpty();
     }
 
     public List<Material> buscarMateriaisPorNotaFiscal(String codigoNota) {

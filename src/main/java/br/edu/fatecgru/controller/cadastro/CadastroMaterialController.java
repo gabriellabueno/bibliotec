@@ -129,7 +129,14 @@
         }
 
         private void configurarListenerTipoMaterial() {
-            materialTypeGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> apresentarForms(null));
+            materialTypeGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
+                tipoAquisicaoCombo.setValue("Doação");
+
+                InterfaceUtil.habilitarCamposNF(false, vboxNotaFiscal, numeroNotaFiscalField);
+                InterfaceUtil.habilitarCamposValorUnitario(false, vboxValorUnitario, valorUnitarioField);
+                notaFiscalSelecionada = null;
+                apresentarForms(null);
+            });
         }
 
         private void configurarListenerTipoAquisicao() {
@@ -187,7 +194,7 @@
                     exibirForm(formTG, false, false, false);
                     break;
                 case "rbEquipamento":
-                    exibirForm(formEquipamento, true, true, true);
+                    exibirForm(formEquipamento, false, true, true);
                     break;
             }
 
@@ -214,12 +221,6 @@
 
             vboxTipoAquisicao.setVisible(tipoAquisicao);
             vboxTipoAquisicao.setManaged(tipoAquisicao);
-
-            vboxNotaFiscal.setVisible(tipoAquisicao);
-            vboxNotaFiscal.setManaged(tipoAquisicao);
-
-            vboxValorUnitario.setVisible(tipoAquisicao);
-            vboxValorUnitario.setManaged(tipoAquisicao);
 
             vboxQntCopias.setVisible(copias);
             vboxQntCopias.setManaged(copias);

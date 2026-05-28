@@ -63,6 +63,30 @@ public class UsuarioRepository {
         }
     }
 
+    public Usuario buscarUsuarioPorEmail(String emailUsuario) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Usuario> query = em.createQuery(
+                    "SELECT u FROM Usuario u WHERE u.email = :email",
+                    Usuario.class
+            );
+            query.setParameter("email", emailUsuario);
+
+            Usuario usuario = query.getSingleResult();
+
+
+            usuario.getNome();
+            usuario.getIdUsuario();
+
+            return usuario;
+
+        } catch (Exception e) {
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
     public List<Usuario> buscarUsuario(String termo, boolean isDocente) {
         EntityManager em = JPAUtil.getEntityManager();
 
@@ -100,41 +124,6 @@ public class UsuarioRepository {
                 em.getTransaction().rollback();
             }
             System.err.println("Erro ao atualizar Usuário: " + e.getMessage());
-            e.printStackTrace();
-            return false;
-        } finally {
-            em.close();
-        }
-    }
-
-    // Exclui um Usuário pelo seu ID
-
-    public boolean excluirUsuario(String idUsuario) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            em.getTransaction().begin();
-
-
-            Usuario usuario = em.find(Usuario.class, idUsuario);
-
-            if (usuario != null) {
-
-                em.remove(usuario);
-                em.getTransaction().commit();
-                return true;
-            } else {
-
-                if (em.getTransaction().isActive()) {
-                    em.getTransaction().rollback();
-                }
-                return false;
-            }
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-
-            System.err.println("Erro ao excluir Usuário: " + e.getMessage());
             e.printStackTrace();
             return false;
         } finally {
