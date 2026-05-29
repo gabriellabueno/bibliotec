@@ -38,78 +38,43 @@ public class CadastroNotaFiscalController implements Initializable {
 
         dataAquisicaoField.setDisable(false);
         descricaoArea.setEditable(true);
-
-
-        codigoField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-
-            if (!newValue) {
-                String codigoAtual = codigoField.getText();
-                handleCodigoChange(codigoAtual);
-            }
-        });
     }
 
 
     @FXML
     private void onCadastrarClick(ActionEvent event) {
-
         try {
-            if (this.notaFiscalSalva != null) {
+            String codigo = codigoField.getText().trim();
 
-                coletarValoresDosCamposParaObjeto(this.notaFiscalSalva);
 
-                NotaFiscal nfResultado = notaFiscalService.atualizarNotaFiscal(this.notaFiscalSalva);
-
-                this.notaFiscalSalva = nfResultado;
-
-                if (nfResultado != null) {
-
-                    limparCamposNFSecundarios();
-                    codigoField.clear();
-                    destravarCamposNFSecundarios();
-                    this.notaFiscalSalva = null;
-                }
+            NotaFiscal nfExistente = notaFiscalService.buscarNotaFiscalPorCodigo(codigo);
+            if (nfExistente != null) {
+                mostrarAlerta(AlertType.WARNING,
+                        "Código já cadastrado",
+                        "Já existe uma Nota Fiscal com o código \"" + codigo + "\".\n" +
+                                "Informe um código diferente.");
                 return;
             }
 
-
-
             NotaFiscal nfCandidata = criarObjetoCandidato();
+            boolean sucesso = notaFiscalService.cadastrarNotaFiscal(nfCandidata);
 
-            NotaFiscal nfResultado = notaFiscalService.buscarOuCadastrar(nfCandidata);
-
-            if (nfResultado != null) {
-                this.notaFiscalSalva = nfResultado;
-                mostrarAlerta(AlertType.INFORMATION, "Sucesso", "Nova Nota Fiscal de código " + nfResultado.getCodigo() + " cadastrada."
-                        + "\nPara adicionar itens individuais vincule materiais.");
-
-
+            if (sucesso) {
+                this.notaFiscalSalva = nfCandidata;
+                mostrarAlerta(AlertType.INFORMATION, "Sucesso",
+                        "Nota Fiscal de código " + codigo + " cadastrada com sucesso.");
                 limparCamposNFSecundarios();
                 codigoField.clear();
-                destravarCamposNFSecundarios();
                 this.notaFiscalSalva = null;
-
-
             } else {
-
-                mostrarAlerta(AlertType.ERROR, "Falha no Cadastro", "Não foi possível cadastrar a Nota Fiscal.");
+                mostrarAlerta(AlertType.ERROR, "Falha no Cadastro",
+                        "Não foi possível cadastrar a Nota Fiscal.");
             }
 
         } catch (IllegalArgumentException ex) {
-
-            mostrarAlerta(AlertType.ERROR, "Erro", ex.getMessage());
-            cadastrarButton.setDisable(false);
-
-        } catch (RuntimeException ex) {
-
-            mostrarAlerta(AlertType.ERROR, "Erro", ex.getMessage());
-            cadastrarButton.setDisable(false);
-            ex.printStackTrace();
-
+            mostrarAlerta(AlertType.ERROR, "Erro de Validação", ex.getMessage());
         } catch (Exception e) {
-
-            mostrarAlerta(AlertType.ERROR, "Erro", e.getMessage());
-            cadastrarButton.setDisable(false);
+            mostrarAlerta(AlertType.ERROR, "Erro Inesperado", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -148,73 +113,6 @@ public class CadastroNotaFiscalController implements Initializable {
         coletarValoresDosCamposParaObjeto(nf);
 
         return nf;
-    }
-
-    private void preencherCampos(NotaFiscal nf) {
-        if (nf != null) {
-
-            dataAquisicaoField.setValue(nf.getDataAquisicao());
-
-            descricaoArea.setText(nf.getDescricao());
-            codigoField.setText(nf.getCodigo());
-            dataAquisicaoField.setDisable(true);
-            descricaoArea.setEditable(true);
-        }
-    }
-
-    private void handleCodigoChange(String novoCodigo) {
-
-        String codigoLimpo = novoCodigo != null ? novoCodigo.trim() : "";
-
-
-        if (codigoLimpo.isEmpty()) {
-            limparCamposNFSecundarios();
-            destravarCamposNFSecundarios();
-            this.notaFiscalSalva = null;
-            return;
-        }
-
-
-        NotaFiscal nfEncontrada = notaFiscalService.buscarNotaFiscalPorCodigo(codigoLimpo);
-
-        if (nfEncontrada != null) {
-
-            preencherCampos(nfEncontrada);
-            travarCamposNFSecundarios();
-            this.notaFiscalSalva = nfEncontrada; // Já define a NF a ser usada
-
-            mostrarAlerta(AlertType.INFORMATION, "Busca OK", "Nota Fiscal " + nfEncontrada.getCodigo() + " encontrada.");
-
-        } else {
-
-            limparCamposNFSecundarios();
-            destravarCamposNFSecundarios();
-            this.notaFiscalSalva = null;
-        }
-    }
-
-    public void setNotaFiscalParaEdicao(NotaFiscal notaFiscal) {
-        if (notaFiscal != null) {
-
-            this.notaFiscalSalva = notaFiscal;
-
-            preencherCampos(notaFiscal);
-
-            travarCamposNFSecundarios();
-
-            cadastrarButton.setText("Atualizar");
-
-            mostrarAlerta(AlertType.INFORMATION, "Modo Edição", "NF " + notaFiscal.getCodigo() + " carregada para edição.");
-        }
-    }
-
-    private void travarCamposNFSecundarios() {
-        dataAquisicaoField.setDisable(true);
-    }
-
-    private void destravarCamposNFSecundarios() {
-        dataAquisicaoField.setDisable(false);
-        descricaoArea.setEditable(true);
     }
 
     private void limparCamposNFSecundarios() {

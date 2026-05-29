@@ -5,6 +5,7 @@ import br.edu.fatecgru.controller.MainController;
 import br.edu.fatecgru.controller.cadastro.CadastroMaterialController;
 import br.edu.fatecgru.controller.cadastro.CadastroNotaFiscalController;
 import br.edu.fatecgru.model.Entity.*;
+import br.edu.fatecgru.model.Enum.StatusMaterial;
 import br.edu.fatecgru.model.Enum.TipoAquisicao;
 import br.edu.fatecgru.model.Enum.TipoMaterial;
 import br.edu.fatecgru.service.MaterialService;
@@ -36,6 +37,7 @@ public class GerenciamentoMaterialController implements Initializable {
     @FXML private RadioButton rbTG;
     @FXML private RadioButton rbEquipamento;
     @FXML private Button btnCadastrarCopia;
+    @FXML private Button btnAtualizar;
 
 
     @FXML private ComboBox<String> tipoAquisicaoCombo;
@@ -330,14 +332,14 @@ public class GerenciamentoMaterialController implements Initializable {
                 materialEmEdicao.getTipoMaterial() == TipoMaterial.REVISTA) {
 
             if (materialEmEdicao.getIdPai() != null) {
-                mensagemConfirmacao = "Tem certeza que deseja desativar esta cópia? \nEla não poderá mais ser emprestada.";
+                mensagemConfirmacao = "Tem certeza que deseja desativar esta cópia? \nEla não poderá mais ser emprestada ou alterada.";
 
             } else {
-                mensagemConfirmacao = "Tem certeza que deseja desativar este material? \nEle não poderá mais ser emprestado, mas continuará no sistema.";
+                mensagemConfirmacao = "Tem certeza que deseja desativar este material? \nEle não poderá mais ser emprestado ou alterado, mas continuará no sistema.";
 
             }
         } else {
-            mensagemConfirmacao = "Tem certeza que deseja excluir este material?";
+            mensagemConfirmacao = "Tem certeza que deseja desativar este material?";
         }
 
         Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION,
@@ -351,13 +353,15 @@ public class GerenciamentoMaterialController implements Initializable {
                 new ButtonType("Não", ButtonBar.ButtonData.NO)
         );
 
-        // Listener para captar botão selecionado
+
         confirmacao.showAndWait().ifPresent(response -> {
             if (response.getButtonData() == ButtonBar.ButtonData.YES) {
                 try {
                     boolean sucesso = materialService.desativarMaterial(materialEmEdicao);
 
                     if (sucesso) {
+                        atualizarEstadoBotoesEdicao(materialEmEdicao);
+
                         Alert sucesso_alert = new Alert(Alert.AlertType.INFORMATION,
                                 "Material desativado com sucesso!", ButtonType.OK);
                         sucesso_alert.showAndWait();
@@ -378,7 +382,7 @@ public class GerenciamentoMaterialController implements Initializable {
                     erro.showAndWait();
 
                 } catch (Exception e) {
-                    // Erro inesperado
+
                     e.printStackTrace();
                     Alert erro = new Alert(Alert.AlertType.ERROR,
                             "Erro inesperado: " + e.getMessage(),
@@ -489,6 +493,8 @@ public class GerenciamentoMaterialController implements Initializable {
             if (ignorarMudancaTipo || newVal == null || newVal.equals(oldVal)) return;
             atualizarVisibilidadeCamposAquisicao(newVal);
         });
+
+        atualizarEstadoBotoesEdicao(material);
     }
 
     private void atualizarVisibilidadeCamposAquisicao(String tipoSelecionado) {
@@ -595,6 +601,15 @@ public class GerenciamentoMaterialController implements Initializable {
         if (formRevista != null) { formRevista.setVisible(false); formRevista.setManaged(false); }
         if (formTG != null) { formTG.setVisible(false); formTG.setManaged(false); }
         if (formEquipamento != null) { formEquipamento.setVisible(false); formEquipamento.setManaged(false); }
+    }
+
+    private void atualizarEstadoBotoesEdicao(Material material) {
+        boolean desativado = material.getStatusMaterial() != StatusMaterial.DISPONIVEL;
+
+        if (desativado) {
+            btnAtualizar.setDisable(true);
+            btnCadastrarCopia.setDisable(true);
+        }
     }
 
 

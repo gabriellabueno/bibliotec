@@ -25,34 +25,6 @@ public class NotaFiscalService {
         return repository.buscarPorCodigo(codigo);
     }
 
-
-    public NotaFiscal buscarOuCadastrar(NotaFiscal nfCandidata) throws IllegalArgumentException {
-
-        if (nfCandidata == null) {
-            throw new IllegalArgumentException("Nota Fiscal não pode ser nula.");
-        }
-
-        validarNotaFiscal(nfCandidata);
-
-        NotaFiscal nfExistente = buscarNotaFiscalPorCodigo(nfCandidata.getCodigo());
-
-        if (nfExistente != null) {
-
-            System.out.println("Nota Fiscal encontrada e reutilizada.");
-            return nfExistente;
-        }
-
-
-
-        if (this.cadastrarNotaFiscal(nfCandidata)) {
-            System.out.println("Nova Nota Fiscal cadastrada com sucesso.");
-            return nfCandidata;
-        }
-
-
-        throw new RuntimeException("Falha ao cadastrar a Nota Fiscal.");
-    }
-
     public List<NotaFiscal> buscarNotaFiscal(String termo) {
         return repository.buscarNotaFiscal(termo);
     }
