@@ -65,6 +65,7 @@ public class GerenciamentoUsuarioController implements Initializable {
     private void voltar() {
         mainController.loadScreen(telaOrigem);
     }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         configurarFactoriesEmprestimos();
@@ -88,6 +89,11 @@ public class GerenciamentoUsuarioController implements Initializable {
 
         this.usuarioEmEdicao = usuario;
 
+        try {
+            usuarioService.verificarELimparPenalidadeExpirada(usuario);
+        } catch (Exception e) {
+            System.err.println("Erro ao verificar penalidade: " + e.getMessage());
+        }
 
         idField.setText(usuario.getIdUsuario());
         nomeField.setText(usuario.getNome());
@@ -110,7 +116,6 @@ public class GerenciamentoUsuarioController implements Initializable {
 
 
         if (usuario.isPenalidade()) {
-
             System.out.println("Usuário está penalizado.");
         }
 
@@ -148,12 +153,8 @@ public class GerenciamentoUsuarioController implements Initializable {
         }
 
         final int limite = this.usuarioEmEdicao.isDocente() ? 3 : 2;
-        long ativos = 0;
-        if (this.emprestimosDoUsuario != null) {
-            ativos = this.emprestimosDoUsuario.stream()
-                    .filter(e -> e.getDataDevolucao() == null) // Filtra os ativos
-                    .count();
-        }
+
+        long ativos = emprestimoService.contarEmprestimosAtivos(usuarioEmEdicao.getIdUsuario());
 
         emprestimosStatusLabel.setText(ativos + "/" + limite);
     }
@@ -206,12 +207,13 @@ public class GerenciamentoUsuarioController implements Initializable {
 
 
                     mainController.loadScreenWithCallback(fxmlPath, (GerenciamentoEmprestimoController controller) -> {
+                        controller.setMainController(mainController);
+                        controller.setTelaOrigem("/ui/screens/pesquisa/pesquisa-usuario.fxml");
                         try {
                             controller.setEmprestimoToEdit(emprestimoParaEdicao);
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
-                        controller.setMainController(mainController);
                     });
 
                 } else {

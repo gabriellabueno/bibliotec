@@ -16,30 +16,34 @@ public class UserResult {
     private final StringProperty emprestimosStatus = new SimpleStringProperty();
     private Usuario usuarioOriginal;
 
-    public static UserResult fromUsuario(Usuario u, int emprestimosAtivos) {
+    public static UserResult fromUsuario(Usuario u, int emprestimosAtivos, int emprestimosAtrasados) {
         UserResult ur = new UserResult();
 
-        // 1. Preenchendo dados básicos
         ur.id.set(u.getIdUsuario());
         ur.nome.set(u.getNome());
         ur.email.set(u.getEmail());
 
-        // 2. 🎯 REVERSÃO: Lógica de Status Simples (sem X/Y e sem quebra de linha)
         String status;
         if (u.isPenalidade()) {
-            status = "EMPRÉSTIMO(S) ATRASADO(S)!";
+
+            if (emprestimosAtivos > 0) {
+                status = "EMPRÉSTIMOS ATRASADOS!";
+
+            } else {
+            String dataFim = u.getDataFimPenalidade() != null
+                    ? u.getDataFimPenalidade().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                    : "data não definida";
+            status = "PENALIDADE ATÉ " + dataFim;
+            }
+
         } else if (emprestimosAtivos > 0) {
-            // Se houver empréstimos ativos, exibe a contagem
-            status = emprestimosAtivos + " - EMPRÉSTIMO(S) ATIVO(S)";
+            status = emprestimosAtivos + " - EMPRÉSTIMOS ATIVOS";
+
         } else {
-            // Se não houver penalidade E emprestimosAtivos = 0
-            // Mudança para indicar claramente que não há empréstimos pendentes.
-            status = "SEM EMPRÉSTIMOS ATIVOS"; // OU "OK", OU "LIVRE", etc.
+            status = "SEM EMPRÉSTIMOS ATIVOS";
         }
 
-        ur.emprestimosStatus.set(status); // Define o status simplificado
-
-        // 3. Armazenando a entidade original
+        ur.emprestimosStatus.set(status);
         ur.usuarioOriginal = u;
 
         return ur;

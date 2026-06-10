@@ -141,10 +141,6 @@ public class GerenciamentoNotaFiscalController implements Initializable {
                 }));
     }
 
-    public void setMainController(MainController mainController) {
-
-    }
-
     public void onSalvarClick(ActionEvent actionEvent) {
         if (notaFiscalemEdicao == null) {
             InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro", "Nota Fiscal para edição não carregada.");
@@ -169,6 +165,10 @@ public class GerenciamentoNotaFiscalController implements Initializable {
             e.printStackTrace();
             InterfaceUtil.mostrarAlerta(Alert.AlertType.ERROR, "Erro ao Salvar", "Não foi possível atualizar a Nota Fiscal: " + e.getMessage());
         }
+    }
+
+    public void voltar() {
+        mainController.loadScreen("/ui/screens/pesquisa/pesquisa-nota-fiscal.fxml");
     }
 
     private BigDecimal converterBigDecimal(String valor) {

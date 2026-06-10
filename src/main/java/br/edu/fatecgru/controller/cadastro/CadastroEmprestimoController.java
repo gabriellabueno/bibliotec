@@ -152,7 +152,7 @@ public class CadastroEmprestimoController implements Initializable {
                 emprestimo.getUsuario().getIdUsuario(),
                 emprestimo.getUsuario().getNome(),
                 emprestimo.getMaterial().getTipoMaterial(),
-                emprestimo.getMaterial().getIdMaterial(),
+                getCodigoMaterial(emprestimo.getMaterial()),
                 nomeMaterial,
                 dataEmprestimo,
                 dataPrevista
@@ -178,5 +178,20 @@ public class CadastroEmprestimoController implements Initializable {
             return equipamento.getNome();
         }
         return "Material Genérico/Desconhecido";
+    }
+
+    private String getCodigoMaterial(Material material) {
+        if (material == null) return "Não encontrado";
+
+        if (material instanceof Livro livro) {
+            return livro.getCodigo();
+        } else if (material instanceof Revista revista) {
+            return revista.getCodigo();
+        } else if (material instanceof TG tg) {
+            return tg.getCodigo();
+        } else if (material instanceof Equipamento equipamento) {
+            return equipamento.getCodigo();
+        }
+        return "Desconhecido";
     }
 }

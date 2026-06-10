@@ -2,6 +2,7 @@ package br.edu.fatecgru.service;
 
 import br.edu.fatecgru.model.Entity.Emprestimo; // Importar Emprestimo
 import br.edu.fatecgru.model.Entity.Usuario;
+import br.edu.fatecgru.model.Enum.StatusEmprestimo;
 import br.edu.fatecgru.repository.EmprestimoRepository; // Importar o novo Repository
 import br.edu.fatecgru.repository.UsuarioRepository;
 import br.edu.fatecgru.util.JPAUtil;
@@ -11,6 +12,7 @@ import jakarta.persistence.TypedQuery;
 import org.hibernate.exception.ConstraintViolationException;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,6 +21,7 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository = new UsuarioRepository();
     private final EmprestimoRepository emprestimoRepository = new EmprestimoRepository();
+    private final EmprestimoService emprestimoService = new EmprestimoService();
 
 
     public boolean cadastrarUsuario(Usuario usuario) {
@@ -70,6 +73,45 @@ public class UsuarioService {
 
     private boolean isVazio(String valor) {
         return valor == null || valor.trim().isEmpty();
+    }
+
+    public Long contarEmprestimosPorStatus(String idUsuario, StatusEmprestimo status) {
+        return emprestimoService.contarEmprestimosPorStatus(idUsuario, status);
+    }
+
+    public void verificarELimparPenalidadeExpirada(Usuario usuario) throws Exception {
+        if (usuario.isPenalidade()) {
+            LocalDate fim = usuario.getDataFimPenalidade();
+            if (fim != null && !fim.isAfter(LocalDate.now())) {
+                usuario.setPenalidade(false);
+                usuario.setDataFimPenalidade(null);
+                usuarioRepository.atualizarUsuario(usuario);
+            }
+        }
+    }
+
+    public void verificarAtrasosDoUsuario(String idUsuario) throws Exception {
+        List<Emprestimo> ativos = emprestimoRepository
+                .buscarEmprestimosPorUsuarioEStatus(idUsuario, StatusEmprestimo.ATIVO);
+        for (Emprestimo e : ativos) {
+            verificarEaplicarAtraso(e);
+        }
+    }
+
+    public void verificarEaplicarAtraso(Emprestimo emprestimo) throws Exception {
+        if (emprestimo.getStatusEmprestimo() != StatusEmprestimo.ATIVO) return;
+
+        LocalDate hoje = LocalDate.now();
+        if (emprestimo.getDataPrevistaDevolucao().isBefore(hoje)) {
+            emprestimo.setStatusEmprestimo(StatusEmprestimo.ATRASADO);
+            emprestimoRepository.cadastrarEmprestimo(emprestimo);
+
+            Usuario usuario = emprestimo.getUsuario();
+            if (!usuario.isPenalidade()) {
+                usuario.setPenalidade(true);
+                usuarioRepository.atualizarUsuario(usuario);
+            }
+        }
     }
 
 }

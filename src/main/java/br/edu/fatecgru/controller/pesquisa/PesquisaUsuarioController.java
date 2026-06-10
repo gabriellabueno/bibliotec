@@ -4,6 +4,7 @@ import br.edu.fatecgru.controller.MainController;
 import br.edu.fatecgru.controller.gerenciamento.GerenciamentoUsuarioController;
 import br.edu.fatecgru.model.Entity.Emprestimo;
 import br.edu.fatecgru.model.Entity.Usuario;
+import br.edu.fatecgru.model.Enum.StatusEmprestimo;
 import br.edu.fatecgru.model.TableView.UserResult;
 import br.edu.fatecgru.service.UsuarioService;
 
@@ -93,11 +94,15 @@ public class PesquisaUsuarioController implements Initializable {
 
             List<UserResult> resultados = usuariosEncontrados.stream()
                     .map(u -> {
-
+                        try {
+                            usuarioService.verificarELimparPenalidadeExpirada(u);
+                            usuarioService.verificarAtrasosDoUsuario(u.getIdUsuario());
+                        } catch (Exception e) {
+                            System.err.println("Erro ao verificar penalidade do usuário " + u.getIdUsuario());
+                        }
                         Long emprestimosAtivos = usuarioService.contarEmprestimosAtivos(u.getIdUsuario());
-
-
-                        return UserResult.fromUsuario(u, emprestimosAtivos.intValue());
+                        Long emprestimosAtrasados = usuarioService.contarEmprestimosPorStatus(u.getIdUsuario(), StatusEmprestimo.ATRASADO);
+                        return UserResult.fromUsuario(u, emprestimosAtivos.intValue(), emprestimosAtrasados.intValue());
                     })
                     .collect(Collectors.toList());
 

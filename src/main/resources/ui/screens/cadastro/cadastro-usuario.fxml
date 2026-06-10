@@ -20,7 +20,7 @@
     <VBox spacing="25.0" maxWidth="400.0">
 
         <HBox spacing="30.0" alignment="CENTER">
-            <RadioButton text="Aluno" selected="true" style="-fx-font-weight: bold;">
+            <RadioButton fx:id="rbAluno" text="Aluno" selected="true" style="-fx-font-weight: bold;">
                 <toggleGroup>
                     <ToggleGroup fx:id="userTypeGroup"/>
                 </toggleGroup>

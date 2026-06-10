@@ -324,4 +324,9 @@ public class MaterialService {
         }
         return repository.buscarMateriaisPorNotaFiscal(codigoNota);
     }
+
+    public boolean temCopias(Material material) {
+        if (material.getIdMaterial() == null) return false;
+        return !repository.buscarCopiasPorIdPai(material.getIdMaterial()).isEmpty();
+    }
 }

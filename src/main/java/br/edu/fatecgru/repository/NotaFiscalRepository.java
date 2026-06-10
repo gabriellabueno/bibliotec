@@ -6,6 +6,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException; // Import necessário
 import jakarta.persistence.TypedQuery;
 import org.hibernate.exception.ConstraintViolationException;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 
@@ -64,10 +67,25 @@ public class NotaFiscalRepository {
     public List<NotaFiscal> buscarNotaFiscal(String termo) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            // Busca por termo contido no código, ignorando maiúsculas/minúsculas
-            String jpql = "SELECT n FROM NotaFiscal n WHERE lower(n.codigo) LIKE :termo OR lower(n.descricao) LIKE :termo";
-            TypedQuery<NotaFiscal> query = em.createQuery(jpql, NotaFiscal.class);
-            query.setParameter("termo", "%" + termo.toLowerCase() + "%");
+            String termoLower = termo.toLowerCase().trim();
+            LocalDate dataParaBusca = converterTermoData(termoLower);
+
+            StringBuilder jpql = new StringBuilder(
+                    "SELECT n FROM NotaFiscal n WHERE " +
+                            "lower(n.codigo) LIKE :termo OR lower(n.descricao) LIKE :termo"
+            );
+
+            if (dataParaBusca != null) {
+                jpql.append(" OR n.dataAquisicao = :data");
+            }
+
+            TypedQuery<NotaFiscal> query = em.createQuery(jpql.toString(), NotaFiscal.class);
+            query.setParameter("termo", "%" + termoLower + "%");
+
+            if (dataParaBusca != null) {
+                query.setParameter("data", dataParaBusca);
+            }
+
             return query.getResultList();
         } catch (Exception e) {
             return Collections.emptyList();
@@ -75,6 +93,20 @@ public class NotaFiscalRepository {
             em.close();
         }
     }
+
+    private LocalDate converterTermoData(String termo) {
+        try {
+            return LocalDate.parse(termo.trim(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        } catch (Exception ignored) {}
+
+        try {
+            return LocalDate.parse(termo.trim(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        } catch (Exception ignored) {}
+
+        return null;
+    }
+
+
 
     public NotaFiscal atualizarNotaFiscal(NotaFiscal notaFiscal) {
         EntityManager em = JPAUtil.getEntityManager();

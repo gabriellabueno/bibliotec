@@ -17,6 +17,7 @@ import javafx.fxml.Initializable;
 public class CadastroUsuarioController implements Initializable {
 
     @FXML private ToggleGroup userTypeGroup;
+    @FXML private RadioButton rbAluno;
     @FXML private TextField idField;
     @FXML private TextField nomeField;
     @FXML private TextField emailField;
@@ -27,6 +28,7 @@ public class CadastroUsuarioController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        rbAluno.setSelected(true);
     }
 
 
@@ -93,9 +95,7 @@ public class CadastroUsuarioController implements Initializable {
         idField.clear();
         nomeField.clear();
         emailField.clear();
-        if (userTypeGroup.getSelectedToggle() != null) {
-            userTypeGroup.getSelectedToggle().setSelected(false);
-        }
+        rbAluno.setSelected(true);
     }
 
 

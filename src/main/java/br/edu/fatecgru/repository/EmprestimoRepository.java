@@ -205,4 +205,43 @@ public class EmprestimoRepository {
             em.close();
         }
     }
+
+    public Long contarEmprestimosPorUsuarioEStatus(String idUsuario, StatusEmprestimo status) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            String jpql = "SELECT COUNT(e) FROM Emprestimo e " +
+                    "WHERE e.usuario.idUsuario = :idUsuario " +
+                    "AND e.statusEmprestimo = :status";
+
+            TypedQuery<Long> query = em.createQuery(jpql, Long.class);
+            query.setParameter("idUsuario", idUsuario);
+            query.setParameter("status", status);
+
+            return query.getSingleResult();
+        } catch (Exception e) {
+            return 0L;
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Emprestimo> buscarEmprestimosPorUsuarioEStatus(String idUsuario, StatusEmprestimo status) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            String jpql = "SELECT e FROM Emprestimo e " +
+                    "JOIN FETCH e.usuario " +
+                    "JOIN FETCH e.material " +
+                    "WHERE e.usuario.idUsuario = :idUsuario " +
+                    "AND e.statusEmprestimo = :status";
+
+            TypedQuery<Emprestimo> query = em.createQuery(jpql, Emprestimo.class);
+            query.setParameter("idUsuario", idUsuario);
+            query.setParameter("status", status);
+            return query.getResultList();
+        } catch (Exception e) {
+            return Collections.emptyList();
+        } finally {
+            em.close();
+        }
+    }
 }

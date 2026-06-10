@@ -185,4 +185,12 @@ public class PesquisaEmprestimoController implements Initializable {
         }
     }
 
+    public void restaurarToggle(String toggleId) {
+        if (toggleId == null) return;
+        statusTypeGroup.getToggles().stream()
+                .filter(t -> toggleId.equals(((RadioButton) t).getId()))
+                .findFirst()
+                .ifPresent(t -> t.setSelected(true));
+    }
+
 }

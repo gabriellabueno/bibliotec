@@ -11,6 +11,7 @@ import br.edu.fatecgru.repository.MaterialRepository;
 import br.edu.fatecgru.repository.UsuarioRepository;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class EmprestimoService {
@@ -49,16 +50,14 @@ public class EmprestimoService {
 
         LocalDate hoje = LocalDate.now();
         if (emprestimo.getDataPrevistaDevolucao().isBefore(hoje)) {
-
-
             emprestimo.setStatusEmprestimo(StatusEmprestimo.ATRASADO);
             emprestimoRepository.cadastrarEmprestimo(emprestimo);
 
-
             Usuario usuario = emprestimo.getUsuario();
-            usuario.setPenalidade(true);
-            usuario.setDataFimPenalidade(hoje.plusDays(DIAS_PENALIDADE)); // Nova regra assumida
-            usuarioRepository.atualizarUsuario(usuario); // Reutilizando para update
+            if (!usuario.isPenalidade()) { // evita sobrescrever se já estava penalizado
+                usuario.setPenalidade(true);
+                usuarioRepository.atualizarUsuario(usuario);
+            }
         }
     }
 
@@ -68,13 +67,20 @@ public class EmprestimoService {
             throw new IllegalStateException("O empréstimo já foi devolvido.");
         }
 
+        boolean estaAtrasado = emprestimo.getStatusEmprestimo() == StatusEmprestimo.ATRASADO;
 
         emprestimo.setDataDevolucao(dataDevolucao);
         emprestimo.setStatusEmprestimo(StatusEmprestimo.DEVOLVIDO);
 
-
         Material material = emprestimo.getMaterial();
         material.setStatusMaterial(StatusMaterial.DISPONIVEL);
+
+        if (estaAtrasado) {
+            Usuario usuario = emprestimo.getUsuario();
+            usuario.setPenalidade(true);
+            usuario.setDataFimPenalidade(dataDevolucao.plusDays(DIAS_PENALIDADE));
+            usuarioRepository.atualizarUsuario(usuario);
+        }
 
         emprestimoRepository.cadastrarEmprestimo(emprestimo);
     }
@@ -109,12 +115,30 @@ public class EmprestimoService {
             throw new IllegalArgumentException("Este empréstimo já foi cancelado.");
         }
 
+        boolean estaAtrasado = emprestimo.getStatusEmprestimo() == StatusEmprestimo.ATRASADO;
+
         Material material = emprestimo.getMaterial();
         material.setStatusMaterial(StatusMaterial.DISPONIVEL);
         emprestimo.setStatusEmprestimo(StatusEmprestimo.CANCELADO);
         emprestimo.setMotivoCancelamento(motivo);
+        materialRepository.atualizarMaterial(material);
 
-        return emprestimoRepository.atualizarEmprestimo(emprestimo);
+        boolean sucesso = emprestimoRepository.atualizarEmprestimo(emprestimo);
+
+        if (sucesso && estaAtrasado) {
+            Usuario usuario = emprestimo.getUsuario();
+            Long outrosAtrasados = emprestimoRepository.contarEmprestimosPorUsuarioEStatus(
+                    usuario.getIdUsuario(), StatusEmprestimo.ATRASADO
+            );
+
+            if (outrosAtrasados == 0) {
+                usuario.setPenalidade(false);
+                usuario.setDataFimPenalidade(null);
+                usuarioRepository.atualizarUsuario(usuario);
+            }
+        }
+
+        return sucesso;
     }
 
 
@@ -146,27 +170,23 @@ public class EmprestimoService {
         }
 
 
-
-
         if (usuario.isPenalidade()) {
 
             LocalDate hoje = LocalDate.now();
             LocalDate fim = usuario.getDataFimPenalidade();
 
-
             if (fim != null && fim.isBefore(hoje)) {
                 usuario.setPenalidade(false);
                 usuario.setDataFimPenalidade(null);
                 usuarioRepository.atualizarUsuario(usuario);
-            } else if (fim == null || fim.isAfter(hoje) || fim.isEqual(hoje)) {
 
-                String fimStr = (fim != null) ? fim.toString() : "sem data registrada";
+            } else if (fim == null || fim.isAfter(hoje) || fim.isEqual(hoje)) {
+                String fimStr = (fim != null) ? "até " + fim.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")).toString() : "pendente de devolução";
                 throw new IllegalStateException(
-                        "Usuário está sob penalidade até " + fimStr + " e não pode realizar novos empréstimos."
+                        "Usuário está sob penalidade, " + fimStr + " e não pode realizar novos empréstimos."
                 );
             }
         }
-
 
         Long qtdEmprestimosAtivos = emprestimoRepository.contarEmprestimosAtivosPorUsuario(idUsuario);
 
@@ -198,5 +218,21 @@ public class EmprestimoService {
 
 
         return emprestimoRepository.cadastrarEmprestimo(novoEmprestimo);
+    }
+
+    public long contarEmprestimosAtivos(String idUsuario) {
+        return emprestimoRepository.contarEmprestimosAtivosPorUsuario(idUsuario);
+    }
+
+    public long contarEmprestimosPorStatus(String idUsuario, StatusEmprestimo status) {
+        return emprestimoRepository.contarEmprestimosPorUsuarioEStatus(idUsuario, status);
+    }
+
+    public void verificarAtrasosDoUsuario(String idUsuario) throws Exception {
+        List<Emprestimo> ativos = emprestimoRepository
+                .buscarEmprestimosPorUsuarioEStatus(idUsuario, StatusEmprestimo.ATIVO);
+        for (Emprestimo e : ativos) {
+            verificarEaplicarAtraso(e);
+        }
     }
 }

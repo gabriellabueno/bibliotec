@@ -10,6 +10,10 @@
         <Insets bottom="30.0" left="210.0" right="210.0" top="100.0" />
     </padding>
 
+    <HBox alignment="CENTER_LEFT" prefWidth="580.0" spacing="10.0">
+        <Button onAction="#voltar" style="-fx-background-color: #5a1a1a; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 30 10 30; -fx-cursor: hand;" text="Voltar" />
+    </HBox>
+
     <Label style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #5a1a1a;" text="Gerenciamento de Nota Fiscal">
         <VBox.margin>
             <Insets bottom="20.0" />

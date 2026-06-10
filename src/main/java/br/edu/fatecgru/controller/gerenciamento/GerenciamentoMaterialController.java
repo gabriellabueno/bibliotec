@@ -253,7 +253,7 @@ public class GerenciamentoMaterialController implements Initializable {
             boolean tarjaVermelha = (materialAtualizado instanceof Livro l && l.isTarjaVermelha())
                     || (materialAtualizado instanceof Revista r && r.isTarjaVermelha());
 
-            if (tipoMaterial && tarjaVermelha) {
+            if (tipoMaterial && tarjaVermelha && materialService.temCopias(materialAtualizado)) {
 
                 Alert pergunta = new Alert(Alert.AlertType.CONFIRMATION);
                 pergunta.setTitle("Atualizar Cópias");

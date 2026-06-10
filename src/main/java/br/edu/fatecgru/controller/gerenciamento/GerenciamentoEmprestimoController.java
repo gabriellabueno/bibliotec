@@ -2,6 +2,7 @@ package br.edu.fatecgru.controller.gerenciamento;
 
 import br.edu.fatecgru.controller.MainController;
 import br.edu.fatecgru.controller.cadastro.CadastroNotaFiscalController;
+import br.edu.fatecgru.controller.pesquisa.PesquisaEmprestimoController;
 import br.edu.fatecgru.model.Entity.*;
 import br.edu.fatecgru.model.Enum.StatusEmprestimo;
 import br.edu.fatecgru.service.EmprestimoService;
@@ -56,7 +57,14 @@ public class GerenciamentoEmprestimoController implements Initializable {
     @FXML private Button btnRenovar;
     @FXML private Button btnCancelar;
 
+    @FXML String toggleOrigem;
+
     private String telaOrigem = "/ui/screens/pesquisa/pesquisa-emprestimo.fxml";
+
+
+    public void setToggleOrigem(String toggleOrigem) {
+        this.toggleOrigem = toggleOrigem;
+    }
 
     public void setTelaOrigem(String telaOrigem) {
         this.telaOrigem = telaOrigem;
@@ -64,7 +72,14 @@ public class GerenciamentoEmprestimoController implements Initializable {
 
     @FXML
     private void voltar() {
-        mainController.loadScreen(telaOrigem);
+        if (telaOrigem.equals("/ui/screens/pesquisa/pesquisa-emprestimo.fxml")) {
+            mainController.loadScreenWithCallback(telaOrigem, (PesquisaEmprestimoController controller) -> {
+                controller.setMainController(mainController);
+                controller.restaurarToggle(toggleOrigem);
+            });
+        } else {
+            mainController.loadScreen("/ui/screens/pesquisa/pesquisa-usuario.fxml");
+        }
     }
 
     @Override
@@ -212,10 +227,15 @@ public class GerenciamentoEmprestimoController implements Initializable {
 
             emprestimoService.renovarEmprestimo(emprestimoEmEdicao);
 
-
             setEmprestimoToEdit(emprestimoEmEdicao);
 
-            InterfaceUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Empréstimo renovado com sucesso! Nova data: " + emprestimoEmEdicao.getDataPrevistaDevolucao());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+            String dataFormatada = emprestimoEmEdicao.getDataPrevistaDevolucao().format(formatter);
+
+            System.out.println(dataFormatada);
+
+            InterfaceUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Empréstimo renovado com sucesso! Nova data: " + dataFormatada);
 
         } catch (IllegalStateException e) {
             InterfaceUtil.mostrarAlerta(Alert.AlertType.WARNING, "Aviso", e.getMessage());
@@ -228,7 +248,7 @@ public class GerenciamentoEmprestimoController implements Initializable {
     private void onCancelar() {
         if (emprestimoEmEdicao == null) return;
 
-        String mensagem = "Tem certeza que deseja CANCELAR este registro de empréstimo? Esta ação é irreversível e removerá o registro do sistema.";
+        String mensagem = "Tem certeza que deseja CANCELAR este empréstimo? Esta ação é irreversível e não será mais possível fazer alterações nesse registro.";
 
         if (!confirmarAcao("Cancelar Empréstimo", "Confirma a ação?", mensagem)) {
             return;

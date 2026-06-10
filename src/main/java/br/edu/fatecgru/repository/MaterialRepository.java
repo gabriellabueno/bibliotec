@@ -238,7 +238,7 @@
             try {
                 String jpql = "SELECT l FROM Livro l WHERE lower(l.titulo) LIKE :termo OR lower(l.autor) LIKE :termo " +
                         "OR l.isbn LIKE :termo OR lower(l.codigo) LIKE :termo OR lower(l.anoPublicacao) LIKE :termo " +
-                        "ORDER BY CASE WHEN l.statusMaterial = :inativo THEN 1 ELSE 0 END ASC";
+                        "OR lower(l.palavrasChave) LIKE :termo " + "ORDER BY CASE WHEN l.statusMaterial = :inativo THEN 1 ELSE 0 END ASC";
 
                 TypedQuery<Livro> query = em.createQuery(jpql, Livro.class);
                 query.setParameter("termo", "%" + termo.toLowerCase() + "%");
@@ -260,7 +260,7 @@
             try {
                 String jpql = "SELECT r FROM Revista r WHERE lower(r.titulo) LIKE :termo OR lower(r.editora) " +
                         "LIKE :termo OR lower(r.codigo) LIKE :termo OR lower(r.anoPublicacao) LIKE :termo " +
-                        "ORDER BY CASE WHEN r.statusMaterial = :inativo THEN 1 ELSE 0 END ASC";
+                        "OR lower(r.palavrasChave) LIKE :termo " + "ORDER BY CASE WHEN r.statusMaterial = :inativo THEN 1 ELSE 0 END ASC";
 
                 TypedQuery<Revista> query = em.createQuery(jpql, Revista.class);
                 query.setParameter("termo", "%" + termo.toLowerCase() + "%");
@@ -282,7 +282,7 @@
             try {
                 String jpql = "SELECT t FROM TG t WHERE lower(t.titulo) LIKE :termo OR " +
                         "lower(t.codigo) LIKE :termo OR lower(t.autor1) LIKE :termo " +
-                        "ORDER BY CASE WHEN t.statusMaterial = :inativo THEN 1 ELSE 0 END ASC";
+                        "OR lower(t.palavrasChave) LIKE :termo " + "ORDER BY CASE WHEN t.statusMaterial = :inativo THEN 1 ELSE 0 END ASC";
 
                 TypedQuery<TG> query = em.createQuery(jpql, TG.class);
                 query.setParameter("termo", "%" + termo.toLowerCase() + "%");
