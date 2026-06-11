@@ -113,6 +113,8 @@ public final class InterfaceUtil {
         alert.setTitle(titulo);
         alert.setHeaderText(cabecalho);
         alert.setContentText(conteudo);
+        alert.getDialogPane().setMaxWidth(380);
+
         return alert.showAndWait();
     }
 }

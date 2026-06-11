@@ -1,6 +1,7 @@
 package br.edu.fatecgru.controller.gerenciamento;
 
 import br.edu.fatecgru.controller.MainController;
+import br.edu.fatecgru.controller.pesquisa.PesquisaNotaFiscalController;
 import br.edu.fatecgru.model.Entity.*;
 import br.edu.fatecgru.model.TableView.ItemResult;
 import br.edu.fatecgru.service.MaterialService;
@@ -168,7 +169,12 @@ public class GerenciamentoNotaFiscalController implements Initializable {
     }
 
     public void voltar() {
-        mainController.loadScreen("/ui/screens/pesquisa/pesquisa-nota-fiscal.fxml");
+        mainController.loadScreenWithCallback(
+                "/ui/screens/pesquisa/pesquisa-nota-fiscal.fxml",
+                (PesquisaNotaFiscalController controller) -> {
+                    controller.setMainController(mainController);
+                }
+        );
     }
 
     private BigDecimal converterBigDecimal(String valor) {

@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -61,6 +62,10 @@ public class GerenciamentoEmprestimoController implements Initializable {
 
     private String telaOrigem = "/ui/screens/pesquisa/pesquisa-emprestimo.fxml";
 
+    @Setter
+    private Usuario usuarioOrigem;
+    @Setter
+    private List<Emprestimo> emprestimosOrigem;
 
     public void setToggleOrigem(String toggleOrigem) {
         this.toggleOrigem = toggleOrigem;
@@ -77,6 +82,14 @@ public class GerenciamentoEmprestimoController implements Initializable {
                 controller.setMainController(mainController);
                 controller.restaurarToggle(toggleOrigem);
             });
+
+        } else if (telaOrigem.equals("/ui/screens/gerenciamento/gerenciamento-usuario.fxml")) {
+            mainController.loadScreenWithCallback(telaOrigem, (GerenciamentoUsuarioController controller) -> {
+                controller.setMainController(mainController);
+                controller.setUsuarioToEdit(usuarioOrigem);
+                controller.setEmprestimosDoUsuario(emprestimosOrigem);
+            });
+
         } else {
             mainController.loadScreen("/ui/screens/pesquisa/pesquisa-usuario.fxml");
         }
@@ -161,7 +174,10 @@ public class GerenciamentoEmprestimoController implements Initializable {
             btnCancelar.setDisable(true);
             btnRenovar.setDisable(true);
             btnSalvar.setDisable(true);
-            dataDevolucaoField.setEditable(false);
+
+            dataDevolucaoField.setDisable(true);
+            dataDevolucaoField.setOnShowing(event -> event.consume());
+
         } else {
             // Atualiza a UI com o status real (ativo, atrasado ou devolvido)
             statusEmprestimoField.setText(emprestimo.getStatusEmprestimo().toString());
@@ -173,12 +189,10 @@ public class GerenciamentoEmprestimoController implements Initializable {
 
             if (finalizado) {
                 dataDevolucaoField.promptTextProperty().set("Empréstimo Finalizado");
+                dataDevolucaoField.setDisable(true);
+                dataDevolucaoField.setOnShowing(event -> event.consume());
             }
         }
-
-
-        // (#) Verifica se Data Prevista já passou (aplica penalidade se necessário)
-        // emprestimoService.verificarEaplicarAtraso(emprestimo);
     }
 
 
@@ -265,7 +279,6 @@ public class GerenciamentoEmprestimoController implements Initializable {
                 statusEmprestimoField.setText("CANCELADO");
                 motivoCancelamentoBox.setVisible(true);
                 motivoCancelamentoField.setText(emprestimoEmEdicao.getMotivoCancelamento());
-                dataDevolucaoField.setEditable(false);
                 if (mainController != null) {
                     mainController.loadScreen("/ui/screens/pesquisa/pesquisa-emprestimo.fxml");
                 }

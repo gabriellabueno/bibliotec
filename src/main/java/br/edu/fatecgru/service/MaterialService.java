@@ -302,8 +302,15 @@ public class MaterialService {
         }
 
         if (material.getTipoAquisicao() == TipoAquisicao.COMPRA) {
-            if (material.getNotaFiscal() == null)
+            if (material.getNotaFiscal() == null) {
                 erros.add("Nota Fiscal é obrigatória para compras");
+            } else {
+
+                NotaFiscal nfEncontrada = notaFiscalService.buscarNotaFiscalPorCodigo(material.getNotaFiscal().getCodigo());
+                if (nfEncontrada == null) {
+                    erros.add("Nota Fiscal '" + material.getNotaFiscal().getCodigo() + "' não encontrada");
+                }
+            }
             if (material.getValorUnitario() == null || material.getValorUnitario().compareTo(BigDecimal.ZERO) <= 0)
                 erros.add("Valor Unitário deve ser maior que zero");
         }
@@ -328,5 +335,9 @@ public class MaterialService {
     public boolean temCopias(Material material) {
         if (material.getIdMaterial() == null) return false;
         return !repository.buscarCopiasPorIdPai(material.getIdMaterial()).isEmpty();
+    }
+
+    public Material buscarMaterialPorId(Long id) {
+        return repository.buscarMaterialPorId(id);
     }
 }

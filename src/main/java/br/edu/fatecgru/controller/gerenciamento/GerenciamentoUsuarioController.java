@@ -153,10 +153,22 @@ public class GerenciamentoUsuarioController implements Initializable {
         }
 
         final int limite = this.usuarioEmEdicao.isDocente() ? 3 : 2;
-
         long ativos = emprestimoService.contarEmprestimosAtivos(usuarioEmEdicao.getIdUsuario());
-
+        boolean limiteAtingido = ativos == limite;
         emprestimosStatusLabel.setText(ativos + "/" + limite);
+
+        if (limiteAtingido) {
+            emprestimosStatusLabel.setStyle("-fx-font-weight: bold; -fx-padding: 2 5; -fx-background-color: #b70c0c; -fx-text-fill: white; -fx-border-radius: 3;");
+        } else {
+            emprestimosStatusLabel.setStyle("-fx-font-weight: bold; -fx-padding: 2 5; -fx-background-color: #1a1a57; -fx-text-fill: white; -fx-border-radius: 3;");
+        }
+
+        if (!this.usuarioEmEdicao.isMatriculaAtiva()) {
+            matriculaStatusLabel.setStyle("-fx-font-weight: bold; -fx-padding: 2 5; -fx-background-color: #b70c0c; -fx-text-fill: white; -fx-border-radius: 3;");
+        } else {
+            matriculaStatusLabel.setStyle("-fx-font-weight: bold; -fx-padding: 2 5; -fx-background-color: #1a1a57; -fx-text-fill: white; -fx-border-radius: 3;");
+        }
+
     }
 
     private void verificarAtrasosEmprestimos() {
@@ -205,10 +217,12 @@ public class GerenciamentoUsuarioController implements Initializable {
                 if (emprestimoParaEdicao != null) {
                     String fxmlPath = "/ui/screens/gerenciamento/gerenciamento-emprestimo.fxml";
 
-
                     mainController.loadScreenWithCallback(fxmlPath, (GerenciamentoEmprestimoController controller) -> {
                         controller.setMainController(mainController);
-                        controller.setTelaOrigem("/ui/screens/pesquisa/pesquisa-usuario.fxml");
+                        controller.setTelaOrigem("/ui/screens/gerenciamento/gerenciamento-usuario.fxml");
+                        controller.setUsuarioOrigem(usuarioEmEdicao);
+                        controller.setEmprestimosOrigem(emprestimosDoUsuario);
+
                         try {
                             controller.setEmprestimoToEdit(emprestimoParaEdicao);
                         } catch (Exception e) {

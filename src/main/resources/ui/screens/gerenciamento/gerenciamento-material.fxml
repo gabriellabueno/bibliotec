@@ -354,7 +354,7 @@
         </HBox>
 
         <HBox alignment="CENTER_RIGHT" prefWidth="700.0" spacing="10.0">
-            <Button onAction="#onExcluirClick" style="-fx-background-color: #b70c0c; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20 10 20; -fx-cursor: hand;" text="Desativar Material" />
+            <Button fx:id="btnDesativar" onAction="#onExcluirClick" style="-fx-background-color: #b70c0c; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20 10 20; -fx-cursor: hand;" text="Desativar Material" />
             <Button fx:id="btnAtualizar" onAction="#onSalvarClick" style="-fx-background-color: #1a1a57; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20 10 20; -fx-cursor: hand;" text="Salvar Alterações" />
         </HBox>
     </HBox>

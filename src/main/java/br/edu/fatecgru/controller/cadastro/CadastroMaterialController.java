@@ -1,6 +1,8 @@
     package br.edu.fatecgru.controller.cadastro;
 
     import br.edu.fatecgru.builder.MaterialBuilder;
+    import br.edu.fatecgru.controller.MainController;
+    import br.edu.fatecgru.controller.gerenciamento.GerenciamentoMaterialController;
     import br.edu.fatecgru.model.Entity.*;
     import br.edu.fatecgru.service.MaterialService;
     import br.edu.fatecgru.model.Enum.TipoAquisicao;
@@ -15,6 +17,7 @@
     import javafx.event.ActionEvent;
     import javafx.scene.layout.HBox;
     import javafx.scene.layout.VBox;
+    import lombok.Setter;
 
     import java.net.URL;
     import java.util.Arrays;
@@ -92,15 +95,20 @@
         @FXML public TextField codigoEquipamentoField;
         @FXML private TextField nomeEquipamentoField;
         @FXML private TextArea descricaoEquipamentoArea;
+        @FXML private Button btnVoltar;
 
 
         private final MaterialService materialService = new MaterialService();
         private final NotaFiscalService notaFiscalService = new NotaFiscalService();
 
+        @Setter
+        private MainController mainController;
 
         private NotaFiscal notaFiscalSelecionada = null;
         private Long codigoPai;
         private boolean modoCopia;
+        private Long idMaterialPaiParaVoltar;
+
 
 
         @Override
@@ -252,12 +260,36 @@
             }
         }
 
+        @FXML
+        private void onVoltarClick() {
+            mainController.loadScreenWithCallback(
+                    "/ui/screens/gerenciamento/gerenciamento-material.fxml",
+                    (GerenciamentoMaterialController controller) -> {
+                        controller.setMainController(mainController);
+                        Material pai = // buscar o material pai pelo id
+                                materialService.buscarMaterialPorId(idMaterialPaiParaVoltar);
+                        controller.preencherFormularioParaEdicao(pai);
+                    }
+            );
+        }
+
         private TipoAquisicao obterTipoAquisicao() {
 
             String aquisicaoStr = tipoAquisicaoCombo.getValue() != null ? tipoAquisicaoCombo.getValue() : "Doação";
 
             if (aquisicaoStr.equals("Compra")) {
-                notaFiscalSelecionada = notaFiscalService.buscarNotaFiscalPorCodigo(numeroNotaFiscalField.getText());
+                String codigoNF = numeroNotaFiscalField.getText().trim();
+
+                if (codigoNF.isEmpty()) {
+                    throw new IllegalArgumentException("Informe o código da Nota Fiscal.");
+                }
+
+                notaFiscalSelecionada = notaFiscalService.buscarNotaFiscalPorCodigo(codigoNF);
+
+                if (notaFiscalSelecionada == null) {
+                    throw new IllegalArgumentException("Nota Fiscal '" + codigoNF + "' não encontrada. Verifique o código informado.");
+                }
+
                 return TipoAquisicao.COMPRA;
             }
 
@@ -375,6 +407,9 @@
 
             vboxQntCopias.setVisible(false);
             vboxQntCopias.setManaged(false);
+            idMaterialPaiParaVoltar = idPai;
+            btnVoltar.setVisible(true);
+            btnVoltar.setManaged(true);
 
         }
 

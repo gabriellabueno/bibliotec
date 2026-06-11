@@ -38,6 +38,7 @@ public class GerenciamentoMaterialController implements Initializable {
     @FXML private RadioButton rbEquipamento;
     @FXML private Button btnCadastrarCopia;
     @FXML private Button btnAtualizar;
+    @FXML private Button btnDesativar;
 
 
     @FXML private ComboBox<String> tipoAquisicaoCombo;
@@ -401,6 +402,7 @@ public class GerenciamentoMaterialController implements Initializable {
             String fxmlPath = "/ui/screens/cadastro/cadastro-material.fxml";
 
             mainController.loadScreenWithCallback(fxmlPath, (CadastroMaterialController controller) -> {
+                controller.setMainController(mainController);
                 controller.preencherFormularioParaCopia(materialEmEdicao, materialEmEdicao.getIdMaterial());
             });
 
@@ -609,6 +611,7 @@ public class GerenciamentoMaterialController implements Initializable {
         if (desativado) {
             btnAtualizar.setDisable(true);
             btnCadastrarCopia.setDisable(true);
+            btnDesativar.setDisable(true);
         }
     }
 
